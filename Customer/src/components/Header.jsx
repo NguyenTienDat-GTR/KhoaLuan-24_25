@@ -218,6 +218,17 @@ const Header = () => {
                   fontWeight: 700,
                 }}
               >
+                Giới thiệu
+              </Typography>
+            </RouterLink>
+            <RouterLink to="/" style={{ textDecoration: "none" }}>
+              <Typography
+                color="rgba(0,120,233,0.8)"
+                sx={{
+                  fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                  fontWeight: 700,
+                }}
+              >
                 Đặt lịch
               </Typography>
             </RouterLink>
@@ -240,7 +251,29 @@ const Header = () => {
                   fontWeight: 700,
                 }}
               >
-                Niềng răng
+                Niềng răng mắc cài
+              </Typography>
+            </RouterLink>
+            <RouterLink to="/" style={{ textDecoration: "none" }}>
+              <Typography
+                color="rgba(0,120,233,0.8)"
+                sx={{
+                  fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                  fontWeight: 700,
+                }}
+              >
+                Dịch vụ khác
+              </Typography>
+            </RouterLink>
+            <RouterLink to="/" style={{ textDecoration: "none" }}>
+              <Typography
+                color="rgba(0,120,233,0.8)"
+                sx={{
+                  fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                  fontWeight: 700,
+                }}
+              >
+                Kiến thức
               </Typography>
             </RouterLink>
             <RouterLink to="/" style={{ textDecoration: "none" }}>
@@ -266,22 +299,22 @@ const Header = () => {
           >
             <Box
               sx={{
-                width: 170,
+                width: 230,
                 padding: "1rem",
                 display: "flex",
                 flexDirection: "column",
                 height: "100%",
                 backgroundColor: "#fff",
                 boxSizing: "border-box",
+                gap: "1rem",
               }}
             >
               <RouterLink to="/" style={{ textDecoration: "none" }}>
                 <Typography
                   color="rgba(0,120,233,0.8)"
                   sx={{
-                    fontSize: "1.5rem",
+                    fontSize: { xs: "1.2rem", sm: "1.5rem" },
                     fontWeight: 700,
-                    margin: "0.5rem 0",
                   }}
                 >
                   Trang Chủ
@@ -291,9 +324,19 @@ const Header = () => {
                 <Typography
                   color="rgba(0,120,233,0.8)"
                   sx={{
-                    fontSize: "1.5rem",
+                    fontSize: { xs: "1.2rem", sm: "1.5rem" },
                     fontWeight: 700,
-                    margin: "0.5rem 0",
+                  }}
+                >
+                  Giới thiệu
+                </Typography>
+              </RouterLink>
+              <RouterLink to="/" style={{ textDecoration: "none" }}>
+                <Typography
+                  color="rgba(0,120,233,0.8)"
+                  sx={{
+                    fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                    fontWeight: 700,
                   }}
                 >
                   Đặt lịch
@@ -303,9 +346,8 @@ const Header = () => {
                 <Typography
                   color="rgba(0,120,233,0.8)"
                   sx={{
-                    fontSize: "1.5rem",
+                    fontSize: { xs: "1.2rem", sm: "1.5rem" },
                     fontWeight: 700,
-                    margin: "0.5rem 0",
                   }}
                 >
                   Bảng giá
@@ -315,21 +357,41 @@ const Header = () => {
                 <Typography
                   color="rgba(0,120,233,0.8)"
                   sx={{
-                    fontSize: "1.5rem",
+                    fontSize: { xs: "1.2rem", sm: "1.5rem" },
                     fontWeight: 700,
-                    margin: "0.5rem 0",
                   }}
                 >
-                  Niềng răng
+                  Niềng răng mắc cài
                 </Typography>
               </RouterLink>
               <RouterLink to="/" style={{ textDecoration: "none" }}>
                 <Typography
                   color="rgba(0,120,233,0.8)"
                   sx={{
-                    fontSize: "1.5rem",
+                    fontSize: { xs: "1.2rem", sm: "1.5rem" },
                     fontWeight: 700,
-                    margin: "0.5rem 0",
+                  }}
+                >
+                  Dịch vụ khác
+                </Typography>
+              </RouterLink>
+              <RouterLink to="/" style={{ textDecoration: "none" }}>
+                <Typography
+                  color="rgba(0,120,233,0.8)"
+                  sx={{
+                    fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                    fontWeight: 700,
+                  }}
+                >
+                  Kiến thức
+                </Typography>
+              </RouterLink>
+              <RouterLink to="/" style={{ textDecoration: "none" }}>
+                <Typography
+                  color="rgba(0,120,233,0.8)"
+                  sx={{
+                    fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                    fontWeight: 700,
                   }}
                 >
                   Liên hệ
