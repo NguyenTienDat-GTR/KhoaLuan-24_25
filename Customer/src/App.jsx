@@ -8,6 +8,7 @@ import { useInView } from "react-intersection-observer";
 const Home = React.lazy(() => import("./pages/Home"));
 const Intro = React.lazy(() => import("./pages/Intro"));
 const Contact = React.lazy(() => import("./pages/Contact"));
+const Booking = React.lazy(() => import("./pages/Booking"));
 const LazyComponent = ({ Component }) => {
   const [isInView, setIsInView] = useState(false);
   const { ref, inView } = useInView({
@@ -72,6 +73,7 @@ const App = () => {
         <Route path="/" element={<LazyComponent Component={Home} />} />
         <Route path="/Intro" element={<LazyComponent Component={Intro} />} />
         <Route path="/Contact" element={<LazyComponent Component={Contact} />} />
+        <Route path="/Booking" element={<LazyComponent Component={Booking} />} />
         {/* Add more routes */}
       </Routes>
     </Router>

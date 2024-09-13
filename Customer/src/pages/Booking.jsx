@@ -3,8 +3,8 @@ import { Box, CircularProgress, Divider, Typography } from "@mui/material";
 
 const Header = React.lazy(() => import("../components/Header"));
 const Footer = React.lazy(() => import("../components/Footer"));
-const BookingFormContact = React.lazy(() => import("../components/Contacts/BookingFromContact"));
-const Contact = () => {
+const BookingForm = React.lazy(() => import("../components/BookingForm"));
+const Booking = () => {
     return (
         <Box
         sx={{
@@ -56,7 +56,7 @@ const Contact = () => {
                         fontWeight: "bold",
                     }}
                 >
-                    LIÊN HỆ 
+                    ĐẶT LỊCH
                 </Typography>
             </Box>
             <hr style={{ width: "1000px", fontSize: "50px" }} />
@@ -80,7 +80,7 @@ const Contact = () => {
             </Box>
           }
         >
-          <BookingFormContact />
+          <BookingForm/>
   
         </Suspense>
         <br/><br/>
@@ -110,4 +110,4 @@ const Contact = () => {
         </Box>
     );
 }
-export default Contact;
+export default Booking;
