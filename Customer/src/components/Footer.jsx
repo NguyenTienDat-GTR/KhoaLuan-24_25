@@ -1,5 +1,13 @@
 import React from "react";
-import { Container, Grid, Typography, Link, Box } from "@mui/material";
+import {
+  Container,
+  Grid,
+  Typography,
+  Link,
+  Box,
+  List,
+  ListItem,
+} from "@mui/material";
 import PinDropOutlinedIcon from "@mui/icons-material/PinDropOutlined";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import PhoneInTalkOutlinedIcon from "@mui/icons-material/PhoneInTalkOutlined";
@@ -84,21 +92,16 @@ const Footer = () => {
                   sm: "1rem",
                   md: "1.2rem",
                 },
+                textAlign: "justify",
+                textIndent: "30px",
               }}
             >
-              <p style={{ textAlign: "justify", textIndent: "30px" }}>
-                <p></p>
-                <PinDropOutlinedIcon /> <b>Địa chỉ:</b>
-                <p></p>
-                <AccessTimeOutlinedIcon /> <b>Giờ làm việc:</b>
-                <p></p>
-                <PhoneInTalkOutlinedIcon />
-                <b> Hotline:</b>
-                <p></p>
-                <EmailOutlinedIcon /> <b>Email:</b>
-                <p></p>
-                <LanguageOutlinedIcon /> <b>Website:</b>
-              </p>
+              <PinDropOutlinedIcon /> <strong>Địa chỉ:</strong>
+              <AccessTimeOutlinedIcon /> <strong>Giờ làm việc:</strong>
+              <PhoneInTalkOutlinedIcon />
+              <strong> Hotline:</strong>
+              <EmailOutlinedIcon /> <strong>Email:</strong>
+              <LanguageOutlinedIcon /> <strong>Website:</strong>
             </Typography>
           </Box>
         </Box>
@@ -138,26 +141,26 @@ const Footer = () => {
             >
               CHÍNH SÁCH - HỖ TRỢ
             </Typography>
-            <Typography
-              sx={{
-                width: "100%",
-                fontSize: {
-                  xs: "0.8rem",
-                  sm: "1rem",
-                  md: "1.2rem",
-                },
-              }}
-            >
-              <ul>
-                <p style={{ textAlign: "justify" }}>
-                  <li>Chính sách bảo mật thông tin khách hàng</li>
-                  <li>Chính sách bảo hành các dịch vụ</li>
-                  <li>Chính sách thanh toán</li>
-                  <li>Giấy phép hoạt động</li>
-                  <li>Hướng dẫn đặt lịch hẹn</li>
-                </p>
-              </ul>
-            </Typography>
+
+            <List>
+              <Typography
+                sx={{
+                  width: "100%",
+                  fontSize: {
+                    xs: "0.8rem",
+                    sm: "1rem",
+                    md: "1.2rem",
+                  },
+                  textAlign: "justify",
+                }}
+              >
+                <ListItem>Chính sách bảo mật thông tin khách hàng</ListItem>
+                <ListItem>Chính sách bảo hành các dịch vụ</ListItem>
+                <ListItem>Chính sách thanh toán</ListItem>
+                <ListItem>Giấy phép hoạt động</ListItem>
+                <ListItem>Hướng dẫn đặt lịch hẹn</ListItem>
+              </Typography>
+            </List>
           </Box>
         </Box>
 
