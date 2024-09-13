@@ -98,23 +98,94 @@ const Footer = () => {
                 flexDirection: "column",
                 justifyConten: "center",
                 alignItems: "flex-start",
+                gap: "1rem",
               }}
             >
-              <Typography>
+              <Typography
+                sx={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  flexWrap: "wrap", // Cho phép xuống dòng khi không đủ không gia
+                  gap: "0.5rem",
+                }}
+              >
                 <PinDropOutlinedIcon /> <strong>Địa chỉ:</strong>
+                <Typography
+                  sx={{
+                    flex: 1,
+                  }}
+                >
+                  12 Nguyễn Văn Bảo, Phường 4, Quận Gò Vấp, TP.Hồ Chí Minh
+                </Typography>
               </Typography>
-              <Typography>
+              <Typography
+                sx={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  flexWrap: "wrap", // Cho phép xuống dòng khi không đủ không gian
+                  gap: "0.5rem",
+                }}
+              >
                 <AccessTimeOutlinedIcon /> <strong>Giờ làm việc:</strong>
+                <Typography
+                  sx={{
+                    flex: 1,
+                  }}
+                >
+                  8:00 AM - 6:00 PM
+                </Typography>
               </Typography>
-              <Typography>
+              <Typography
+                sx={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  flexWrap: "wrap", // Cho phép xuống dòng khi không đủ không gian
+                  gap: "0.5rem",
+                }}
+              >
                 <PhoneInTalkOutlinedIcon />
                 <strong> Hotline:</strong>
+                <Typography
+                  sx={{
+                    flex: 1,
+                  }}
+                >
+                  0123456789
+                </Typography>
               </Typography>
-              <Typography>
+              <Typography
+                sx={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  flexWrap: "wrap", // Cho phép xuống dòng khi không đủ không gian
+                  gap: "0.5rem",
+                }}
+              >
                 <EmailOutlinedIcon /> <strong>Email:</strong>
+                <Typography
+                  sx={{
+                    flex: 1,
+                  }}
+                >
+                  hoangkim@nhakhoa.com
+                </Typography>
               </Typography>
-              <Typography>
+              <Typography
+                sx={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  flexWrap: "wrap", // Cho phép xuống dòng khi không đủ không gian
+                  gap: "0.5rem",
+                }}
+              >
                 <LanguageOutlinedIcon /> <strong>Website:</strong>
+                <Typography
+                  sx={{
+                    flex: 1,
+                  }}
+                >
+                  www.nhakhoahoangkim.com
+                </Typography>
               </Typography>
             </Box>
           </Box>
