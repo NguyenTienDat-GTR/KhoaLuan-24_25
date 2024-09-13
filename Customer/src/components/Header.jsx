@@ -203,7 +203,7 @@ const Header = () => {
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{
-                  fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                  fontSize: { xs: "1.2rem", sm: "1rem" },
                   fontWeight: 700,
                 }}
               >
@@ -214,7 +214,7 @@ const Header = () => {
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{
-                  fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                  fontSize: { xs: "1.2rem", sm: "1rem" },
                   fontWeight: 700,
                 }}
               >
@@ -225,7 +225,7 @@ const Header = () => {
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{
-                  fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                  fontSize: { xs: "1.2rem", sm: "1rem" },
                   fontWeight: 700,
                 }}
               >
@@ -236,7 +236,7 @@ const Header = () => {
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{
-                  fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                  fontSize: { xs: "1.2rem", sm: "1rem" },
                   fontWeight: 700,
                 }}
               >
@@ -247,7 +247,7 @@ const Header = () => {
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{
-                  fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                  fontSize: { xs: "1.2rem", sm: "1rem" },
                   fontWeight: 700,
                 }}
               >
@@ -258,7 +258,7 @@ const Header = () => {
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{
-                  fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                  fontSize: { xs: "1.2rem", sm: "1rem" },
                   fontWeight: 700,
                 }}
               >
@@ -269,7 +269,7 @@ const Header = () => {
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{
-                  fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                  fontSize: { xs: "1.2rem", sm: "1rem" },
                   fontWeight: 700,
                 }}
               >
@@ -280,7 +280,7 @@ const Header = () => {
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{
-                  fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                  fontSize: { xs: "1.2rem", sm: "1rem" },
                   fontWeight: 700,
                 }}
               >

@@ -1,45 +1,92 @@
 import React from "react";
-import {
-  Container,
-  Grid,
-  Typography,
-  Link,
-  Box,
-  // Các component khác của Material-UI tùy theo thiết kế
-} from "@mui/material";
+import { Container, Grid, Typography, Box, Link } from "@mui/material";
 
 const Footer = () => {
   return (
     <footer>
-      <Container maxWidth="lg">
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={4}>
+      <Box
+        maxWidth="lg"
+        sx={{
+          width: { xs: "100%", sm: "100%", md: "100vw" },
+          // overflow: "hidden",
+        }}
+      >
+        <Box
+          sx={{
+            width: { xs: "100%", sm: "100%", md: "100vw" },
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row", md: "row" }, // Chiều dọc trên mobile, hàng ngang trên desktop và tablet
+            justifyContent: {
+              xs: "space-evenly",
+              sm: "center",
+              md: "center",
+            }, // Căn đều các cột trên desktop và tablet
+            alignItems: "flex-start",
+            m: "1rem auto",
+            backgroundColor: "rgba(21,182,210,0.72)",
+            padding: { xs: "1rem", sm: "2rem", md: "2rem" },
+            overflow: "hidden",
+          }}
+        >
+          <Box
+            className="information"
+            sx={{
+              flex: 1,
+              marginBottom: {
+                xs: "1rem",
+                md: "0",
+                // width: { xs: "100%", sm: "33%", md: "33%" },
+                flex: 1,
+              },
+            }}
+          >
             <Typography variant="h6" gutterBottom>
               NHA KHOA HOÀNG KIM
             </Typography>
-            <Typography variant="body2">
-              Địa chỉ: 12, đường Nguyễn Văn Bảo, phường 4, Quận Gò Vấp
-              <br />
-              Giờ làm việc: ...
-              <br />
-              Hotline: ...
-              <br />
-              Email: ...
-              <br />
-              Website: ...
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6} md={4}>
+            <Box>
+              <Typography>
+                Địa chỉ: <br />
+                12, đường Nguyễn Văn Bảo, phường 4, Quận Gò Vấp
+              </Typography>
+              <Typography>Giờ làm việc: ...</Typography>
+              <Typography>Hotline: ...</Typography>
+              <Typography>Email: ...</Typography>
+              <Typography>Website: ...</Typography>
+            </Box>
+          </Box>
+
+          <Box
+            className="information"
+            sx={{
+              flex: 1,
+              marginBottom: {
+                xs: "1rem",
+                md: "0",
+                // width: { xs: "100%", sm: "33%", md: "50px" },
+                flex: 1,
+              },
+            }}
+          >
             <Typography variant="h6" gutterBottom>
               CHÍNH SÁCH - HỖ TRỢ
             </Typography>
-            <Link href="/chinh-sach-bao-mat">Chính sách bảo mật</Link>
-            <br />
-            <Link href="/chinh-sach-bao-hanh">Chính sách bảo hành</Link>
-            <br />
-            {/* Các link khác */}
-          </Grid>
-          <Grid item xs={12} sm={6} md={4}>
+            <Link href="/chinh-sach-bao-mat" sx={{ display: "block" }}>
+              Chính sách bảo mật
+            </Link>
+            <Link href="/chinh-sach-bao-hanh" sx={{ display: "block" }}>
+              Chính sách bảo hành
+            </Link>
+            {/* Thêm các link khác */}
+          </Box>
+
+          <Box
+            className="information"
+            sx={{
+              flex: 1,
+              //  width: { xs: "100%", sm: "33%",
+              md: "auto",
+            }}
+          >
             <Typography variant="h6" gutterBottom>
               LIÊN KẾT MẠNG XÃ HỘI
             </Typography>
@@ -48,8 +95,9 @@ const Footer = () => {
               ĐỐI TÁC THANH TOÁN
             </Typography>
             {/* Các logo đối tác */}
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
+
         <Box mt={3}>
           <Typography variant="body2" color="textSecondary" align="center">
             {"Copyright © "}
@@ -60,7 +108,7 @@ const Footer = () => {
             </Link>
           </Typography>
         </Box>
-      </Container>
+      </Box>
     </footer>
   );
 };
