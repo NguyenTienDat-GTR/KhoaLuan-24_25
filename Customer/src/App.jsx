@@ -3,10 +3,11 @@ import { Box, CircularProgress } from "@mui/material";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 
+
 // Lazy load components
 const Home = React.lazy(() => import("./pages/Home"));
 const Intro = React.lazy(() => import("./pages/Intro"));
-
+const Contact = React.lazy(() => import("./pages/Contact"));
 const LazyComponent = ({ Component }) => {
   const [isInView, setIsInView] = useState(false);
   const { ref, inView } = useInView({
@@ -70,6 +71,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LazyComponent Component={Home} />} />
         <Route path="/Intro" element={<LazyComponent Component={Intro} />} />
+        <Route path="/Contact" element={<LazyComponent Component={Contact} />} />
         {/* Add more routes */}
       </Routes>
     </Router>

@@ -268,7 +268,7 @@ const Footer = () => {
         </Box>
 
         <Box mt={3}>
-          <Typography variant="body2" color="textSecondary" align="center">
+          <Typography variant="body2" color="blue" align="center">
             {"Copyright © "}
             {new Date().getFullYear()}
             {" Nha Khoa HOÀNG KIM - "}
