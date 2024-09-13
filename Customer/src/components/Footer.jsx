@@ -36,6 +36,7 @@ const Footer = () => {
           alignItems: { xs: "flex-start", sm: "center" }, // Align items for mobile and larger screens
           gap: { sm: "2", md: "0" },
           marginX: { xs: "0", sm: "0", md: "0" },
+          paddingY: { xs: "1rem", sm: "2rem", md: "2rem" },
         }}
       >
         {/* Contact Section */}
@@ -84,7 +85,7 @@ const Footer = () => {
               NHA KHOA HOÀNG KIM
             </Typography>
 
-            <Typography
+            <Box
               sx={{
                 width: "100%",
                 fontSize: {
@@ -93,16 +94,29 @@ const Footer = () => {
                   md: "1.2rem",
                 },
                 textAlign: "justify",
-                textIndent: "30px",
+                display: "flex",
+                flexDirection: "column",
+                justifyConten: "center",
+                alignItems: "flex-start",
               }}
             >
-              <PinDropOutlinedIcon /> <strong>Địa chỉ:</strong>
-              <AccessTimeOutlinedIcon /> <strong>Giờ làm việc:</strong>
-              <PhoneInTalkOutlinedIcon />
-              <strong> Hotline:</strong>
-              <EmailOutlinedIcon /> <strong>Email:</strong>
-              <LanguageOutlinedIcon /> <strong>Website:</strong>
-            </Typography>
+              <Typography>
+                <PinDropOutlinedIcon /> <strong>Địa chỉ:</strong>
+              </Typography>
+              <Typography>
+                <AccessTimeOutlinedIcon /> <strong>Giờ làm việc:</strong>
+              </Typography>
+              <Typography>
+                <PhoneInTalkOutlinedIcon />
+                <strong> Hotline:</strong>
+              </Typography>
+              <Typography>
+                <EmailOutlinedIcon /> <strong>Email:</strong>
+              </Typography>
+              <Typography>
+                <LanguageOutlinedIcon /> <strong>Website:</strong>
+              </Typography>
+            </Box>
           </Box>
         </Box>
 
@@ -115,7 +129,7 @@ const Footer = () => {
             justifyContent: "center",
             alignItems: "center",
             width: { xs: "100%", sm: "30%", md: "30%" },
-            height: { xs: "auto", sm: "15rem", md: "25rem" },
+            height: { xs: "auto", sm: "auto", md: "auto" },
             mt: { xs: "2rem", sm: "0", md: "0" },
           }}
         >
@@ -123,6 +137,7 @@ const Footer = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
+              justifyContent: "center",
               width: "80%",
               height: "auto",
               ml: { xs: "0", sm: "2rem", md: "2rem" },
