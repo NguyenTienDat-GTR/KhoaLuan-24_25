@@ -1,5 +1,12 @@
 import React from "react";
-import { Box, Typography, Divider } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 import VolunteerActivismOutlinedIcon from "@mui/icons-material/VolunteerActivismOutlined";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import Diversity1OutlinedIcon from "@mui/icons-material/Diversity1Outlined";
@@ -54,7 +61,7 @@ const IntrodutionHK = () => {
             >
               Khắc phục mọi tình trạng răng
             </Typography>
-            <Typography
+            <Box
               sx={{
                 width: "100%",
                 fontSize: {
@@ -64,41 +71,38 @@ const IntrodutionHK = () => {
                 },
               }}
             >
-              <p style={{ textAlign: "justify", textIndent: "30px" }}>
-                <b>Nha Khoa Hoàng Kim</b> là một hệ thống phòng khám nha khoa
-                nổi tiếng, chuyên cung cấp các dịch vụ chăm sóc và điều trị răng
-                miệng chất lượng cao. Với hơn nhiều năm kinh nghiệm trong ngành,
-                sở hữu đội ngũ bác sĩ nha khoa giàu kinh nghiệm và được đào tạo
-                chuyên sâu trong các lĩnh vực như chỉnh nha, cấy ghép Implant,
-                bọc răng sứ, tẩy trắng răng, và các giải pháp thẩm mỹ nha khoa
-                khác.
-                <br />
-              </p>
-              <p style={{ textAlign: "justify", textIndent: "30px" }}>
+              <Typography sx={{ textAlign: "justify", textIndent: "30px" }}>
+                <strong>Nha Khoa Hoàng Kim</strong> là một hệ thống phòng khám
+                nha khoa nổi tiếng, chuyên cung cấp các dịch vụ chăm sóc và điều
+                trị răng miệng chất lượng cao. Với hơn nhiều năm kinh nghiệm
+                trong ngành, sở hữu đội ngũ bác sĩ nha khoa giàu kinh nghiệm và
+                được đào tạo chuyên sâu trong các lĩnh vực như chỉnh nha, cấy
+                ghép Implant, bọc răng sứ, tẩy trắng răng, và các giải pháp thẩm
+                mỹ nha khoa khác.
+              </Typography>
+              <Typography sx={{ textAlign: "justify", textIndent: "30px" }}>
                 Phòng khám cam kết sử dụng trang thiết bị hiện đại, cùng với các
                 công nghệ tiên tiến trong điều trị nhằm mang đến hiệu quả điều
                 trị tối ưu và an toàn cho khách hàng. Đặc biệt, Nha Khoa Hoàng
                 Kim luôn chú trọng đến chất lượng dịch vụ và sự hài lòng của
                 khách hàng, với phương châm “Nụ cười là niềm tin”.
-                <br />
-              </p>
-              <p style={{ textAlign: "justify", textIndent: "30px" }}>
+              </Typography>
+              <Typography sx={{ textAlign: "justify", textIndent: "30px" }}>
                 Hệ thống phòng khám của Nha Khoa Hoàng Kim không chỉ tập trung
                 vào việc điều trị mà còn cung cấp các gói dịch vụ thẩm mỹ răng
                 miệng, giúp khách hàng cải thiện thẩm mỹ và tự tin hơn trong
                 giao tiếp.
-                <br />
-              </p>
-            </Typography>
+              </Typography>
+            </Box>
           </Box>
         </Box>
         <Box
           className="container-image"
           sx={{
             display: "grid",
-            gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(2, 1fr)" },
+            gridTemplateColumns: { xs: "repeat(1, 0fr)", sm: "repeat(1, 1fr)" },
             gridRowGap: { xs: "1rem", sm: "1rem", md: "1rem" },
-            width: { xs: "100vw", sm: "50%", md: "50%" },
+            width: { xs: "100vw", sm: "45%", md: "50%" },
             height: "auto",
             mr: { xs: "0", sm: "3rem", md: "2rem" },
             paddingX: { xs: "1rem", sm: "1rem", md: "1rem" },
@@ -109,19 +113,19 @@ const IntrodutionHK = () => {
             src="https://picsum.photos/200"
             alt="giới thiệu nha khoa"
             sx={{
-              width: { xs: "13rem", sm: "90%", md: "50%" }, // Giảm width của ảnh
-              height: { xs: "15rem", sm: "15rem", md: "10rem" },
+              width: { xs: "100vw", sm: "26rem", md: "100%" }, // Giảm width của ảnh
+              height: { xs: "15rem", sm: "30rem", md: "34rem" },
               margin: { xs: "0 auto", sm: "0", md: "0" },
               objectFit: "cover",
-              mx: "auto", // Canh giữa ảnh
+              mx: { xs: "auto" }, // Canh giữa ảnh
             }}
-            style={{ width: "700px", height: "450px" }}
           />
         </Box>
       </Box>
       <Box
         sx={{
           width: { xs: "100vw", sm: "100vw", md: "100vw" },
+          mt: "1rem",
         }}
       >
         <Divider
@@ -180,7 +184,7 @@ const IntrodutionHK = () => {
             >
               <VolunteerActivismOutlinedIcon /> Tầm nhìn
             </Typography>
-            <Typography
+            <Box
               sx={{
                 width: "100%",
                 fontSize: {
@@ -190,17 +194,16 @@ const IntrodutionHK = () => {
                 },
               }}
             >
-              <p style={{ textAlign: "justify", textIndent: "30px" }}>
-                <b>Nha Khoa Hoàng Kim </b>am kết mang đến dịch vụ nha khoa chất
-                lượng cao, an toàn và hiện đại nhất cho khách hàng. <br />
-              </p>
-              <p style={{ textAlign: "justify", textIndent: "30px" }}>
+              <Typography sx={{ textAlign: "justify", textIndent: "30px" }}>
+                <strong>Nha Khoa Hoàng Kim </strong>am kết mang đến dịch vụ nha
+                khoa chất lượng cao, an toàn và hiện đại nhất cho khách hàng.
+              </Typography>
+              <Typography sx={{ textAlign: "justify", textIndent: "30px" }}>
                 Phòng khám không chỉ hướng tới việc cải thiện nụ cười cho khách
                 hàng mà còn tạo dựng uy tín thông qua chất lượng dịch vụ và sự
                 hài lòng của khách hàng.
-                <br />
-              </p>
-            </Typography>
+              </Typography>
+            </Box>
           </Box>
         </Box>
         <Box
@@ -238,45 +241,54 @@ const IntrodutionHK = () => {
             >
               <Diversity1OutlinedIcon /> Sứ mệnh
             </Typography>
-            <Typography
-              sx={{
-                width: "100%",
-                fontSize: {
-                  xs: "0.8rem",
-                  sm: "1rem",
-                  md: "1.2rem",
-                },
-              }}
-            >
-              <ul>
-                <p style={{ textAlign: "justify" }}>
-                  <li>
-                    <p>
-                      {" "}
-                      <b>Nha Khoa Hoàng Kim </b>mong muốn trở thành một trong
-                      những hệ thống nha khoa hàng đầu tại Việt Nam, đem đến
-                      tiêu chuẩn quốc tế trong chăm sóc sức khỏe răng miệng.{" "}
-                      <br />
-                    </p>
-                  </li>
+            <List>
+              <ListItem
+                sx={{
+                  textAlign: "justify",
+                  width: "100%",
+                  fontSize: {
+                    xs: "0.8rem",
+                    sm: "1rem",
+                    md: "1.2rem",
+                  },
+                }}
+              >
+                <strong>Nha Khoa Hoàng Kim </strong>mong muốn trở thành một
+                trong những hệ thống nha khoa hàng đầu tại Việt Nam, đem đến
+                tiêu chuẩn quốc tế trong chăm sóc sức khỏe răng miện
+              </ListItem>
 
-                  <li>
-                    <p style={{ textAlign: "justify" }}>
-                      Phòng khám tập trung vào việc nâng cao sức khỏe răng miệng
-                      và cải thiện thẩm mỹ nụ cười, giúp mọi khách hàng đều có
-                      thể tự tin trong giao tiếp.{" "}
-                    </p>
-                  </li>
-                  <li>
-                    <p style={{ textAlign: "justify" }}>
-                      Bên cạnh đó, Nha Khoa Hoàng Kim cũng chú trọng đến việc
-                      giáo dục sức khỏe răng miệng, giúp khách hàng hiểu rõ hơn
-                      về cách chăm sóc răng miệng hiệu quả.{" "}
-                    </p>
-                  </li>
-                </p>
-              </ul>
-            </Typography>
+              <ListItem
+                sx={{
+                  textAlign: "justify",
+                  width: "100%",
+                  fontSize: {
+                    xs: "0.8rem",
+                    sm: "1rem",
+                    md: "1.2rem",
+                  },
+                }}
+              >
+                Phòng khám tập trung vào việc nâng cao sức khỏe răng miệng và
+                cải thiện thẩm mỹ nụ cười, giúp mọi khách hàng đều có thể tự tin
+                trong giao tiếp.
+              </ListItem>
+              <ListItem
+                sx={{
+                  textAlign: "justify",
+                  width: "100%",
+                  fontSize: {
+                    xs: "0.8rem",
+                    sm: "1rem",
+                    md: "1.2rem",
+                  },
+                }}
+              >
+                Bên cạnh đó, Nha Khoa Hoàng Kim cũng chú trọng đến việc giáo dục
+                sức khỏe răng miệng, giúp khách hàng hiểu rõ hơn về cách chăm
+                sóc răng miệng hiệu quả.
+              </ListItem>
+            </List>
           </Box>
         </Box>
       </Box>
@@ -316,7 +328,6 @@ const IntrodutionHK = () => {
             }}
           />
         </Box>
-        <br />
         <Box
           className="container-text"
           sx={{
@@ -353,7 +364,8 @@ const IntrodutionHK = () => {
             >
               Giá trị cốt lõi
             </Typography>
-            <Typography
+
+            <List
               sx={{
                 width: "95%",
                 fontSize: {
@@ -361,49 +373,73 @@ const IntrodutionHK = () => {
                   sm: "1rem",
                   md: "1.2rem",
                 },
-                mr: { xs: "0.5rem", sm: "0", md: "0" },
+                mr: { xs: "0.5rem", sm: "0", md: "0.5rem" },
               }}
             >
-              <ol>
-                <p style={{ textAlign: "justify" }}>
-                  <li>
-                    <b>Chất lượng: </b>
-                    Đảm bảo chất lượng dịch vụ cao nhất với đội ngũ bác sĩ
-                    chuyên nghiệp, trang thiết bị hiện đại và quy trình điều trị
-                    an toàn. <br />
-                  </li>
-                  <br />
+              <ListItem>
+                <ListItemText
+                  primary={
+                    <Typography component="span">
+                      <strong>Chất lượng: </strong>
+                      Đảm bảo chất lượng dịch vụ cao nhất với đội ngũ bác sĩ
+                      chuyên nghiệp, trang thiết bị hiện đại và quy trình điều
+                      trị an toàn.
+                    </Typography>
+                  }
+                />
+              </ListItem>
 
-                  <li>
-                    <b>Tận Tâm: </b>
-                    Mọi hoạt động của Nha Khoa Hoàng Kim đều lấy khách hàng làm
-                    trung tâm, chú trọng đến sự thoải mái và hài lòng của khách
-                    hàng.
-                  </li>
-                  <br />
-                  <li>
-                    <b>Đổi mới: </b>
-                    Luôn cập nhật các công nghệ tiên tiến và phương pháp điều
-                    trị mới nhất để mang lại trải nghiệm tốt nhất cho khách
-                    hàng.
-                  </li>
-                  <br />
-                  <li>
-                    <b> Đáng tin cậy: </b>
-                    Đảm bảo mọi dịch vụ nha khoa đều minh bạch, chính xác và đáp
-                    ứng tiêu chuẩn y tế cao.
-                  </li>
-                  <br />
-                  <li>
-                    {" "}
-                    <b>Phát triển bền vững: </b>
-                    Xây dựng một môi trường làm việc bền vững và chuyên nghiệp,
-                    luôn hướng đến sự phát triển lâu dài và bền vững của công
-                    ty.
-                  </li>
-                </p>
-              </ol>
-            </Typography>
+              <ListItem>
+                <ListItemText
+                  primary={
+                    <Typography component="span">
+                      <strong>Tận Tâm: </strong>
+                      Mọi hoạt động của Nha Khoa Hoàng Kim đều lấy khách hàng
+                      làm trung tâm, chú trọng đến sự thoải mái và hài lòng của
+                      khách hàng.
+                    </Typography>
+                  }
+                />
+              </ListItem>
+
+              <ListItem>
+                <ListItemText
+                  primary={
+                    <Typography component="span">
+                      <strong>Đổi mới: </strong>
+                      Luôn cập nhật các công nghệ tiên tiến và phương pháp điều
+                      trị mới nhất để mang lại trải nghiệm tốt nhất cho khách
+                      hàng.
+                    </Typography>
+                  }
+                />
+              </ListItem>
+
+              <ListItem>
+                <ListItemText
+                  primary={
+                    <Typography component="span">
+                      <strong>Đáng tin cậy: </strong>
+                      Đảm bảo mọi dịch vụ nha khoa đều minh bạch, chính xác và
+                      đáp ứng tiêu chuẩn y tế cao.
+                    </Typography>
+                  }
+                />
+              </ListItem>
+
+              <ListItem>
+                <ListItemText
+                  primary={
+                    <Typography component="span">
+                      <strong>Phát triển bền vững: </strong>
+                      Xây dựng một môi trường làm việc bền vững và chuyên
+                      nghiệp, luôn hướng đến sự phát triển lâu dài và bền vững
+                      của công ty.
+                    </Typography>
+                  }
+                />
+              </ListItem>
+            </List>
           </Box>
         </Box>
       </Box>

@@ -210,7 +210,7 @@ const Header = () => {
                 Trang Chủ
               </Typography>
             </RouterLink>
-            <RouterLink to="/" style={{ textDecoration: "none" }}>
+            <RouterLink to="/Intro" style={{ textDecoration: "none" }}>
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{
@@ -265,7 +265,7 @@ const Header = () => {
                 Dịch vụ khác
               </Typography>
             </RouterLink>
-            <RouterLink to="/" style={{ textDecoration: "none" }}>
+            <RouterLink to="/Infor" style={{ textDecoration: "none" }}>
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{
@@ -320,7 +320,7 @@ const Header = () => {
                   Trang Chủ
                 </Typography>
               </RouterLink>
-              <RouterLink to="/" style={{ textDecoration: "none" }}>
+              <RouterLink to="/Intro" style={{ textDecoration: "none" }}>
                 <Typography
                   color="rgba(0,120,233,0.8)"
                   sx={{
@@ -375,7 +375,7 @@ const Header = () => {
                   Dịch vụ khác
                 </Typography>
               </RouterLink>
-              <RouterLink to="/" style={{ textDecoration: "none" }}>
+              <RouterLink to="/Infor" style={{ textDecoration: "none" }}>
                 <Typography
                   color="rgba(0,120,233,0.8)"
                   sx={{

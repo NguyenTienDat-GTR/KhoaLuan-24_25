@@ -6,6 +6,7 @@ import { useInView } from "react-intersection-observer";
 // Lazy load components
 const Home = React.lazy(() => import("./pages/Home"));
 const Intro = React.lazy(() => import("./pages/Intro"));
+const Infor = React.lazy(() => import("./pages/Infor"));
 
 const LazyComponent = ({ Component }) => {
   const [isInView, setIsInView] = useState(false);
@@ -70,6 +71,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LazyComponent Component={Home} />} />
         <Route path="/Intro" element={<LazyComponent Component={Intro} />} />
+        <Route path="/Infor" element={<LazyComponent Component={Infor} />} />
         {/* Add more routes */}
       </Routes>
     </Router>

@@ -74,10 +74,32 @@ const Intro = () => {
           NHA KHOA HOÀNG KIM
         </Typography>
       </Box>
-      <IntroductionHK />
+      <Suspense
+        fallback={
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh", // Full screen height for vertical centering
+              width: "100vw", // Full screen width for horizontal centering
+            }}
+          >
+            <CircularProgress
+              sx={{
+                width: { xs: "50px", sm: "70px", md: "100px" }, // Responsive width
+                height: { xs: "50px", sm: "70px", md: "100px" }, // Responsive height
+              }}
+            />
+          </Box>
+        }
+      >
+        <IntroductionHK />
+      </Suspense>
       <Box
         sx={{
           width: { xs: "100vw", sm: "100vw", md: "100vw" },
+          mt: "1rem",
         }}
       >
         <Divider
@@ -115,7 +137,44 @@ const Intro = () => {
           CÁC GIẢI PHÁP TỐT NHẤT
         </Typography>
       </Box>
-      <Solution />
+      <Suspense
+        fallback={
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh", // Full screen height for vertical centering
+              width: "100vw", // Full screen width for horizontal centering
+            }}
+          >
+            <CircularProgress
+              sx={{
+                width: { xs: "50px", sm: "70px", md: "100px" }, // Responsive width
+                height: { xs: "50px", sm: "70px", md: "100px" }, // Responsive height
+              }}
+            />
+          </Box>
+        }
+      >
+        <Solution />
+      </Suspense>
+      <Box
+        sx={{
+          width: { xs: "100vw", sm: "100vw", md: "100vw" },
+          mt: "1rem",
+          mb: "1rem",
+        }}
+      >
+        <Divider
+          sx={{
+            borderBottomWidth: 1,
+            borderColor: "#000",
+            width: { xs: "30%", sm: "50%", md: "70%" },
+            margin: "0 auto",
+          }}
+        />
+      </Box>
       <Suspense>
         <Suspense
           fallback={
@@ -137,12 +196,8 @@ const Intro = () => {
             </Box>
           }
         >
-          <br /> <hr style={{ width: "1000px", fontSize: "50px" }} />
-          <br />
           <BookingForm />
         </Suspense>
-        <br />
-        <br />
         <Suspense
           fallback={
             <Box
