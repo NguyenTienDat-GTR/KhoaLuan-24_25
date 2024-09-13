@@ -94,15 +94,15 @@ const Footer = () => {
               >
                 <p style={{ textAlign: 'justify', textIndent: "30px" }}>
                   <p></p>
-                 <PinDropOutlinedIcon/> <b>Địa chỉ:</b>
+                  <PinDropOutlinedIcon /> <b>Địa chỉ:</b>
                   <p></p>
-                 <AccessTimeOutlinedIcon/> <b>Giờ làm việc:</b>
+                  <AccessTimeOutlinedIcon /> <b>Giờ làm việc:</b>
                   <p></p>
-                  <PhoneInTalkOutlinedIcon/><b> Hotline:</b>
+                  <PhoneInTalkOutlinedIcon /><b> Hotline:</b>
                   <p></p>
-                 <EmailOutlinedIcon/> <b>Email:</b>
+                  <EmailOutlinedIcon /> <b>Email:</b>
                   <p></p>
-                 <LanguageOutlinedIcon/> <b>Website:</b>
+                  <LanguageOutlinedIcon /> <b>Website:</b>
 
                 </p>
 
@@ -158,26 +158,29 @@ const Footer = () => {
                   <p style={{ textAlign: 'justify' }}>
 
                     <li>
-                      Chính sách bảo mật thông tin khách hàng <br />
+                      <a href="/" style={{ color: "#363134" }}>
+                        Chính sách bảo mật thông tin khách hàng
+                      </a> <br />
                     </li>
 
                     <li>
-                      Chính sách bảo hành các dịch vụ                                       
+                      <a href="/" style={{ color: "#363134" }}>
+                        Chính sách bảo hành các dịch vụ
+                        </a>
+                    </li>
+                    <li>
+                      <a href="/" style={{ color: "#363134" }}>
+                        Chính sách thanh toán</a>
+                    </li>
+                    <li>
+                      <a href="/" style={{ color: "#363134" }}>
+                        Giấy phép hoạt động</a>
+                    </li>
+                    <li>
+                      <a href="/" style={{ color: "#363134" }}>
+                        Hướng dẫn đặt lịch hẹn</a>
+                    </li>
 
-                    </li>
-                    <li>
-                    
-                       Chính sách thanh toán
-                    </li>
-                    <li>
-                    
-                       Giấy phép hoạt động
-                    </li>
-                    <li>
-                    
-                      Hướng dẫn đặt lịch hẹn
-                    </li>
-                    
                   </p>
                 </ul>
               </Typography>
@@ -230,7 +233,7 @@ const Footer = () => {
                   },
                 }}
               >
-                <FacebookOutlinedIcon/>
+                <FacebookOutlinedIcon />
 
               </Typography>
               <Typography
@@ -256,8 +259,8 @@ const Footer = () => {
                   },
                 }}
               >
-               
-                <FacebookOutlinedIcon/>
+
+                <FacebookOutlinedIcon />
 
               </Typography>
             </Box>

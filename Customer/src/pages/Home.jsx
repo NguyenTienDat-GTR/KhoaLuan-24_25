@@ -267,7 +267,9 @@ const Home = () => {
           }
         >
           <BookingForm />
+  
         </Suspense>
+        <br/><br/>
         <Suspense
           fallback={
             <Box
