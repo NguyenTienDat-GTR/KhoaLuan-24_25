@@ -326,7 +326,13 @@ const Footer = () => {
         </Box>
       </Box>
 
-      <Box mt={3}>
+      <Box
+        mt={3}
+        sx={{
+          textAlign: "center",
+          width: { xs: "100vw", sm: "100vw", md: "100vw" },
+        }}
+      >
         <Typography variant="body2" color="textSecondary" align="center">
           {"Copyright © "}
           {new Date().getFullYear()}
