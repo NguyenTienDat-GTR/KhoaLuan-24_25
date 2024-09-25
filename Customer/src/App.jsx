@@ -10,6 +10,7 @@ const Contact = React.lazy(() => import("./pages/Contact"));
 const Booking = React.lazy(() => import("./pages/Booking"));
 const Infor = React.lazy(() => import("./pages/Infor"));
 const PriceList = React.lazy(() => import("./pages/PriceList"));
+const Braces = React.lazy(() => import("./pages/Braces"));
 
 const LazyComponent = ({ Component }) => {
   const [isInView, setIsInView] = useState(false);
@@ -87,6 +88,7 @@ const App = () => {
           path="/PriceList"
           element={<LazyComponent Component={PriceList} />}
         />
+        <Route path="/Braces" element={<LazyComponent Component={Braces} />} />
         {/* Add more routes */}
       </Routes>
     </Router>
