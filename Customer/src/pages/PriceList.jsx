@@ -7,6 +7,7 @@ const Footer = React.lazy(() => import("../components/Footer"));
 const PriceService = React.lazy(() =>
   import("../components/PriceList/PriceService")
 );
+const BookingForm = React.lazy(() => import("../components/BookingForm"));
 
 const PriceList = () => {
   return (
@@ -71,6 +72,29 @@ const PriceList = () => {
         }
       >
         <PriceService />
+      </Suspense>
+
+      <Suspense
+        fallback={
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh", // Full screen height for vertical centering
+              width: "100vw", // Full screen width for horizontal centering
+            }}
+          >
+            <CircularProgress
+              sx={{
+                width: { xs: "50px", sm: "70px", md: "100px" }, // Responsive width
+                height: { xs: "50px", sm: "70px", md: "100px" }, // Responsive height
+              }}
+            />
+          </Box>
+        }
+      >
+        <BookingForm />
       </Suspense>
       <Suspense
         fallback={
