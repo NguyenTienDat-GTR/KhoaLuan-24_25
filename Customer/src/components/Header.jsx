@@ -232,7 +232,7 @@ const Header = () => {
                 Đặt lịch
               </Typography>
             </RouterLink>
-            <RouterLink to="/" style={{ textDecoration: "none" }}>
+            <RouterLink to="/PriceList" style={{ textDecoration: "none" }}>
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{
@@ -342,7 +342,7 @@ const Header = () => {
                   Đặt lịch
                 </Typography>
               </RouterLink>
-              <RouterLink to="/" style={{ textDecoration: "none" }}>
+              <RouterLink to="/PriceList" style={{ textDecoration: "none" }}>
                 <Typography
                   color="rgba(0,120,233,0.8)"
                   sx={{
