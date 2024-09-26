@@ -195,7 +195,7 @@ const IntrodutionHK = () => {
               }}
             >
               <Typography sx={{ textAlign: "justify", textIndent: "30px" }}>
-                <strong>Nha Khoa Hoàng Kim </strong>am kết mang đến dịch vụ nha
+                <strong>Nha Khoa Hoàng Kim </strong>cam kết mang đến dịch vụ nha
                 khoa chất lượng cao, an toàn và hiện đại nhất cho khách hàng.
               </Typography>
               <Typography sx={{ textAlign: "justify", textIndent: "30px" }}>
@@ -251,11 +251,12 @@ const IntrodutionHK = () => {
                     sm: "1rem",
                     md: "1.2rem",
                   },
+                  textIndent: "30px",
                 }}
               >
-                <strong>Nha Khoa Hoàng Kim </strong>mong muốn trở thành một
-                trong những hệ thống nha khoa hàng đầu tại Việt Nam, đem đến
-                tiêu chuẩn quốc tế trong chăm sóc sức khỏe răng miện
+                Nha Khoa Hoàng Kim mong muốn trở thành một trong những hệ thống
+                nha khoa hàng đầu tại Việt Nam, đem đến tiêu chuẩn quốc tế trong
+                chăm sóc sức khỏe răng miện
               </ListItem>
 
               <ListItem
@@ -267,6 +268,7 @@ const IntrodutionHK = () => {
                     sm: "1rem",
                     md: "1.2rem",
                   },
+                  textIndent: "30px",
                 }}
               >
                 Phòng khám tập trung vào việc nâng cao sức khỏe răng miệng và
@@ -282,6 +284,7 @@ const IntrodutionHK = () => {
                     sm: "1rem",
                     md: "1.2rem",
                   },
+                  textIndent: "30px",
                 }}
               >
                 Bên cạnh đó, Nha Khoa Hoàng Kim cũng chú trọng đến việc giáo dục

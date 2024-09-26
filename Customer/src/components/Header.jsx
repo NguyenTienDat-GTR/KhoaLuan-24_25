@@ -254,7 +254,7 @@ const Header = () => {
                 Niềng răng mắc cài
               </Typography>
             </RouterLink>
-            <RouterLink to="/" style={{ textDecoration: "none" }}>
+            <RouterLink to="/Services" style={{ textDecoration: "none" }}>
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{
@@ -364,7 +364,7 @@ const Header = () => {
                   Niềng răng mắc cài
                 </Typography>
               </RouterLink>
-              <RouterLink to="/" style={{ textDecoration: "none" }}>
+              <RouterLink to="/Services" style={{ textDecoration: "none" }}>
                 <Typography
                   color="rgba(0,120,233,0.8)"
                   sx={{

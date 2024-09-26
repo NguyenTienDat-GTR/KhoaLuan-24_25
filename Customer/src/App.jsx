@@ -11,6 +11,19 @@ const Booking = React.lazy(() => import("./pages/Booking"));
 const Infor = React.lazy(() => import("./pages/Infor"));
 const PriceList = React.lazy(() => import("./pages/PriceList"));
 const Braces = React.lazy(() => import("./pages/Braces"));
+const Services = React.lazy(() => import("./pages/Services"));
+const SD_Rang = React.lazy(() =>
+  import(".//components/Services/ServiceDetails/SD_Rang")
+);
+const SD_Implant = React.lazy(() =>
+  import(".//components/Services/ServiceDetails/SD_Implant")
+);
+const SD_Kham = React.lazy(() =>
+  import(".//components/Services/ServiceDetails/SD_Kham")
+);
+const SD_Nieng = React.lazy(() =>
+  import(".//components/Services/ServiceDetails/SD_Nieng")
+);
 
 const LazyComponent = ({ Component }) => {
   const [isInView, setIsInView] = useState(false);
@@ -89,6 +102,30 @@ const App = () => {
           element={<LazyComponent Component={PriceList} />}
         />
         <Route path="/Braces" element={<LazyComponent Component={Braces} />} />
+        <Route
+          path="/Services"
+          element={<LazyComponent Component={Services} />}
+        />
+
+        <Route
+          path="/Services/nha-khoa-tham-my"
+          element={<LazyComponent Component={SD_Rang} />}
+        />
+
+        <Route
+          path="/Services/trong-rang-implant"
+          element={<LazyComponent Component={SD_Implant} />}
+        />
+
+        <Route
+          path="/Services/dieu-tri-tong-quat"
+          element={<LazyComponent Component={SD_Kham} />}
+        />
+
+        <Route
+          path="/Services/nieng-rang-chinh-nha"
+          element={<LazyComponent Component={SD_Nieng} />}
+        />
         {/* Add more routes */}
       </Routes>
     </Router>

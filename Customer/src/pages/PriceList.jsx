@@ -45,7 +45,6 @@ const PriceList = () => {
           textAlign: "center",
           fontSize: { xs: "1rem", sm: "1.5rem", md: "2rem" }, // Responsive font sizeF
           fontWeight: "bold",
-          color: "rgba(21,182,210,0.63)",
           padding: { xs: "10px", sm: "20px", md: "30px" }, // Responsive padding
         }}
       >
