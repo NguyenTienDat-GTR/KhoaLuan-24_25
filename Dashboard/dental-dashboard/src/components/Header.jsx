@@ -47,18 +47,15 @@ const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
 
   const handleLogout = () => {
     if (isLoggedIn) {
-      console.log("Before logout, isLoggedIn:", isLoggedIn); // Kiểm tra trạng thái trước khi logout
-      logout(); // Gọi hàm logout
-      handleMenuClose(); // Đóng menu
-      navigation("/dashboard/login"); // Điều hướng đến trang login
+      logout(); // Call logout function
+      handleMenuClose(); // Close the menu
+      navigation("/dashboard/login"); // Navigate to login page
     }
   };
 
   useEffect(() => {
-    console.log("isLoggedIn state changed:", isLoggedIn);
     if (!isLoggedIn) {
-      // Nếu đã logout thành công, có thể thực hiện một số hành động khác nếu cần
-      console.log("After logout, isLoggedIn:", isLoggedIn);
+      // Handle actions after logout if needed
     }
   }, [isLoggedIn]);
 
@@ -91,8 +88,8 @@ const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
           alignItems: "center",
           right: "10%",
           top: "5%",
-          position: "absolute", // Chuyển sang absolute
-          width: "auto", // Đảm bảo không làm lệch các phần tử
+          position: "absolute",
+          width: "auto",
         }}
       >
         <IconButton color="inherit">
@@ -110,22 +107,25 @@ const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
         onClose={handleMenuClose}
         PaperProps={{
           style: {
-            position: "absolute", // Đảm bảo menu không ảnh hưởng đến layout
+            position: "absolute",
             right: 10,
-            top: "4rem", // Đặt menu ngay dưới AppBar
+            top: "4rem",
           },
         }}
       >
-        <MenuItem onClick={handleMenuClose}>
-          <Link
-            to="/profile"
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
-            <Person sx={{ marginRight: 1 }} /> Profile
-          </Link>
+        <MenuItem
+          onClick={handleMenuClose}
+          sx={{ display: "flex", alignItems: "center" }}
+        >
+          <Person sx={{ marginRight: 1 }} />
+          <Typography variant="body1">Profile</Typography>
         </MenuItem>
-        <MenuItem onClick={handleLogout}>
-          <ExitToApp sx={{ marginRight: 1 }} /> Logout
+        <MenuItem
+          onClick={handleLogout}
+          sx={{ display: "flex", alignItems: "center" }}
+        >
+          <ExitToApp sx={{ marginRight: 1 }} />
+          <Typography variant="body1">Logout</Typography>
         </MenuItem>
       </Menu>
 
