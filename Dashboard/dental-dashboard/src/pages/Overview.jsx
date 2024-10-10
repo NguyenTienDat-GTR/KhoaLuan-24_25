@@ -115,7 +115,12 @@ const Overview = () => {
         }}
       >
         <Card
-          sx={{ flex: "1 1 0", minWidth: 200, backgroundColor: "#f0f8ff" }} // Reduced width
+          sx={{
+            flex: "1 1 0",
+            minWidth: 200,
+            backgroundColor: "#f0f8ff",
+            boxShadow: 10,
+          }} // Reduced width
         >
           <CardContent>
             <AccessAlarm sx={{ fontSize: 40, color: "#3f51b5" }} />
@@ -141,7 +146,12 @@ const Overview = () => {
         </Card>
 
         <Card
-          sx={{ flex: "1 1 0", minWidth: 200, backgroundColor: "#e1f5fe" }} // Reduced width
+          sx={{
+            flex: "1 1 0",
+            minWidth: 200,
+            backgroundColor: "#e1f5fe",
+            boxShadow: 10,
+          }} // Reduced width
         >
           <CardContent>
             <AccountCircle sx={{ fontSize: 40, color: "#4caf50" }} />
@@ -167,7 +177,12 @@ const Overview = () => {
         </Card>
 
         <Card
-          sx={{ flex: "1 1 0", minWidth: 200, backgroundColor: "#ffe0b2" }} // Reduced width
+          sx={{
+            flex: "1 1 0",
+            minWidth: 200,
+            backgroundColor: "#ffe0b2",
+            boxShadow: 10,
+          }} // Reduced width
         >
           <CardContent>
             <EditCalendar sx={{ fontSize: 40, color: "#ff9800" }} />
@@ -194,7 +209,12 @@ const Overview = () => {
 
         {/* New Card for additional information */}
         <Card
-          sx={{ flex: "1 1 0", minWidth: 200, backgroundColor: "#ffccbc" }} // Reduced width
+          sx={{
+            flex: "1 1 0",
+            minWidth: 200,
+            backgroundColor: "#ffccbc",
+            boxShadow: 10,
+          }} // Reduced width
         >
           <CardContent>
             <Medication sx={{ fontSize: 40, color: "#e53935" }} />
