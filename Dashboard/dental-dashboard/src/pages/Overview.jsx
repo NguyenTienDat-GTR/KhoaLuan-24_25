@@ -4,7 +4,6 @@ import {
   CardContent,
   Typography,
   Box,
-  Select,
   MenuItem,
   FormControl,
   InputLabel,
@@ -29,6 +28,7 @@ import {
   Medication,
   EditCalendar,
 } from "@mui/icons-material"; // Import icons
+import Select from "react-select";
 
 const Overview = () => {
   // Sample data for charts
@@ -56,55 +56,104 @@ const Overview = () => {
 
   const COLORS = ["#82ca9d", "#ff8042"];
 
-  // State for individual filters
-  const [appointmentFilter, setAppointmentFilter] = useState("Tất cả");
-  const [patientFilter, setPatientFilter] = useState("Tất cả");
-  const [revenueFilter, setRevenueFilter] = useState("Tất cả");
-  const [medicationFilter, setMedicationFilter] = useState("Tất cả");
+  // State cho các combobox
+  const [selectedYear, setSelectedYear] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [selectedDay, setSelectedDay] = useState(null);
 
-  // State for chart filters
-  const [pieChartFilter, setPieChartFilter] = useState("Tất cả");
-  const [barChartFilter, setBarChartFilter] = useState("Tất cả");
-  const [barChartDoubleFilter, setBarChartDoubleFilter] = useState("Tất cả");
-
-  // State for common filter
-  const [commonFilter, setCommonFilter] = useState("Tất cả");
-
-  const filterOptions = [
-    "Tất cả",
-    "Năm nay",
-    "Tháng này",
-    "Tuần này",
-    "Hôm nay",
+  // Danh sách các giá trị cho năm, tháng, ngày
+  const years = [
+    { label: "Không chọn", value: null },
+    ...Array(5)
+      .fill()
+      .map((_, i) => ({
+        label: (2020 + i).toString(),
+        value: 2020 + i,
+      })),
   ];
 
-  // Function to handle common filter change
-  const handleCommonFilterChange = (value) => {
-    setCommonFilter(value);
-    setAppointmentFilter(value);
-    setPatientFilter(value);
-    setRevenueFilter(value);
-    setMedicationFilter(value);
+  const months = [
+    { label: "Không chọn", value: null },
+    ...Array(12)
+      .fill()
+      .map((_, i) => ({
+        label: (i + 1).toString(),
+        value: i + 1,
+      })),
+  ];
+
+  const days = [
+    { label: "Không chọn", value: null },
+    ...Array(31)
+      .fill()
+      .map((_, i) => ({
+        label: (i + 1).toString(),
+        value: i + 1,
+      })),
+  ];
+  const handleYearChange = (option) => {
+    setSelectedYear(option);
+    setSelectedMonth(null); // Reset tháng và ngày khi chọn lại năm
+    setSelectedDay(null);
+  };
+
+  const handleMonthChange = (option) => {
+    setSelectedMonth(option);
+    setSelectedDay(null); // Reset ngày khi chọn lại tháng
   };
 
   return (
     <Box sx={{ paddingY: 4, paddingX: 0.5 }}>
-      {/* Common Filter */}
-      <FormControl sx={{ mb: 2, width: "15rem" }}>
-        <InputLabel shrink>Chọn thời gian chung</InputLabel>
-        <Select
-          value={commonFilter}
-          onChange={(e) => handleCommonFilterChange(e.target.value)}
-          variant="filled"
+      {/* Chọn năm */}
+      <Box sx={{ gap: "1rem", display: "flex", alignItems: "center" }}>
+        <Typography sx={{ fontSize: "1.3rem" }}>
+          Hiển thị dữ liệu theo:{" "}
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            alignContent: "center",
+            gap: "1rem",
+          }}
         >
-          {filterOptions.map((option) => (
-            <MenuItem key={option} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+          <FormControl sx={{ mb: 2, width: "15rem" }}>
+            <Select
+              options={years}
+              value={selectedYear}
+              onChange={handleYearChange}
+              placeholder="Chọn năm"
+            />
+          </FormControl>
 
+          {/* Chọn tháng (phải chọn năm trước) */}
+          <FormControl
+            sx={{ mb: 2, width: "15rem" }}
+            disabled={!selectedYear?.value}
+          >
+            <Select
+              options={months}
+              value={selectedMonth}
+              onChange={handleMonthChange}
+              placeholder="Chọn tháng"
+              isDisabled={!selectedYear?.value}
+            />
+          </FormControl>
+
+          {/* Chọn ngày (phải chọn năm và tháng trước) */}
+          <FormControl
+            sx={{ mb: 2, width: "15rem" }}
+            disabled={!selectedMonth?.value}
+          >
+            <Select
+              options={days}
+              value={selectedDay}
+              onChange={setSelectedDay}
+              placeholder="Chọn ngày"
+              isDisabled={!selectedMonth?.value}
+            />
+          </FormControl>
+        </Box>
+      </Box>
       {/* Flexbox container for cards */}
       <Box
         sx={{
@@ -128,20 +177,6 @@ const Overview = () => {
               Tổng số lịch hẹn
             </Typography>
             <Typography sx={{ fontSize: "1.5rem" }}>150</Typography>
-            <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel>Chọn thời gian</InputLabel>
-              <Select
-                value={appointmentFilter}
-                onChange={(e) => setAppointmentFilter(e.target.value)}
-                variant="filled"
-              >
-                {filterOptions.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
           </CardContent>
         </Card>
 
@@ -159,20 +194,6 @@ const Overview = () => {
               Tổng số bệnh nhân
             </Typography>
             <Typography sx={{ fontSize: "1.5rem" }}>80</Typography>
-            <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel>Chọn thời gian</InputLabel>
-              <Select
-                value={patientFilter}
-                onChange={(e) => setPatientFilter(e.target.value)}
-                variant="filled"
-              >
-                {filterOptions.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
           </CardContent>
         </Card>
 
@@ -190,20 +211,6 @@ const Overview = () => {
               Số lịch hẹn chờ phản hồi
             </Typography>
             <Typography sx={{ fontSize: "1.5rem" }}>20</Typography>
-            <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel>Chọn thời gian</InputLabel>
-              <Select
-                value={revenueFilter}
-                onChange={(e) => setRevenueFilter(e.target.value)}
-                variant="filled"
-              >
-                {filterOptions.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
           </CardContent>
         </Card>
 
@@ -220,20 +227,6 @@ const Overview = () => {
             <Medication sx={{ fontSize: 40, color: "#e53935" }} />
             <Typography sx={{ fontSize: "1.2rem" }}>Số lượng thuốc</Typography>
             <Typography sx={{ fontSize: "1.5rem" }}>150</Typography>
-            <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel>Chọn thời gian</InputLabel>
-              <Select
-                value={medicationFilter}
-                onChange={(e) => setMedicationFilter(e.target.value)}
-                variant="filled"
-              >
-                {filterOptions.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
           </CardContent>
         </Card>
       </Box>
@@ -243,20 +236,6 @@ const Overview = () => {
         <Typography variant="h6" gutterBottom>
           Biểu đồ số lượng lịch hẹn
         </Typography>
-        <FormControl sx={{ mb: 2, width: "15rem" }}>
-          <InputLabel>Chọn thời gian</InputLabel>
-          <Select
-            value={barChartDoubleFilter}
-            onChange={(e) => setBarChartDoubleFilter(e.target.value)}
-            variant="filled"
-          >
-            {filterOptions.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -275,20 +254,6 @@ const Overview = () => {
         <Typography variant="h6" gutterBottom>
           Biểu đồ trạng thái lịch hẹn
         </Typography>
-        <FormControl sx={{ mb: 2, width: "15rem" }}>
-          <InputLabel>Chọn thời gian</InputLabel>
-          <Select
-            value={pieChartFilter}
-            onChange={(e) => setPieChartFilter(e.target.value)}
-            variant="filled"
-          >
-            {filterOptions.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Tooltip />
@@ -318,20 +283,6 @@ const Overview = () => {
         <Typography variant="h6" gutterBottom>
           Biểu đồ doanh thu
         </Typography>
-        <FormControl sx={{ mb: 2, width: "15rem" }}>
-          <InputLabel>Chọn thời gian</InputLabel>
-          <Select
-            value={barChartFilter}
-            onChange={(e) => setBarChartFilter(e.target.value)}
-            variant="filled"
-          >
-            {filterOptions.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={revenueData}>
             <CartesianGrid strokeDasharray="3 3" />

@@ -71,7 +71,7 @@ const LazyComponent = ({ Component }) => {
                 // top: "50%",
                 // left: "50%",
                 height: "100vh", // Full screen height for better centering
-                width: "100vw",
+                width: "100%",
               }}
             >
               <CircularProgress
