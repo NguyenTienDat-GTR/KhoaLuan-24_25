@@ -137,7 +137,7 @@ const ManageAccount = ({ isSidebarOpen }) => {
 
   return (
     <Box sx={{ paddingY: 6, paddingX: 0.5 }}>
-      <Typography variant="h6" sx={{ fontWeight: "Bold" }}>
+      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 2 }}>
         Quản lý tài khoản
       </Typography>
       <Box
@@ -176,10 +176,10 @@ const ManageAccount = ({ isSidebarOpen }) => {
           />
         </RadioGroup>
       </Box>
-      <TableContainer>
+      <TableContainer sx={{ boxShadow: 3, borderRadius: 2 }}>
         <Table>
           <TableHead>
-            <TableRow>
+            <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell sx={{ fontWeight: "bold", width: "10%" }}>
                 Số thứ tự
               </TableCell>
@@ -197,7 +197,10 @@ const ManageAccount = ({ isSidebarOpen }) => {
             {filteredAccounts
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((account, index) => (
-                <TableRow key={account.id}>
+                <TableRow
+                  key={account.id}
+                  sx={{ "&:hover": { backgroundColor: "#e0f7fa" } }}
+                >
                   <TableCell sx={{ width: "5%" }}>
                     {index + 1 + page * rowsPerPage}
                   </TableCell>
@@ -208,6 +211,7 @@ const ManageAccount = ({ isSidebarOpen }) => {
                   <TableCell
                     sx={{
                       color: account.status === "Active" ? "green" : "red",
+                      fontWeight: "bold",
                     }}
                   >
                     {account.status}
