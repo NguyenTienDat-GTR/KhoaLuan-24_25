@@ -35,6 +35,9 @@ const ManageAccount = React.lazy(() => import("./pages/ManageAccount"));
 const ModalAuthorization = React.lazy(() =>
   import("./components/ModalAuthorization")
 );
+const ManageDoctor = React.lazy(() =>
+  import("./pages/ManageHuman/ManageDoctor")
+);
 
 const LazyComponent = ({ Component }) => {
   const [isInView, setIsInView] = useState(false);
@@ -250,6 +253,16 @@ function App() {
                     <LazyComponent
                       Component={() => (
                         <ManageAccount isSidebarOpen={sidebarOpen} />
+                      )}
+                    />
+                  }
+                />
+                <Route
+                  path="/dashboard/quan-ly-nhan-su/bac-si"
+                  element={
+                    <LazyComponent
+                      Component={() => (
+                        <ManageDoctor isSidebarOpen={sidebarOpen} />
                       )}
                     />
                   }
