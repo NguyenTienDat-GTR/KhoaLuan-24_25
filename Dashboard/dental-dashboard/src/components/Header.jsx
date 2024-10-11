@@ -9,11 +9,15 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Link } from "react-router-dom";
-import { Person, ExitToApp } from "@mui/icons-material";
 import { useAuth } from "../hooks/auth/useAuth";
 import { useNavigate } from "react-router-dom";
+import {
+  ManageAccounts,
+  Notifications,
+  Person,
+  ExitToApp,
+} from "@mui/icons-material";
 
 const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
   const pathParts = currentPath.split("/");
@@ -51,6 +55,15 @@ const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
       handleMenuClose(); // Close the menu
       navigation("/dashboard/login"); // Navigate to login page
     }
+  };
+  const handleAccountInfor = () => {
+    handleMenuClose();
+    navigation("/dashboard/account-info");
+  };
+
+  const handleProfile = () => {
+    handleMenuClose();
+    navigation("/dashboard/profile");
   };
 
   useEffect(() => {
@@ -94,7 +107,7 @@ const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
         }}
       >
         <IconButton color="inherit">
-          <NotificationsIcon />
+          <Notifications />
         </IconButton>
         <IconButton color="inherit" onClick={handleMenuOpen}>
           <Avatar alt="User Name" src="/path-to-avatar.jpg" />
@@ -115,18 +128,25 @@ const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
         }}
       >
         <MenuItem
-          onClick={handleMenuClose}
+          onClick={handleProfile}
           sx={{ display: "flex", alignItems: "center" }}
         >
           <Person sx={{ marginRight: 1 }} />
-          <Typography variant="body1">Profile</Typography>
+          <Typography variant="body1">Hồ sơ cá nhân</Typography>
+        </MenuItem>
+        <MenuItem
+          onClick={handleAccountInfor}
+          sx={{ display: "flex", alignItems: "center" }}
+        >
+          <ManageAccounts sx={{ marginRight: 1 }} />
+          <Typography variant="body1">Thông tin tài khoản</Typography>
         </MenuItem>
         <MenuItem
           onClick={handleLogout}
           sx={{ display: "flex", alignItems: "center" }}
         >
           <ExitToApp sx={{ marginRight: 1 }} />
-          <Typography variant="body1">Logout</Typography>
+          <Typography variant="body1">Đăng xuất</Typography>
         </MenuItem>
       </Menu>
 

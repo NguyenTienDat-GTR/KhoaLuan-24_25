@@ -10,16 +10,6 @@ import {
 } from "@mui/material";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
-// import DashboardIcon from "@mui/icons-material/Dashboard";
-// import EventNoteIcon from "@mui/icons-material/EventNote";
-// import PeopleIcon from "@mui/icons-material/People";
-// import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
-// import DescriptionIcon from "@mui/icons-material/Description";
-// import PaymentIcon from "@mui/icons-material/Payment";
-// import BarChartIcon from "@mui/icons-material/BarChart";
-// import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
-// import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-// import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import {
   Dashboard,
   EventNote,
