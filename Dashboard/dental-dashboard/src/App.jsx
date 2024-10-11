@@ -41,6 +41,7 @@ import { AuthProvider, useAuth } from "./hooks/auth/useAuth";
 // Lazy load components
 const Overview = React.lazy(() => import("./pages/Overview"));
 const Login = React.lazy(() => import("./pages/Login"));
+const ManageAccount = React.lazy(() => import("./pages/ManageAccount"));
 const ModalAuthorization = React.lazy(() =>
   import("./components/ModalAuthorization")
 );
@@ -237,14 +238,26 @@ function App() {
           {/* Thêm margin-top cho không gian giữa Header và Overview */}
           <Routes>
             {isLoggedIn ? (
-              <Route
-                path="/dashboard/tong-quan"
-                element={
-                  <LazyComponent
-                    Component={() => <Overview isSidebarOpen={sidebarOpen} />}
-                  />
-                }
-              />
+              <>
+                <Route
+                  path="/dashboard/tong-quan"
+                  element={
+                    <LazyComponent
+                      Component={() => <Overview isSidebarOpen={sidebarOpen} />}
+                    />
+                  }
+                />
+                <Route
+                  path="/dashboard/tai-khoan"
+                  element={
+                    <LazyComponent
+                      Component={() => (
+                        <ManageAccount isSidebarOpen={sidebarOpen} />
+                      )}
+                    />
+                  }
+                />
+              </>
             ) : (
               <Route
                 path="/dashboard/*"
