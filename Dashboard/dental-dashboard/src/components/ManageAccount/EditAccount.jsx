@@ -9,15 +9,20 @@ import {
   DialogContent,
   DialogTitle,
   MenuItem,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
   IconButton,
   Tooltip,
 } from "@mui/material";
 import { LockReset } from "@mui/icons-material";
 
 const roles = ["Admin", "Bác sĩ", "Nhân viên"];
+const statuses = ["Active", "Inactive"];
 
 const EditAccount = ({ open, onClose, account, onUpdate }) => {
   const [role, setRole] = useState(account?.role);
+  const [status, setStatus] = useState(account?.status);
   const [isChanged, setIsChanged] = useState(false);
 
   const handleRoleChange = (e) => {
@@ -25,14 +30,18 @@ const EditAccount = ({ open, onClose, account, onUpdate }) => {
     setIsChanged(true);
   };
 
+  const handleStatusChange = (e) => {
+    setStatus(e.target.value);
+    setIsChanged(true);
+  };
+
   const handleResetPassword = () => {
-    // Handle password reset logic here
     console.log(`Reset password for ${account.username}`);
     onClose();
   };
 
   const handleUpdate = () => {
-    onUpdate({ ...account, role }); // Update with new role
+    onUpdate({ ...account, role, status }); // Update with new role and status
     onClose();
   };
 
@@ -53,6 +62,7 @@ const EditAccount = ({ open, onClose, account, onUpdate }) => {
             Tên tài khoản: {account?.username}
           </Typography>
         </Box>
+
         <Box sx={{ marginTop: 2 }}>
           <Typography variant="body1" sx={{ fontWeight: "bold" }}>
             Chọn vai trò:
@@ -71,6 +81,22 @@ const EditAccount = ({ open, onClose, account, onUpdate }) => {
               </MenuItem>
             ))}
           </TextField>
+        </Box>
+
+        <Box sx={{ marginTop: 2 }}>
+          <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+            Trạng thái tài khoản:
+          </Typography>
+          <RadioGroup value={status} onChange={handleStatusChange}>
+            {statuses.map((status) => (
+              <FormControlLabel
+                key={status}
+                value={status}
+                control={<Radio />}
+                label={status}
+              />
+            ))}
+          </RadioGroup>
         </Box>
       </DialogContent>
       <DialogActions>

@@ -82,6 +82,7 @@ const ManageAccount = ({ isSidebarOpen }) => {
   const [createAccountDialogOpen, setCreateAccountDialogOpen] = useState(false);
   const [editAccountDialogOpen, setEditAccountDialogOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState(null);
+  const [accounts, setAccounts] = useState(initialAccounts);
 
   const filteredAccounts = initialAccounts.filter((account) => {
     const matchesSearch =
@@ -120,8 +121,11 @@ const ManageAccount = ({ isSidebarOpen }) => {
   };
 
   const handleUpdateAccount = (updatedAccount) => {
-    // Update the account in your state or API here
-    console.log("Account updated:", updatedAccount);
+    setAccounts((prevAccounts) =>
+      prevAccounts.map((account) =>
+        account.id === updatedAccount.id ? updatedAccount : account
+      )
+    );
     setEditAccountDialogOpen(false);
   };
 
