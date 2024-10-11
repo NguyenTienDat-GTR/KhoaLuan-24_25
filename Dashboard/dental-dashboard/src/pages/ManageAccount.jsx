@@ -20,6 +20,7 @@ import {
 import { Edit, Delete } from "@mui/icons-material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import CreateAccount from "../components/ManageAccount/CreateAccount";
+import EditAccount from "../components/ManageAccount/EditAccount";
 
 const initialAccounts = [
   {
@@ -79,6 +80,8 @@ const ManageAccount = ({ isSidebarOpen }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [createAccountDialogOpen, setCreateAccountDialogOpen] = useState(false);
+  const [editAccountDialogOpen, setEditAccountDialogOpen] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState(null);
 
   const filteredAccounts = initialAccounts.filter((account) => {
     const matchesSearch =
@@ -109,6 +112,17 @@ const ManageAccount = ({ isSidebarOpen }) => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleEditClick = (account) => {
+    setSelectedAccount(account);
+    setEditAccountDialogOpen(true);
+  };
+
+  const handleUpdateAccount = (updatedAccount) => {
+    // Update the account in your state or API here
+    console.log("Account updated:", updatedAccount);
+    setEditAccountDialogOpen(false);
   };
 
   return (
@@ -184,7 +198,10 @@ const ManageAccount = ({ isSidebarOpen }) => {
                   </TableCell>
                   <TableCell>
                     <Tooltip title="Chỉnh sửa" arrow>
-                      <IconButton sx={{ color: "blue" }}>
+                      <IconButton
+                        sx={{ color: "blue" }}
+                        onClick={() => handleEditClick(account)}
+                      >
                         <Edit />
                       </IconButton>
                     </Tooltip>
@@ -212,6 +229,12 @@ const ManageAccount = ({ isSidebarOpen }) => {
       <CreateAccount
         open={createAccountDialogOpen}
         onClose={() => setCreateAccountDialogOpen(false)}
+      />
+      <EditAccount
+        open={editAccountDialogOpen}
+        onClose={() => setEditAccountDialogOpen(false)}
+        account={selectedAccount}
+        onUpdate={handleUpdateAccount}
       />
     </Box>
   );
