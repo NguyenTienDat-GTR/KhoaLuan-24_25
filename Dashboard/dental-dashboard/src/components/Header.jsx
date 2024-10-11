@@ -86,9 +86,10 @@ const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          right: "10%",
-          top: "5%",
-          position: "absolute",
+          // right: sidebarOpen ? "22%" : "10%",
+          top: "1%",
+          right: "5%",
+          position: "fixed",
           width: "auto",
         }}
       >
