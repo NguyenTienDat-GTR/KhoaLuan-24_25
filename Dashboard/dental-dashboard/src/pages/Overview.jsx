@@ -30,7 +30,8 @@ import {
 } from "@mui/icons-material"; // Import icons
 import Select from "react-select";
 
-const Overview = () => {
+const Overview = ({ isSidebarOpen }) => {
+  const cardWidth = isSidebarOpen ? "calc(50% - 16px)" : "calc(50% - 8px)";
   // Sample data for charts
   const data = [
     { name: "Mon", Appointments: 10, Emergency: 2 },
@@ -154,6 +155,7 @@ const Overview = () => {
           </FormControl>
         </Box>
       </Box>
+
       {/* Flexbox container for cards */}
       <Box
         sx={{
@@ -163,70 +165,143 @@ const Overview = () => {
           gap: 2, // Spacing between cards
         }}
       >
+        {/* Card 1: Tổng số lịch hẹn */}
         <Card
           sx={{
-            flex: "1 1 0",
-            minWidth: 200,
+            width: cardWidth,
             backgroundColor: "#f0f8ff",
             boxShadow: 10,
-          }} // Reduced width
+          }}
         >
           <CardContent>
-            <AccessAlarm sx={{ fontSize: 40, color: "#3f51b5" }} />
-            <Typography sx={{ fontSize: "1.2rem" }}>
-              Tổng số lịch hẹn
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <AccessAlarm sx={{ fontSize: 40, color: "#3f51b5" }} />
+              <Typography
+                sx={{
+                  fontSize: "1.3rem",
+                  color: "#3f51b5",
+                  fontWeight: "bold",
+                }}
+              >
+                Tổng số lịch hẹn
+              </Typography>
+            </Box>
+            <Typography
+              sx={{
+                padding: "2rem",
+                fontSize: "2.2rem",
+                color: "#ff5722",
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              150
             </Typography>
-            <Typography sx={{ fontSize: "1.5rem" }}>150</Typography>
           </CardContent>
         </Card>
 
+        {/* Card 2: Tổng số bệnh nhân */}
         <Card
           sx={{
-            flex: "1 1 0",
-            minWidth: 200,
+            width: cardWidth,
             backgroundColor: "#e1f5fe",
             boxShadow: 10,
-          }} // Reduced width
+          }}
         >
           <CardContent>
-            <AccountCircle sx={{ fontSize: 40, color: "#4caf50" }} />
-            <Typography sx={{ fontSize: "1.2rem" }}>
-              Tổng số bệnh nhân
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <AccountCircle sx={{ fontSize: 40, color: "#4caf50" }} />
+              <Typography
+                sx={{
+                  fontSize: "1.3rem",
+                  color: "#4caf50",
+                  fontWeight: "bold",
+                }}
+              >
+                Tổng số bệnh nhân
+              </Typography>
+            </Box>
+            <Typography
+              sx={{
+                padding: "2rem",
+                fontSize: "2.2rem",
+                color: "#ff5722",
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              80
             </Typography>
-            <Typography sx={{ fontSize: "1.5rem" }}>80</Typography>
           </CardContent>
         </Card>
 
+        {/* Card 3: Số lịch hẹn chờ phản hồi */}
         <Card
           sx={{
-            flex: "1 1 0",
-            minWidth: 200,
-            backgroundColor: "#ffe0b2",
+            width: cardWidth,
+            backgroundColor: "#FFE7BA",
             boxShadow: 10,
-          }} // Reduced width
+          }}
         >
           <CardContent>
-            <EditCalendar sx={{ fontSize: 40, color: "#ff9800" }} />
-            <Typography sx={{ fontSize: "1.2rem" }}>
-              Số lịch hẹn chờ phản hồi
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <EditCalendar sx={{ fontSize: 40, color: "#FF6347" }} />
+              <Typography
+                sx={{
+                  fontSize: "1.3rem",
+                  color: "#FF6347",
+                  fontWeight: "bold",
+                }}
+              >
+                Số lịch hẹn chờ phản hồi
+              </Typography>
+            </Box>
+            <Typography
+              sx={{
+                padding: "2rem",
+                fontSize: "2.2rem",
+                color: "#ff5722",
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              20
             </Typography>
-            <Typography sx={{ fontSize: "1.5rem" }}>20</Typography>
           </CardContent>
         </Card>
 
-        {/* New Card for additional information */}
+        {/* Card 4: Số lượng thuốc */}
         <Card
           sx={{
-            flex: "1 1 0",
-            minWidth: 200,
+            width: cardWidth,
             backgroundColor: "#ffccbc",
             boxShadow: 10,
-          }} // Reduced width
+          }}
         >
           <CardContent>
-            <Medication sx={{ fontSize: 40, color: "#e53935" }} />
-            <Typography sx={{ fontSize: "1.2rem" }}>Số lượng thuốc</Typography>
-            <Typography sx={{ fontSize: "1.5rem" }}>150</Typography>
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <Medication sx={{ fontSize: 40, color: "#e53935" }} />
+              <Typography
+                sx={{
+                  fontSize: "1.3rem",
+                  color: "#e53935",
+                  fontWeight: "bold",
+                }}
+              >
+                Số lượng thuốc
+              </Typography>
+            </Box>
+            <Typography
+              sx={{
+                padding: "2rem",
+                fontSize: "2.2rem",
+                color: "#ff5722",
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              76
+            </Typography>
           </CardContent>
         </Card>
       </Box>

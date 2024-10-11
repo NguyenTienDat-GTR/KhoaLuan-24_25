@@ -239,7 +239,11 @@ function App() {
             {isLoggedIn ? (
               <Route
                 path="/dashboard/tong-quan"
-                element={<LazyComponent Component={Overview} />}
+                element={
+                  <LazyComponent
+                    Component={() => <Overview isSidebarOpen={sidebarOpen} />}
+                  />
+                }
               />
             ) : (
               <Route
