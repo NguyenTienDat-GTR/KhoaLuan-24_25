@@ -24,9 +24,9 @@ import {
 import {
   AccessAlarm,
   AccountCircle,
-  EventAvailable,
   Medication,
   EditCalendar,
+  AttachMoney,
 } from "@mui/icons-material"; // Import icons
 import Select from "react-select";
 
@@ -280,7 +280,7 @@ const Overview = ({ isSidebarOpen }) => {
         >
           <CardContent>
             <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-              <Medication sx={{ fontSize: 40, color: "#e53935" }} />
+              <AttachMoney sx={{ fontSize: 40, color: "#e53935" }} />
               <Typography
                 sx={{
                   fontSize: "1.3rem",
@@ -288,7 +288,7 @@ const Overview = ({ isSidebarOpen }) => {
                   fontWeight: "bold",
                 }}
               >
-                Số lượng thuốc
+                Tổng doanh thu
               </Typography>
             </Box>
             <Typography
@@ -300,7 +300,7 @@ const Overview = ({ isSidebarOpen }) => {
                 textAlign: "center",
               }}
             >
-              76
+              120.000.000 VND
             </Typography>
           </CardContent>
         </Card>
