@@ -16,6 +16,11 @@ import {
   FormControlLabel,
   Radio,
   Tooltip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
@@ -63,7 +68,6 @@ const initialAccounts = [
     role: "Bác sĩ",
     status: "Inactive",
   },
-
   {
     id: 6,
     code: "AC006",
@@ -81,10 +85,11 @@ const ManageAccount = ({ isSidebarOpen }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [createAccountDialogOpen, setCreateAccountDialogOpen] = useState(false);
   const [editAccountDialogOpen, setEditAccountDialogOpen] = useState(false);
+  const [deleteConfirmDialogOpen, setDeleteConfirmDialogOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [accounts, setAccounts] = useState(initialAccounts);
 
-  const filteredAccounts = initialAccounts.filter((account) => {
+  const filteredAccounts = accounts.filter((account) => {
     const matchesSearch =
       account.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
       account.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -120,13 +125,14 @@ const ManageAccount = ({ isSidebarOpen }) => {
     setEditAccountDialogOpen(true);
   };
 
-  const handleUpdateAccount = (updatedAccount) => {
-    setAccounts((prevAccounts) =>
-      prevAccounts.map((account) =>
-        account.id === updatedAccount.id ? updatedAccount : account
-      )
-    );
-    setEditAccountDialogOpen(false);
+  const handleDeleteClick = (account) => {
+    setSelectedAccount(account);
+    setDeleteConfirmDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    setAccounts(accounts.filter((acc) => acc.id !== selectedAccount.id));
+    setDeleteConfirmDialogOpen(false);
   };
 
   return (
@@ -174,9 +180,13 @@ const ManageAccount = ({ isSidebarOpen }) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: "bold" }}>Số thứ tự</TableCell>
+              <TableCell sx={{ fontWeight: "bold", width: "10%" }}>
+                Số thứ tự
+              </TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Mã</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Họ tên</TableCell>
+              <TableCell sx={{ fontWeight: "bold", width: "20%" }}>
+                Họ tên
+              </TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Tên tài khoản</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Vai trò</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Trạng thái</TableCell>
@@ -188,9 +198,11 @@ const ManageAccount = ({ isSidebarOpen }) => {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((account, index) => (
                 <TableRow key={account.id}>
-                  <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
+                  <TableCell sx={{ width: "5%" }}>
+                    {index + 1 + page * rowsPerPage}
+                  </TableCell>
                   <TableCell>{account.code}</TableCell>
-                  <TableCell>{account.name}</TableCell>
+                  <TableCell sx={{ width: "25%" }}>{account.name}</TableCell>
                   <TableCell>{account.username}</TableCell>
                   <TableCell>{account.role}</TableCell>
                   <TableCell
@@ -210,7 +222,10 @@ const ManageAccount = ({ isSidebarOpen }) => {
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Xóa" arrow>
-                      <IconButton sx={{ color: "red" }}>
+                      <IconButton
+                        sx={{ color: "red" }}
+                        onClick={() => handleDeleteClick(account)}
+                      >
                         <Delete />
                       </IconButton>
                     </Tooltip>
@@ -230,6 +245,7 @@ const ManageAccount = ({ isSidebarOpen }) => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+
       <CreateAccount
         open={createAccountDialogOpen}
         onClose={() => setCreateAccountDialogOpen(false)}
@@ -238,8 +254,45 @@ const ManageAccount = ({ isSidebarOpen }) => {
         open={editAccountDialogOpen}
         onClose={() => setEditAccountDialogOpen(false)}
         account={selectedAccount}
-        onUpdate={handleUpdateAccount}
+        onUpdate={(updatedAccount) => {
+          setAccounts((prevAccounts) =>
+            prevAccounts.map((acc) =>
+              acc.id === updatedAccount.id ? updatedAccount : acc
+            )
+          );
+          setEditAccountDialogOpen(false);
+        }}
       />
+
+      {/* Dialog xác nhận xóa */}
+      <Dialog
+        open={deleteConfirmDialogOpen}
+        onClose={() => setDeleteConfirmDialogOpen(false)}
+      >
+        <DialogTitle>Xác nhận xóa tài khoản</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Bạn có chắc chắn muốn xóa tài khoản{" "}
+            <strong>{selectedAccount?.name}</strong> không?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteConfirmDialogOpen(false)}>
+            Hủy bỏ
+          </Button>
+          <Button
+            onClick={handleConfirmDelete}
+            color="error"
+            sx={{
+              backgroundColor: "red",
+              color: "white",
+              "&:hover": { backgroundColor: "darkred" },
+            }}
+          >
+            Xóa
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
