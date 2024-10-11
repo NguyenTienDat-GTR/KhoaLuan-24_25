@@ -136,7 +136,7 @@ const ManageAccount = ({ isSidebarOpen }) => {
   };
 
   return (
-    <Box sx={{ paddingY: 2, paddingX: 0.5 }}>
+    <Box sx={{ paddingY: 6, paddingX: 0.5 }}>
       <Typography variant="h6" sx={{ fontWeight: "Bold" }}>
         Quản lý tài khoản
       </Typography>

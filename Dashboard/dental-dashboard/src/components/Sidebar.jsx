@@ -8,7 +8,7 @@ import {
   Divider,
   Box,
   Avatar,
-  Tooltip, // Nhập Tooltip
+  Tooltip,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -80,24 +80,34 @@ const Sidebar = ({ open, onToggleSidebar, onPathChange, menuItems }) => {
           <React.Fragment key={index}>
             <ListItem
               button={true}
-              component={Link}
-              to={`/${item.path}`} // Sử dụng item.path
-              onClick={() => onPathChange(item.text)} // Truyền item.path thay vì item.text
+              component={item.subItems ? "div" : Link} // Chuyển sang 'div' nếu có subItems
+              to={!item.subItems ? `/${item.path}` : undefined} // Đảm bảo không có link cho các mục cha có subItems
+              onClick={() => {
+                if (item.subItems) {
+                  toggleSubMenu(index); // Chỉ mở/đóng submenu nếu có subItems
+                } else {
+                  onPathChange(item.text); // Nếu không có subItems, cập nhật path
+                }
+              }}
               sx={{
                 display: "flex",
                 justifyContent: open ? "flex-start" : "center",
                 alignItems: "center",
                 padding: open ? "10px 20px" : "10px 5px",
+                cursor: "pointer",
+                fontSize: "10px !important", // Giảm kích thước font chữ
               }}
             >
               <Tooltip title={item.text} arrow placement="right">
-                {/* Thêm Tooltip */}
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   {item.icon}
                   {open && (
                     <ListItemText
                       primary={item.text}
-                      sx={{ marginLeft: 1, color: "#000012" }}
+                      sx={{
+                        marginLeft: 1,
+                        color: "#000012",
+                      }}
                     />
                   )}
                 </Box>
@@ -106,14 +116,13 @@ const Sidebar = ({ open, onToggleSidebar, onPathChange, menuItems }) => {
                 <IconButton
                   onClick={(event) => {
                     event.stopPropagation(); // Ngăn sự kiện nổi lên ListItem
-                    event.preventDefault(); // Ngăn điều hướng trang
                     toggleSubMenu(index); // Hiển thị/ẩn submenu
                   }}
                 >
                   {openSubMenu[index] ? (
-                    <ArrowDropDownIcon />
+                    <ArrowDropDownIcon sx={{ ml: "0.2rem" }} />
                   ) : (
-                    <ArrowRightIcon />
+                    <ArrowRightIcon sx={{ ml: "0.2rem" }} />
                   )}
                 </IconButton>
               )}
@@ -132,7 +141,7 @@ const Sidebar = ({ open, onToggleSidebar, onPathChange, menuItems }) => {
                     <Tooltip title={subItem.text} arrow placement="right">
                       <ListItemText
                         primary={subItem.text}
-                        sx={{ color: "#1C1C1C", fontSize: "0.1rem" }}
+                        sx={{ color: "#1C1C1C", fontSize: "0.7rem" }} // Giảm kích thước font chữ cho subItem
                       />
                     </Tooltip>
                   </ListItem>

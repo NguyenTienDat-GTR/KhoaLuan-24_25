@@ -104,7 +104,10 @@ const Overview = ({ isSidebarOpen }) => {
   };
 
   return (
-    <Box sx={{ paddingY: 4, paddingX: 0.5 }}>
+    <Box sx={{ paddingY: 6, paddingX: 0.5 }}>
+      <Typography variant="h6" sx={{ fontWeight: "Bold" }}>
+        Tổng quan
+      </Typography>
       {/* Chọn năm */}
       <Box sx={{ gap: "1rem", display: "flex", alignItems: "center" }}>
         <Typography sx={{ fontSize: "1.3rem" }}>

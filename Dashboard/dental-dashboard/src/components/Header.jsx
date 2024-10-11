@@ -131,7 +131,7 @@ const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
       </Menu>
 
       {/* Path Navigation */}
-      <Box
+      {/* <Box
         className="path"
         sx={{
           display: "flex",
@@ -170,7 +170,7 @@ const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
             )}
           </span>
         ))}
-      </Box>
+      </Box> */}
     </AppBar>
   );
 };

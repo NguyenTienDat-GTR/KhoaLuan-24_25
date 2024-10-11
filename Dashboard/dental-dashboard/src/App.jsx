@@ -116,21 +116,20 @@ function App() {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handlePathChange = (newPath, isSubMenu = false, parentPath = "") => {
+  const handlePathChange = (newPath, isSubMenu = false) => {
+    setCurrentPath(newPath);
+
     if (newPath === "Tổng quan") {
+      // Reset fullPath về chỉ "Tổng quan"
       setFullPath("Tổng quan");
-      setCurrentPath("Tổng quan");
-    } else if (isSubMenu && parentPath) {
-      setFullPath(`Tổng quan / ${parentPath} / ${newPath}`);
-      setCurrentPath(`Tổng quan / ${parentPath} / ${newPath}`);
+    } else if (isSubMenu) {
+      // Nếu là menu con, thêm vào fullPath
+      setFullPath((prevFullPath) => `${prevFullPath} / ${newPath}`);
     } else {
-      // Nếu chọn trang cha, xóa bỏ trang con
-      if (!isSubMenu) {
-        const parent = menuItems.find((item) => item.text === newPath);
-        if (parent) {
-          setFullPath(`Tổng quan / ${parent.text}`);
-          setCurrentPath(`Tổng quan / ${parent.text}`);
-        }
+      // Nếu chọn trang cha, cập nhật fullPath chỉ với trang cha
+      const parent = menuItems.find((item) => item.text === newPath);
+      if (parent) {
+        setFullPath(`${parent.text}`);
       }
     }
   };
@@ -156,12 +155,10 @@ function App() {
         {
           text: "Dịch vụ tổng quát",
           path: "tong-quat",
-          icon: <ArrowRight />,
         },
         {
           text: "Dịch vụ chuyên khoa",
           path: "chuyen-khoa",
-          icon: <ArrowRight />,
         },
       ],
     },
@@ -171,9 +168,19 @@ function App() {
       path: "dashboard/quan-ly-benh-nhan",
     },
     {
-      text: "Quản lý bác sĩ và nhân viên",
+      text: "Quản lý nhân sự",
       icon: <AssignmentInd sx={{ color: "rgba(21,182,210)" }} />,
-      path: "dashboard/quan-ly-bac-si-nhan-vien",
+      path: "dashboard/quan-ly-nhan-su",
+      subItems: [
+        {
+          text: "Quản lí nhân viên",
+          path: "nhan-vien",
+        },
+        {
+          text: "Quản lí bác sĩ",
+          path: "bac-si",
+        },
+      ],
     },
     {
       text: "Hồ sơ điều trị",
@@ -191,7 +198,7 @@ function App() {
       path: "dashboard/bao-cao",
     },
     {
-      text: "Quản lí tài khoản",
+      text: "Quản lý tài khoản",
       icon: <ManageAccounts sx={{ color: "rgba(21,182,210)" }} />,
       path: "dashboard/tai-khoan",
     },
@@ -234,7 +241,7 @@ function App() {
         )}
         {/* Truyền currentPath cho Header */}
         {/* Routes */}
-        <Box sx={{ mt: !isLoggedIn ? 0 : "5rem" }}>
+        <Box sx={{ mt: !isLoggedIn ? 0 : "1rem" }}>
           {/* Thêm margin-top cho không gian giữa Header và Overview */}
           <Routes>
             {isLoggedIn ? (
