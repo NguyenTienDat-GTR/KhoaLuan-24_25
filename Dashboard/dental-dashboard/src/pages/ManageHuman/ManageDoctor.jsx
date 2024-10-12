@@ -105,77 +105,120 @@ const ManageDoctor = () => {
           display: "flex",
           alignItems: "center",
           marginBottom: 2,
-          gap: 2,
-          flexWrap: "wrap",
+          gap: 4,
         }}
       >
         <TextField
-          label="Tìm kiếm"
+          label="Tìm kiếm theo mã, họ tên, số điện thoại hoặc email"
           variant="outlined"
           size="small"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          sx={{ width: "20%", bgcolor: "#f5f5f5" }} // Thay đổi màu nền
+          sx={{ width: "40%", bgcolor: "#f5f5f5" }} // Thay đổi màu nền
         />
-
-        <Typography sx={{ marginTop: 0.5 }}>Lọc theo ngày:</Typography>
-        <FormControl variant="outlined" size="small" sx={{ minWidth: 120 }}>
-          <Select
-            value={selectedDay}
-            onChange={(e) => setSelectedDay(e.target.value)}
-            displayEmpty
-            sx={{ bgcolor: "#f5f5f5" }}
+        <Box
+          className="filter"
+          sx={{
+            position: "relative",
+            width: "50%",
+            padding: 2,
+            border: "1px solid #ccc",
+            borderRadius: 2,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography
+            component="label"
+            sx={{
+              position: "absolute",
+              top: "-10px",
+              left: 10,
+              bgcolor: "white",
+              px: 0.5,
+              fontSize: "0.875rem",
+              color: "#333",
+            }}
           >
-            <MenuItem value="">
-              <em>Tất cả ngày</em>
-            </MenuItem>
-            <MenuItem value="Thứ Hai">Thứ Hai</MenuItem>
-            <MenuItem value="Thứ Ba">Thứ Ba</MenuItem>
-            <MenuItem value="Thứ Tư">Thứ Tư</MenuItem>
-            <MenuItem value="Thứ Năm">Thứ Năm</MenuItem>
-            <MenuItem value="Thứ Sáu">Thứ Sáu</MenuItem>
-            <MenuItem value="Thứ Bảy">Thứ Bảy</MenuItem>
-            <MenuItem value="Chủ Nhật">Chủ Nhật</MenuItem>
-          </Select>
-        </FormControl>
-
-        <Typography sx={{ marginTop: 0.5 }}>Lọc theo thời gian:</Typography>
-        <FormControl variant="outlined" size="small" sx={{ minWidth: 120 }}>
-          <Select
-            value={selectedTime}
-            onChange={(e) => setSelectedTime(e.target.value)}
-            displayEmpty
-            sx={{ bgcolor: "#f5f5f5" }}
+            Thời gian làm việc
+          </Typography>
+          <Box
+            sx={{
+              width: "45%",
+              display: "flex",
+              justifyContent: "space-evenly",
+              alignItems: "center",
+            }}
           >
-            <MenuItem value="">
-              <em>Tất cả thời gian</em>
-            </MenuItem>
-            <MenuItem value="08:00 - 12:00">08:00 - 12:00</MenuItem>
-            <MenuItem value="13:00 - 17:00">13:00 - 17:00</MenuItem>
-            <MenuItem value="Cả ngày">Cả ngày</MenuItem>
-          </Select>
-        </FormControl>
+            <Typography sx={{ marginTop: 0.5 }}>Theo ngày:</Typography>
+            <FormControl variant="outlined" size="small" sx={{ minWidth: 120 }}>
+              <Select
+                value={selectedDay}
+                onChange={(e) => setSelectedDay(e.target.value)}
+                displayEmpty
+                sx={{ bgcolor: "#f5f5f5" }}
+              >
+                <MenuItem value="">
+                  <em>Tất cả ngày</em>
+                </MenuItem>
+                <MenuItem value="Thứ Hai">Thứ Hai</MenuItem>
+                <MenuItem value="Thứ Ba">Thứ Ba</MenuItem>
+                <MenuItem value="Thứ Tư">Thứ Tư</MenuItem>
+                <MenuItem value="Thứ Năm">Thứ Năm</MenuItem>
+                <MenuItem value="Thứ Sáu">Thứ Sáu</MenuItem>
+                <MenuItem value="Thứ Bảy">Thứ Bảy</MenuItem>
+                <MenuItem value="Chủ Nhật">Chủ Nhật</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
 
-        <Box>
-          <Typography variant="caption">Trạng thái:</Typography>
-          <RadioGroup
-            row
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+          <Box
+            sx={{
+              width: "40%",
+              display: "flex",
+              justifyContent: "space-evenly",
+              alignItems: "center",
+            }}
           >
-            <FormControlLabel value="" control={<Radio />} label="Tất cả" />
-            <FormControlLabel
-              value="active"
-              control={<Radio />}
-              label="Còn hoạt động"
-            />
-            <FormControlLabel
-              value="inactive"
-              control={<Radio />}
-              label="Đã nghỉ"
-            />
-          </RadioGroup>
+            <Typography sx={{ marginTop: 1 }}>Theo giờ:</Typography>
+            <FormControl variant="outlined" size="small" sx={{ minWidth: 120 }}>
+              <Select
+                value={selectedTime}
+                onChange={(e) => setSelectedTime(e.target.value)}
+                displayEmpty
+                sx={{ bgcolor: "#f5f5f5" }}
+              >
+                <MenuItem value="">
+                  <em>Tất cả giờ</em>
+                </MenuItem>
+                <MenuItem value="08:00 - 12:00">08:00 - 12:00</MenuItem>
+                <MenuItem value="13:00 - 17:00">13:00 - 17:00</MenuItem>
+                <MenuItem value="Cả ngày">Cả ngày</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
         </Box>
+      </Box>
+      <Box>
+        <Typography variant="caption">Trạng thái:</Typography>
+        <RadioGroup
+          row
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
+          <FormControlLabel value="" control={<Radio />} label="Tất cả" />
+          <FormControlLabel
+            value="active"
+            control={<Radio />}
+            label="Còn hoạt động"
+          />
+          <FormControlLabel
+            value="inactive"
+            control={<Radio />}
+            label="Đã nghỉ"
+          />
+        </RadioGroup>
       </Box>
 
       <Box sx={{ marginBottom: 2 }}>
@@ -205,7 +248,14 @@ const ManageDoctor = () => {
             {filteredDoctors
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((doctor, index) => (
-                <TableRow key={doctor.id} hover>
+                <TableRow
+                  key={doctor.id}
+                  hover
+                  sx={{
+                    backgroundColor:
+                      doctor.status === "inactive" ? "#ffebee" : "inherit", // Màu đỏ nhạt cho bác sĩ đã nghỉ
+                  }}
+                >
                   <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
                   <TableCell>{doctor.id}</TableCell>
                   <TableCell>{doctor.name}</TableCell>
