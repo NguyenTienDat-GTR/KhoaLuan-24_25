@@ -21,6 +21,18 @@ import {
   RadioGroup,
 } from "@mui/material";
 import { Add, Edit, Visibility } from "@mui/icons-material";
+import CreateDoctor from "../../components/ManageDoctor/createDoctor";
+import DoctorDetail from "../../components/ManageDoctor/DoctorDetail";
+
+const daysOfWeek = {
+  Monday: "Thứ Hai",
+  Tuesday: "Thứ Ba",
+  Wednesday: "Thứ Tư",
+  Thursday: "Thứ Năm",
+  Friday: "Thứ Sáu",
+  Saturday: "Thứ Bảy",
+  Sunday: "Chủ Nhật",
+};
 
 const ManageDoctor = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -29,6 +41,9 @@ const ManageDoctor = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [openCreateDoctor, setOpenCreateDoctor] = useState(false);
+  const [openDoctorDetail, setOpenDoctorDetail] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
 
   const doctors = [
     {
@@ -36,15 +51,22 @@ const ManageDoctor = () => {
       name: "Nguyễn Văn A",
       phone: "0123456789",
       email: "a@gmail.com",
-      workingHours: "08:00 - 12:00",
-      status: "active", // Thêm trạng thái
+      workingSchedule: {
+        Monday: ["08:00 - 12:00", "13:00 - 17:00"],
+        Wednesday: ["08:00 - 12:00"],
+        Friday: ["13:00 - 17:00"],
+      },
+      status: "active",
     },
     {
       id: "BS00002",
       name: "Trần Thị B",
       phone: "0987654321",
       email: "b@gmail.com",
-      workingHours: "13:00 - 17:00",
+      workingSchedule: {
+        Tuesday: ["08:00 - 12:00"],
+        Thursday: ["13:00 - 17:00"],
+      },
       status: "inactive",
     },
     {
@@ -52,7 +74,11 @@ const ManageDoctor = () => {
       name: "Lê Thị C",
       phone: "0912345678",
       email: "c@gmail.com",
-      workingHours: "Cả ngày",
+      workingSchedule: {
+        Monday: ["08:00 - 17:00"],
+        Wednesday: ["08:00 - 17:00"],
+        Friday: ["08:00 - 17:00"],
+      },
       status: "active",
     },
     {
@@ -60,7 +86,10 @@ const ManageDoctor = () => {
       name: "Phạm Văn D",
       phone: "0123456780",
       email: "d@gmail.com",
-      workingHours: "08:00 - 12:00, 13:00 - 17:00",
+      workingSchedule: {
+        Saturday: ["08:00 - 12:00", "13:00 - 17:00"],
+        Sunday: ["08:00 - 12:00"],
+      },
       status: "inactive",
     },
     {
@@ -68,10 +97,12 @@ const ManageDoctor = () => {
       name: "Trần Thị E",
       phone: "0987654320",
       email: "e@gmail.com",
-      workingHours: "Thứ Bảy: 08:00 - 12:00, Chủ Nhật: 13:00 - 17:00",
+      workingSchedule: {
+        Saturday: ["08:00 - 12:00"],
+        Sunday: ["13:00 - 17:00"],
+      },
       status: "active",
     },
-    // Thêm nhiều bác sĩ nếu cần
   ];
 
   const filteredDoctors = doctors.filter((doctor) => {
@@ -92,6 +123,19 @@ const ManageDoctor = () => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleOpenCreateDoctor = () => {
+    setOpenCreateDoctor(true);
+  };
+
+  const handleCloseCreateDoctor = () => {
+    setOpenCreateDoctor(false);
+  };
+
+  const handleOpenDoctorDetail = (doctor) => {
+    setSelectedDoctor(doctor);
+    setOpenDoctorDetail(true);
   };
 
   return (
@@ -226,6 +270,7 @@ const ManageDoctor = () => {
           variant="contained"
           startIcon={<Add />}
           sx={{ bgcolor: "#4caf50" }}
+          onClick={handleOpenCreateDoctor}
         >
           Thêm mới bác sĩ
         </Button>
@@ -249,7 +294,7 @@ const ManageDoctor = () => {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((doctor, index) => (
                 <TableRow
-                  key={doctor.id}
+                  key={`${doctor.id}-${index}`}
                   hover
                   sx={{
                     backgroundColor:
@@ -262,21 +307,23 @@ const ManageDoctor = () => {
                   <TableCell>{doctor.phone}</TableCell>
                   <TableCell>{doctor.email}</TableCell>
                   <TableCell>
-                    {doctor.workingHours.split(",").map((time, i) => (
-                      <Typography key={i} display="block">
-                        {time.trim()}
-                      </Typography>
-                    ))}
+                    {/* Chuyển đổi lịch làm việc thành chuỗi để hiển thị */}
+                    {Object.entries(doctor.workingSchedule).map(
+                      ([day, times]) => (
+                        <div key={day}>
+                          {daysOfWeek[day]}: {times.join(", ")}{" "}
+                          {/* Sử dụng từ điển để hiển thị ngày bằng tiếng Việt */}
+                        </div>
+                      )
+                    )}
                   </TableCell>
+
                   <TableCell>
                     <Tooltip title="Xem chi tiết">
-                      <IconButton>
+                      <IconButton
+                        onClick={() => handleOpenDoctorDetail(doctor)}
+                      >
                         <Visibility sx={{ color: "green" }} />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Chỉnh sửa">
-                      <IconButton>
-                        <Edit sx={{ color: "blue" }} />
                       </IconButton>
                     </Tooltip>
                   </TableCell>
@@ -294,6 +341,14 @@ const ManageDoctor = () => {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+      {/* Dialog thêm mới bác sĩ */}
+      <CreateDoctor open={openCreateDoctor} onClose={handleCloseCreateDoctor} />
+      {/* Dialog xem chi tiết bác sĩ */}
+      <DoctorDetail
+        open={openDoctorDetail}
+        onClose={() => setOpenDoctorDetail(false)}
+        doctor={selectedDoctor}
       />
     </Box>
   );
