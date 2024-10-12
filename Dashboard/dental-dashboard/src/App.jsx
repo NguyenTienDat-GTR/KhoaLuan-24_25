@@ -38,6 +38,9 @@ const ModalAuthorization = React.lazy(() =>
 const ManageDoctor = React.lazy(() =>
   import("./pages/ManageHuman/ManageDoctor")
 );
+const ManageEmployee = React.lazy(() =>
+  import("./pages/ManageHuman/ManageEmployee")
+);
 
 const LazyComponent = ({ Component }) => {
   const [isInView, setIsInView] = useState(false);
@@ -263,6 +266,16 @@ function App() {
                     <LazyComponent
                       Component={() => (
                         <ManageDoctor isSidebarOpen={sidebarOpen} />
+                      )}
+                    />
+                  }
+                />
+                <Route
+                  path="/dashboard/quan-ly-nhan-su/nhan-vien"
+                  element={
+                    <LazyComponent
+                      Component={() => (
+                        <ManageEmployee isSidebarOpen={sidebarOpen} />
                       )}
                     />
                   }
