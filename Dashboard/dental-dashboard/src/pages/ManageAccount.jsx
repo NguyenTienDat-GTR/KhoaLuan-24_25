@@ -157,7 +157,7 @@ const ManageAccount = ({ isSidebarOpen }) => {
         />
         <Button
           variant="contained"
-          color="primary"
+          sx={{ bgcolor: "#4caf50" }}
           startIcon={<PersonAddIcon />}
           onClick={() => setCreateAccountDialogOpen(true)}
         >

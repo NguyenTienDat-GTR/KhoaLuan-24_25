@@ -11,6 +11,7 @@ import {
   Radio,
   Checkbox,
   FormControl,
+  FormLabel,
 } from "@mui/material";
 import { Add, RestartAlt, Save, Cancel } from "@mui/icons-material";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
@@ -114,6 +115,7 @@ const CreateDoctor = ({ open, onClose }) => {
                 }}
               />
               <FormControl sx={{ height: "3.55rem", justifyContent: "center" }}>
+                <FormLabel component="legend">Giới tính</FormLabel>
                 <RadioGroup
                   row
                   value={gender}

@@ -81,7 +81,7 @@ const CreateAccount = ({ open, onClose }) => {
         <Button onClick={onClose}>Hủy</Button>
         <Button
           onClick={handleCreateAccount}
-          color="primary"
+          color="success"
           disabled={!selectedUser || !role} // Kích hoạt nút khi cả hai trường đều có giá trị
           sx={{
             backgroundColor: selectedUser && role ? "primary.main" : "grey.400",
