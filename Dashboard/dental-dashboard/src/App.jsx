@@ -27,6 +27,8 @@ import {
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import { AuthProvider, useAuth } from "./hooks/auth/useAuth";
+import "react-toastify/dist/ReactToastify.css"; // Import CSS cho toast
+import { ToastContainer } from "react-toastify";
 
 // Lazy load components
 const Overview = React.lazy(() => import("./pages/Overview"));
@@ -313,6 +315,15 @@ export default () => (
   <AuthProvider>
     <Router>
       <App />
+      <ToastContainer
+        position="top-center"
+        autoClose={5000} // Thời gian tự động đóng toast (5000ms = 5 giây)
+        hideProgressBar={true} // Hiện thanh tiến trình
+        closeOnClick
+        pauseOnHover
+        draggable
+        pauseOnFocusLoss
+      />
     </Router>
   </AuthProvider>
 );

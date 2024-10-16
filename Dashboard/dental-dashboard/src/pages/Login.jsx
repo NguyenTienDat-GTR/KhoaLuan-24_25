@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   TextField,
@@ -12,6 +12,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { styled } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/auth/useAuth";
+import { toast } from "react-toastify";
 
 const FullScreenContainer = styled(Box)({
   display: "flex",
@@ -41,7 +42,7 @@ const LoginPaper = styled(Paper)({
   textAlign: "center",
   boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
   backdropFilter: "blur(5px)", // Hiệu ứng làm mờ nền phía sau form
-  backgroundColor: "rgba(255, 255, 255, 1)", // Đặt màu nền trong suốt một chút để form nổi bật trên hình nền
+  backgroundColor: "rgba(255, 255, 255, 1)",
 });
 
 const StyledFormControl = styled(FormControl)({
@@ -51,13 +52,23 @@ const StyledFormControl = styled(FormControl)({
 
 const Login = () => {
   const navigate = useNavigate(); // Khởi tạo useNavigate
-  const { login } = useAuth(); // Lấy hàm login từ context
+  const { login } = useAuth();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = (event) => {
-    event.preventDefault(); // Ngăn chặn hành vi mặc định của form
-    // Xử lý xác thực ở đây nếu cần thiết
-    login();
-    navigate("/dashboard/tong-quan"); // Chuyển hướng đến trang tổng quan
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const success = await login(username, password); // Chờ hàm login trả về
+
+    if (success) {
+      // Kiểm tra xem đăng nhập có thành công không
+      toast.success("Đăng nhập thành công!"); // Hiển thị thông báo thành công
+      navigate("/dashboard/tong-quan"); // Chuyển hướng đến trang tổng quan
+    } else {
+      toast.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin!");
+
+      console.error("Đăng nhập thất bại, vui lòng kiểm tra lại thông tin.");
+    }
   };
 
   return (
@@ -83,6 +94,8 @@ const Login = () => {
                 name="username"
                 autoComplete="username"
                 autoFocus
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </StyledFormControl>
             <StyledFormControl>
@@ -93,6 +106,8 @@ const Login = () => {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </StyledFormControl>
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
