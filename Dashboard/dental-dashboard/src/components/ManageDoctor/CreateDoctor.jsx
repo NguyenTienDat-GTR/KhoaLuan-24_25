@@ -12,11 +12,14 @@ import {
   Checkbox,
   FormControl,
   FormLabel,
+  Avatar,
 } from "@mui/material";
 import { Add, RestartAlt, Save, Cancel } from "@mui/icons-material";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import axios from "../../config/axiosConfig";
+import Cookies from "js-cookie";
 
 const CreateDoctor = ({ open, onClose }) => {
   const [name, setName] = useState("");
@@ -27,6 +30,7 @@ const CreateDoctor = ({ open, onClose }) => {
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [degree, setDegree] = useState("");
+  const [avatar, setAvatar] = useState(null);
   const [workingSchedule, setWorkingSchedule] = useState({
     Monday: [],
     Tuesday: [],
@@ -48,6 +52,14 @@ const CreateDoctor = ({ open, onClose }) => {
     Sunday: "Chủ Nhật",
   };
 
+  // Handling avatar change
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAvatar(URL.createObjectURL(file)); // Create a local URL for the selected file
+    }
+  };
+
   const handleReset = () => {
     setName("");
     setDob(null);
@@ -57,6 +69,7 @@ const CreateDoctor = ({ open, onClose }) => {
     setEmail("");
     setAddress("");
     setDegree("");
+    setAvatar(null);
     setWorkingSchedule({
       Monday: [],
       Tuesday: [],
@@ -69,7 +82,7 @@ const CreateDoctor = ({ open, onClose }) => {
   };
 
   const handleCreate = () => {
-    const dobString = dob ? dob.format("YYYYMMDD") : "";
+    const dobString = dob ? dob.format("DDMMYYYY") : "";
     const doctorId = `${dobString}${idCard.slice(-4)}`.slice(0, 8);
     console.log("Doctor ID:", doctorId);
     console.log("Working Schedule:", workingSchedule);
@@ -95,6 +108,31 @@ const CreateDoctor = ({ open, onClose }) => {
             component="form"
             sx={{ display: "flex", flexDirection: "row", gap: 4 }}
           >
+            {/* Avatar upload */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 2,
+                marginTop: 2,
+              }}
+            >
+              <Avatar
+                alt="Avatar Preview"
+                src={avatar} // Display selected avatar
+                sx={{ width: 120, height: 120 }}
+              />
+              <Button variant="contained" component="label">
+                Tải lên ảnh đại diện
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={handleAvatarChange} // Handle file selection
+                />
+              </Button>
+            </Box>
             <Box
               sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}
             >
@@ -183,7 +221,11 @@ const CreateDoctor = ({ open, onClose }) => {
                 .map((row, rowIndex) => (
                   <Box
                     key={rowIndex}
-                    sx={{ display: "flex", justifyContent: "space-between" }}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      gap: 5,
+                    }}
                   >
                     {row.map((day) => (
                       <Box

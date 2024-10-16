@@ -2,6 +2,7 @@ import { create } from "zustand";
 import Cookies from "js-cookie";
 import axios from "../../config/axiosConfig";
 import React, { createContext, useContext } from "react";
+import { toast } from "react-toastify";
 
 export const useAuth = create((set) => ({
   isLoggedIn: !!Cookies.get("token"), // Kiểm tra token trong cookie
@@ -10,6 +11,7 @@ export const useAuth = create((set) => ({
   login: async (username, password) => {
     try {
       const response = await axios.post("/auth/login", { username, password });
+
       const { token } = response.data;
 
       // Lưu token vào cookie
@@ -17,8 +19,10 @@ export const useAuth = create((set) => ({
 
       // Cập nhật trạng thái đăng nhập
       set({ isLoggedIn: true, token });
+      toast.success(response.data.message);
       return true;
     } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
       console.error(
         "Login failed:",
         error.response?.data?.message || error.message
@@ -29,6 +33,7 @@ export const useAuth = create((set) => ({
   logout: () => {
     // Xóa token khỏi cookie và cập nhật trạng thái đăng xuất
     Cookies.remove("token");
+    Cookies.remove("user");
     set({ isLoggedIn: false, token: null });
   },
 }));

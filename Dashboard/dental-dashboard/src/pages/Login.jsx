@@ -12,7 +12,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { styled } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/auth/useAuth";
-import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 const FullScreenContainer = styled(Box)({
   display: "flex",
@@ -62,11 +62,11 @@ const Login = () => {
 
     if (success) {
       // Kiểm tra xem đăng nhập có thành công không
-      toast.success("Đăng nhập thành công!"); // Hiển thị thông báo thành công
-      navigate("/dashboard/tong-quan"); // Chuyển hướng đến trang tổng quan
+      const token = Cookies.get("token");
+      if (token) {
+        navigate("/dashboard/tong-quan"); // Chuyển hướng đến trang tổng quan
+      }
     } else {
-      toast.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin!");
-
       console.error("Đăng nhập thất bại, vui lòng kiểm tra lại thông tin.");
     }
   };

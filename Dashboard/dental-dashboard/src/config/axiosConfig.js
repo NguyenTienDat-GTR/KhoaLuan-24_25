@@ -4,7 +4,7 @@ import { REACT_APP_IP_ADDRESS, REACT_APP_PORT } from "../../env";
 
 const BASE_URL = `http://${REACT_APP_IP_ADDRESS}:${REACT_APP_PORT}`;
 
-const axisoInstance = axios.create({ baseURL: BASE_URL });
+const axiosInstance = axios.create({ baseURL: BASE_URL });
 
 axios.interceptors.response.use(
     (response) => response,
@@ -12,4 +12,4 @@ axios.interceptors.response.use(
         Promise.reject((error.response && error.response) || "Something went wrong")
 );
 
-export default axisoInstance;
+export default axiosInstance;

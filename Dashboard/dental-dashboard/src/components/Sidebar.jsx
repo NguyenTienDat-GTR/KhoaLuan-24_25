@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Drawer,
   List,
@@ -9,26 +9,33 @@ import {
   Box,
   Avatar,
   Tooltip,
+  Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 const Sidebar = ({ open, onToggleSidebar, onPathChange, menuItems }) => {
   const [openSubMenu, setOpenSubMenu] = useState({});
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      const decodedUser = jwtDecode(token);
+      setUser(decodedUser);
+    }
+  }, [Cookies.get("token")]);
 
   const toggleSubMenu = (index) => {
     setOpenSubMenu((prevState) => ({
       ...prevState,
       [index]: !prevState[index],
     }));
-  };
-
-  const user = {
-    name: "Nguyễn Văn An",
-    avatarUrl: "https://picsum.photos/200",
   };
 
   return (
@@ -56,14 +63,15 @@ const Sidebar = ({ open, onToggleSidebar, onPathChange, menuItems }) => {
         <Box sx={{ display: "flex", alignItems: "center", height: "2.7rem" }}>
           {open && (
             <>
-              <Avatar
-                alt={user.name}
-                src={user.avatarUrl}
-                sx={{ marginRight: 1, cursor: "pointer" }}
-              />
-              <span style={{ color: "rgba(100,100,255)", fontWeight: "bold" }}>
-                {user.name}
-              </span>
+              <Typography
+                sx={{
+                  color: "rgba(100,100,255)",
+                  fontWeight: "bold",
+                  fontSize: "1.2rem",
+                }}
+              >
+                {user?.user.details.employeeName}
+              </Typography>
             </>
           )}
         </Box>
@@ -91,9 +99,10 @@ const Sidebar = ({ open, onToggleSidebar, onPathChange, menuItems }) => {
               }}
               sx={{
                 display: "flex",
-                justifyContent: open ? "flex-start" : "center",
+                width: "100%",
+                justifyContent: open ? "space-between" : "center",
                 alignItems: "center",
-                padding: open ? "10px 20px" : "10px 5px",
+                padding: open ? "10px 10px" : "10px 5px",
                 cursor: "pointer",
                 fontSize: "10px !important", // Giảm kích thước font chữ
               }}
@@ -118,11 +127,12 @@ const Sidebar = ({ open, onToggleSidebar, onPathChange, menuItems }) => {
                     event.stopPropagation(); // Ngăn sự kiện nổi lên ListItem
                     toggleSubMenu(index); // Hiển thị/ẩn submenu
                   }}
+                  sx={{ width: "20%" }}
                 >
                   {openSubMenu[index] ? (
-                    <ArrowDropDownIcon sx={{ ml: "0.2rem" }} />
+                    <ArrowDropDownIcon />
                   ) : (
-                    <ArrowRightIcon sx={{ ml: "0.2rem" }} />
+                    <ArrowRightIcon />
                   )}
                 </IconButton>
               )}

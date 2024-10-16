@@ -18,26 +18,22 @@ import {
   Person,
   ExitToApp,
 } from "@mui/icons-material";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
   const pathParts = currentPath.split("/");
   const { logout, isLoggedIn } = useAuth();
+  const [user, setUser] = useState(null);
   const navigation = useNavigate();
 
-  const generateLink = (index) => {
-    if (pathParts[index].trim() === "Tổng quan") {
-      return "/dashboard/tong-quan";
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      const decodedUser = jwtDecode(token);
+      setUser(decodedUser);
     }
-
-    const menuItem = menuItems.find(
-      (item) => item.text === pathParts[index].trim()
-    );
-    if (menuItem) {
-      return `/${menuItem.path}`;
-    }
-
-    return "//dashboard/tong-quan";
-  };
+  }, [Cookies.get("token")]); // Theo dõi token
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -100,7 +96,7 @@ const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
           justifyContent: "space-between",
           alignItems: "center",
           // right: sidebarOpen ? "22%" : "10%",
-          top: "1%",
+          top: "-10",
           right: "5%",
           position: "fixed",
           width: "auto",
@@ -110,7 +106,11 @@ const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
           <Notifications />
         </IconButton>
         <IconButton color="inherit" onClick={handleMenuOpen}>
-          <Avatar alt="User Name" src="/path-to-avatar.jpg" />
+          <Avatar
+            alt="User Name"
+            src={user?.user.details?.urlAvatar}
+            sx={{ width: 50, height: 50 }}
+          />
         </IconButton>
       </Box>
 

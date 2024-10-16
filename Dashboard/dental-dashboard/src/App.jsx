@@ -104,7 +104,7 @@ const LazyComponent = ({ Component }) => {
 };
 
 function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(true); // Trạng thái mở hoặc thu gọn sidebar
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Trạng thái mở hoặc thu gọn sidebar
   const [currentPath, setCurrentPath] = useState("Tổng quan");
   const [fullPath, setFullPath] = useState("Tổng quan"); // lưu full path
   const { isLoggedIn } = useAuth() || {}; // Sử dụng giá trị mặc định nếu useAuth không trả về gì
@@ -213,7 +213,7 @@ function App() {
   };
 
   return (
-    <Box sx={{ display: isLoginPage ? "block" : "flex" }}>
+    <Box sx={{ display: !isLoggedIn ? "block" : "flex" }}>
       {/* Sidebar */}
 
       {isLoggedIn && (
@@ -315,15 +315,15 @@ export default () => (
   <AuthProvider>
     <Router>
       <App />
-      <ToastContainer
-        position="top-center"
-        autoClose={5000} // Thời gian tự động đóng toast (5000ms = 5 giây)
-        hideProgressBar={true} // Hiện thanh tiến trình
-        closeOnClick
-        pauseOnHover
-        draggable
-        pauseOnFocusLoss
-      />
+      {/* <ToastContainer
+          position="top-center"
+          autoClose={3000} // Thời gian tự động đóng toast (3000ms = 3 giây)
+          hideProgressBar={true} // Hiện thanh tiến trình
+          newestOnTop={true} // Hiện toast mới nhất ở trên cùng
+          pauseOnHover
+          draggable
+          pauseOnFocusLoss
+        /> */}
     </Router>
   </AuthProvider>
 );
