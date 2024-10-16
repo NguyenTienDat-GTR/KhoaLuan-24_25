@@ -315,15 +315,14 @@ export default () => (
   <AuthProvider>
     <Router>
       <App />
-      {/* <ToastContainer
-          position="top-center"
-          autoClose={3000} // Thời gian tự động đóng toast (3000ms = 3 giây)
-          hideProgressBar={true} // Hiện thanh tiến trình
-          newestOnTop={true} // Hiện toast mới nhất ở trên cùng
-          pauseOnHover
-          draggable
-          pauseOnFocusLoss
-        /> */}
+      <ToastContainer
+        position="top-center"
+        autoClose={3000} // Thời gian tự động đóng toast (3000ms = 3 giây)
+        hideProgressBar={true} // Hiện thanh tiến trình
+        newestOnTop={true} // Hiện toast mới nhất ở trên cùng
+        draggable
+        pauseOnFocusLoss
+      />
     </Router>
   </AuthProvider>
 );

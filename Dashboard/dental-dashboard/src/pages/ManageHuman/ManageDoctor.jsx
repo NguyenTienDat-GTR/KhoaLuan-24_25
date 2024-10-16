@@ -21,7 +21,7 @@ import {
   RadioGroup,
 } from "@mui/material";
 import { Add, Edit, Visibility } from "@mui/icons-material";
-import CreateDoctor from "../../components/ManageDoctor/createDoctor";
+import CreateDoctor from "../../components/ManageDoctor/CreateDoctor";
 import DoctorDetail from "../../components/ManageDoctor/DoctorDetail";
 
 const daysOfWeek = {

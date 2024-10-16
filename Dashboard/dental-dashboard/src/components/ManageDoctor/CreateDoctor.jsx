@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -13,13 +13,15 @@ import {
   FormControl,
   FormLabel,
   Avatar,
+  Typography,
 } from "@mui/material";
 import { Add, RestartAlt, Save, Cancel } from "@mui/icons-material";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import axios from "../../config/axiosConfig";
 import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+import useCreateDoctor from "../../hooks/doctor/useCreateDoctor";
 
 const CreateDoctor = ({ open, onClose }) => {
   const [name, setName] = useState("");
@@ -31,6 +33,8 @@ const CreateDoctor = ({ open, onClose }) => {
   const [address, setAddress] = useState("");
   const [degree, setDegree] = useState("");
   const [avatar, setAvatar] = useState(null);
+  const [createBy, setCreateBy] = useState("");
+  const [imageFile, setImageFile] = useState(null);
   const [workingSchedule, setWorkingSchedule] = useState({
     Monday: [],
     Tuesday: [],
@@ -40,6 +44,17 @@ const CreateDoctor = ({ open, onClose }) => {
     Saturday: [],
     Sunday: [],
   });
+  const { createDoctor, loading, error, success } = useCreateDoctor();
+  const [userLoggedIn, setUserLoggedIn] = useState(null);
+
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      const decodedUser = jwtDecode(token);
+      setUserLoggedIn(decodedUser);
+      console.log(userLoggedIn);
+    }
+  }, []);
 
   // Ánh xạ tên ngày tiếng Anh sang tiếng Việt
   const daysOfWeek = {
@@ -55,8 +70,10 @@ const CreateDoctor = ({ open, onClose }) => {
   // Handling avatar change
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
+    console.log(file);
     if (file) {
       setAvatar(URL.createObjectURL(file)); // Create a local URL for the selected file
+      setImageFile(file);
     }
   };
 
@@ -81,13 +98,33 @@ const CreateDoctor = ({ open, onClose }) => {
     });
   };
 
+  useEffect(() => {
+    handleReset();
+  }, [success]);
+
   const handleCreate = () => {
-    const dobString = dob ? dob.format("DDMMYYYY") : "";
-    const doctorId = `${dobString}${idCard.slice(-4)}`.slice(0, 8);
-    console.log("Doctor ID:", doctorId);
-    console.log("Working Schedule:", workingSchedule);
-    // Xử lý thêm bác sĩ mới ở đây
-    onClose();
+    console.log("tạo bác sĩ");
+    // Chỉ lấy những ngày có ít nhất 1 timeSlot
+    const filteredWorkingTime = Object.entries(workingSchedule)
+      .filter(([day, slots]) => slots.length > 0) // Chỉ giữ lại những ngày có timeSlot
+      .map(([day, slots]) => ({
+        day, // Ngày làm việc
+        timeSlots: slots, // Các khung giờ
+      }));
+
+    const doctorData = {
+      employeeName: name,
+      gender,
+      birthDate: dob ? dob.format("YYYY-MM-DD") : "",
+      employeePhone: phone,
+      employeeEmail: email,
+      citizenID: idCard,
+      address,
+      workingTime: filteredWorkingTime,
+      employeeSpecialization: [degree], // Bằng cấp
+      createBy: userLoggedIn?.user.details.employeeName,
+    };
+    createDoctor(doctorData, imageFile); // Gọi hàm tạo bác sĩ từ hook
   };
 
   const handleCheckboxChange = (day, time) => {
@@ -115,7 +152,7 @@ const CreateDoctor = ({ open, onClose }) => {
                 flexDirection: "column",
                 alignItems: "center",
                 gap: 2,
-                marginTop: 2,
+                marginTop: "1rem",
               }}
             >
               <Avatar
@@ -126,7 +163,10 @@ const CreateDoctor = ({ open, onClose }) => {
               <Button variant="contained" component="label">
                 Tải lên ảnh đại diện
                 <input
+                  required
+                  autoFocus
                   type="file"
+                  name="employeeAvatar"
                   hidden
                   accept="image/*"
                   onChange={handleAvatarChange} // Handle file selection
@@ -134,13 +174,21 @@ const CreateDoctor = ({ open, onClose }) => {
               </Button>
             </Box>
             <Box
-              sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                mt: "1rem",
+              }}
             >
               <TextField
                 label="Họ tên"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 fullWidth
+                required
+                autoFocus
               />
               <DesktopDatePicker
                 label="Ngày tháng năm sinh"
@@ -158,6 +206,7 @@ const CreateDoctor = ({ open, onClose }) => {
                   row
                   value={gender}
                   onChange={(e) => setGender(e.target.value)}
+                  required
                 >
                   <FormControlLabel
                     value="male"
@@ -176,35 +225,51 @@ const CreateDoctor = ({ open, onClose }) => {
                 value={idCard}
                 onChange={(e) => setIdCard(e.target.value)}
                 fullWidth
+                required
+                autoFocus
               />
             </Box>
 
             <Box
-              sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                mt: "1rem",
+              }}
             >
               <TextField
                 label="Số điện thoại"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 fullWidth
+                required
+                autoFocus
               />
               <TextField
                 label="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 fullWidth
+                required
+                autoFocus
               />
               <TextField
                 label="Địa chỉ"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 fullWidth
+                required
+                autoFocus
               />
               <TextField
                 label="Bằng cấp"
                 value={degree}
                 onChange={(e) => setDegree(e.target.value)}
                 fullWidth
+                required
+                autoFocus
               />
             </Box>
           </Box>
@@ -267,30 +332,37 @@ const CreateDoctor = ({ open, onClose }) => {
           </Box>
 
           <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-            <Button
-              variant="outlined"
-              startIcon={<RestartAlt />}
-              onClick={handleReset}
-              color="primary"
-            >
-              Reset
-            </Button>
-            <Button
-              variant="contained"
-              startIcon={<Save />}
-              onClick={handleCreate}
-              color="success"
-            >
-              Tạo
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<Cancel />}
-              onClick={onClose}
-              color="error"
-            >
-              Hủy
-            </Button>
+            {!loading && (
+              <Button
+                variant="outlined"
+                startIcon={<RestartAlt />}
+                onClick={handleReset}
+                color="primary"
+              >
+                Reset
+              </Button>
+            )}
+            {!loading && (
+              <Button
+                variant="contained"
+                startIcon={<Save />}
+                onClick={handleCreate}
+                color="success"
+              >
+                Tạo
+              </Button>
+            )}
+            {!loading && (
+              <Button
+                variant="outlined"
+                startIcon={<Cancel />}
+                onClick={onClose}
+                color="error"
+              >
+                Hủy
+              </Button>
+            )}
+            {loading && <Typography>Đang thêm bác sĩ...</Typography>}
           </Box>
         </DialogContent>
       </Dialog>
