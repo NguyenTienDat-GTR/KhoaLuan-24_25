@@ -1,5 +1,9 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
+import rangThua from '../images/rang-thua.png';
+import rangMom from '../images/rang-mom.png';
+import rangVau from '../images/rang-vau.png';
+import rangKhapKhenh from '../images/rang-khap-khenh.png';
 
 const Introdution = () => {
   return (
@@ -80,8 +84,20 @@ const Introdution = () => {
       >
         <Box
           component="img"
-          src="https://picsum.photos/200"
+          src={rangThua}
           alt="răng thưa"
+          sx={{
+            width: { xs: "80%", sm: "90%", md: "90%" }, // Giảm width của ảnh
+            height: { xs: "10rem", sm: "10rem", md: "15rem" },
+            objectFit: "cover",
+            mx: "auto", // Canh giữa ảnh
+          }}
+        ></Box>
+         
+        <Box
+          component="img"
+          src={rangVau}
+          alt="răng vầu"
           sx={{
             width: { xs: "80%", sm: "90%", md: "90%" }, // Giảm width của ảnh
             height: { xs: "10rem", sm: "10rem", md: "15rem" },
@@ -91,8 +107,8 @@ const Introdution = () => {
         />
         <Box
           component="img"
-          src="https://picsum.photos/200"
-          alt="răng thưa"
+          src={rangMom}
+          alt="răng móm"
           sx={{
             width: { xs: "80%", sm: "90%", md: "90%" }, // Giảm width của ảnh
             height: { xs: "10rem", sm: "10rem", md: "15rem" },
@@ -102,19 +118,8 @@ const Introdution = () => {
         />
         <Box
           component="img"
-          src="https://picsum.photos/200"
-          alt="răng thưa"
-          sx={{
-            width: { xs: "80%", sm: "90%", md: "90%" }, // Giảm width của ảnh
-            height: { xs: "10rem", sm: "10rem", md: "15rem" },
-            objectFit: "cover",
-            mx: "auto", // Canh giữa ảnh
-          }}
-        />
-        <Box
-          component="img"
-          src="https://picsum.photos/200"
-          alt="răng thưa"
+          src={rangKhapKhenh}
+          alt="răng khấp khểnh"
           sx={{
             width: { xs: "80%", sm: "90%", md: "90%" }, // Giảm width của ảnh
             height: { xs: "10rem", sm: "10rem", md: "15rem" },

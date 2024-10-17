@@ -11,7 +11,7 @@ import {
 import PhoneIcon from "@mui/icons-material/Phone";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link as RouterLink } from "react-router-dom";
-
+import logo from "../components/images/phong-kham/logo.png"
 const Header = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -74,6 +74,15 @@ const Header = () => {
                 margin: "0",
               }}
             >
+              <Box
+                component="img"
+                src={logo} // Replace with your logo image path
+                alt="Logo"
+                sx={{
+                  width: { xs: "3rem", sm: "3.5rem", md: "4.5rem" }, // Adjust logo size
+                  marginRight: { xs: "0.5rem", sm: "1rem" },
+                }}
+              />
               <Typography
                 variant="h4"
                 sx={{
@@ -82,7 +91,7 @@ const Header = () => {
                   fontSize: { xs: "1.5rem", sm: "1.5rem", md: "2.2rem" },
                 }}
               >
-                NHA KHOA
+                PHÒNG KHÁM NHA KHOA
               </Typography>
               <Typography
                 variant="h1"
@@ -93,7 +102,7 @@ const Header = () => {
                   fontSize: { xs: "2rem", sm: "2rem", md: "3.2rem" },
                 }}
               >
-                HOÀNG KIM
+                HBT
               </Typography>
             </Box>
             <Box
@@ -131,7 +140,7 @@ const Header = () => {
                     fontSize: { sm: "0.7rem", md: "1.1rem" },
                   }}
                 >
-                  12 Nguyễn Văn Bảo, Phường 4, Quận Gò Vấp, TP.Hồ Chí Minh
+                  877 Tân Kỳ Tân Quý, Phường Bình Hưng Hoà A, Quận Bình Tân, Tp.Hồ Chí Minh
                 </Typography>
               </Box>
               <Box
@@ -158,7 +167,7 @@ const Header = () => {
                     fontSize: { sm: "0.7rem", md: "1.1rem" },
                   }}
                 >
-                  0123456789
+                  0906070338
                 </Typography>
               </Box>
             </Box>
@@ -243,7 +252,7 @@ const Header = () => {
                 Bảng giá
               </Typography>
             </RouterLink>
-            {/* <RouterLink to="/Braces" style={{ textDecoration: "none" }}>
+            <RouterLink to="/Braces" style={{ textDecoration: "none" }}>
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{
@@ -253,7 +262,7 @@ const Header = () => {
               >
                 Niềng răng mắc cài
               </Typography>
-            </RouterLink> */}
+            </RouterLink>
             <RouterLink to="/Services" style={{ textDecoration: "none" }}>
               <Typography
                 color="rgba(0,120,233,0.8)"
@@ -353,7 +362,7 @@ const Header = () => {
                   Bảng giá
                 </Typography>
               </RouterLink>
-              {/* <RouterLink to="/Braces" style={{ textDecoration: "none" }}>
+              <RouterLink to="/Braces" style={{ textDecoration: "none" }}>
                 <Typography
                   color="rgba(0,120,233,0.8)"
                   sx={{
@@ -363,7 +372,7 @@ const Header = () => {
                 >
                   Niềng răng mắc cài
                 </Typography>
-              </RouterLink> */}
+              </RouterLink>
               <RouterLink to="/Services" style={{ textDecoration: "none" }}>
                 <Typography
                   color="rgba(0,120,233,0.8)"

@@ -8,35 +8,38 @@ import {
   Typography,
   Button,
 } from "@mui/material";
-
+import rang3 from "..//images/intro/rs.jpg";
+import rang4 from "..//images/intro/TRIP.jpg";
+import rang5 from "..//images/intro/NRCN.png";
+import rang6 from "..//images/intro/NKTQ.png";
 const servicesData = [
   {
     id: "nha-khoa-tham-my",
     title: "Nha Khoa Thẩm Mỹ",
     description:
       "Sự lựa chọn tuyệt vời cho những ai muốn cải thiện nụ cười của mình.",
-    imgSrc: "https://picsum.photos/200",
+    imgSrc: rang3,
   },
   {
-    id: "trong-rang-implant",
-    title: "Trồng Răng Implant",
+    id: "phuc-hinh-rang-da-mat",
+    title: "Phục Hình Răng Đã Mất",
     description:
       "Giải pháp hiệu quả cho những người mất răng, mang lại lợi ích về thẩm mỹ và chức năng.",
-    imgSrc: "https://picsum.photos/2001",
+    imgSrc:rang4,
   },
   {
     id: "nieng-rang-chinh-nha",
     title: "Niềng Răng - Chỉnh Nha",
     description:
       "Giải pháp hiệu quả để cải thiện sự sắp xếp của răng và hàm, mang lại lợi ích về thẩm mỹ và chức năng.",
-    imgSrc: "https://picsum.photos/2003",
+    imgSrc: rang5,
   },
   {
     id: "dieu-tri-tong-quat",
     title: "Điều Trị Tổng Quát",
     description:
       "Một phần quan trọng trong chăm sóc sức khỏe răng miệng, giúp duy trì và cải thiện tình trạng răng miệng của bệnh nhân.",
-    imgSrc: "https://picsum.photos/200",
+    imgSrc: rang6,
   },
 ];
 
@@ -67,6 +70,7 @@ const ServiceGrid = () => {
               height: "100%",
               display: "flex",
               flexDirection: "column",
+              backgroundColor: "#f6f6f6",
               padding: { xs: "10px", sm: "12px", md: "16px" },
             }}
           >

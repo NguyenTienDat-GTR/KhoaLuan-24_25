@@ -15,6 +15,8 @@ import {
   FormLabel,
   Avatar,
   Input,
+  IconButton,
+  Chip,
 } from "@mui/material";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -27,6 +29,8 @@ import { toast } from "react-toastify";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 import useUserStore from "../../hooks/auth/useUserStore";
+import { AddCircleOutline, Delete } from "@mui/icons-material";
+import "../../css/loadingEffect.css";
 
 const DoctorDetail = ({ open, onClose, doctor }) => {
   const [formData, setFormData] = useState({
@@ -38,7 +42,7 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
     employeePhone: "",
     employeeEmail: "",
     address: "",
-    employeeSpecialization: "",
+    employeeSpecialization: [],
     workingTime: {
       Monday: [],
       Tuesday: [],
@@ -57,8 +61,8 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
   const [imageFile, setImageFile] = useState(null);
   // const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
-  const [buttonText, setButtonText] = useState("Đóng");
   const { userLoggedIn, setUserLoggedIn, token } = useUserStore();
+  const [newSpecialization, setNewSpecialization] = useState("");
 
   useEffect(() => {
     // setToken(Cookies.get("token"));
@@ -98,13 +102,42 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
         employeePhone: doctor.employeePhone,
         employeeEmail: doctor.employeeEmail,
         address: doctor.address,
-        employeeSpecialization: doctor.employeeSpecialization.join(", "), // Chuyển đổi thành chuỗi nếu là mảng
+        employeeSpecialization: doctor.employeeSpecialization || [],
         workingTime: workingTimeObject,
         urlAvatar: doctor.urlAvatar,
         isWorking: doctor.isWorking,
       });
     }
   }, [doctor]);
+
+  // Xử lý thay đổi input cho bằng cấp mới
+  const handleSpecializationChange = (e) => {
+    setNewSpecialization(e.target.value);
+  };
+
+  // Thêm bằng cấp mới vào danh sách
+  const handleAddSpecialization = () => {
+    if (newSpecialization.trim()) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        employeeSpecialization: [
+          ...prevFormData.employeeSpecialization,
+          newSpecialization,
+        ],
+      }));
+      setNewSpecialization(""); // Reset input
+    }
+  };
+
+  // Xóa bằng cấp khỏi danh sách
+  const handleDeleteSpecialization = (index) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      employeeSpecialization: prevFormData.employeeSpecialization.filter(
+        (item, i) => i !== index
+      ),
+    }));
+  };
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
@@ -146,17 +179,33 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
       employeePhone: doctor.employeePhone,
       employeeEmail: doctor.employeeEmail,
       address: doctor.address,
-      employeeSpecialization: doctor.employeeSpecialization.join(", "), // Chuyển đổi thành chuỗi nếu là mảng
+      employeeSpecialization: doctor.employeeSpecialization || [], // Chuyển đổi thành chuỗi nếu là mảng
       workingTime: workingTimeObject,
       urlAvatar: doctor.urlAvatar,
       isWorking: doctor.isWorking,
     });
     setIsEditing(false);
+    setNewSpecialization(""); // Reset input
   };
   // Hàm xử lý khi dialog đóng
   const handleClose = () => {
     if (isEditing) {
       setIsEditing(false); // Nếu đang chỉnh sửa, đặt lại isEditing thành false
+      setFormData({
+        employeeID: doctor.employeeID,
+        employeeName: doctor.employeeName,
+        birthDate: doctor.birthDate ? dayjs(doctor.birthDate) : null,
+        gender: doctor.gender,
+        citizenID: doctor.citizenID,
+        employeePhone: doctor.employeePhone,
+        employeeEmail: doctor.employeeEmail,
+        address: doctor.address,
+        employeeSpecialization: doctor.employeeSpecialization || [], // Chuyển đổi thành chuỗi nếu là mảng
+        workingTime: workingTimeObject,
+        urlAvatar: doctor.urlAvatar,
+        isWorking: doctor.isWorking,
+      });
+      setNewSpecialization(""); // Reset input
     }
     onClose(); // Gọi hàm onClose từ component cha để đóng Dialog
   };
@@ -178,16 +227,14 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
     const formDataToSend = new FormData();
 
     // Chuyển đổi `workingTime` thành định dạng mà backend mong đợi
-    const workingTimeArray = Object.keys(formData.workingTime).map((day) => ({
-      day: day,
-      timeSlots: formData.workingTime[day],
-    }));
+    const workingTimeArray = Object.keys(formData.workingTime)
+      .filter((day) => formData.workingTime[day].length > 0)
+      .map((day) => ({
+        day: day,
+        timeSlots: formData.workingTime[day],
+      }));
 
-    // Chuyển đổi employeeSpecialization từ chuỗi thành mảng
-    const specializationArray = formData.employeeSpecialization
-      ? formData.employeeSpecialization.split(",").map((item) => item.trim())
-      : [];
-
+    const specializationArray = formData.employeeSpecialization;
     // Thêm các trường vào FormData
     for (const key in formData) {
       if (key === "workingTime") {
@@ -235,7 +282,6 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
         setLoading(false);
         setImageFile(null);
         console.log("file sau", imageFile);
-        setButtonText("Đóng");
         setIsEditing(false);
       }
 
@@ -445,44 +491,73 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
                   shrink: !!formData?.address,
                 }}
               />
-              <TextField
-                label="Bằng cấp"
-                variant="outlined"
-                name="employeeSpecialization"
-                value={formData?.employeeSpecialization || ""}
-                onChange={handleInputChange}
-                InputProps={{
-                  readOnly: !isEditing,
-                }}
-              />
-              <Box
-                sx={{
-                  marginTop: 2,
-                  gap: "0.5rem",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <Typography variant="h6">Trạng thái làm việc:</Typography>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={formData?.isWorking || false}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          isWorking: e.target.checked,
-                        })
-                      }
-                      disabled={!isEditing}
-                    />
-                  }
-                  label="Đang hoạt động"
+              <Box sx={{ flex: 1 }}>
+                {/* Bằng cấp */}
+                <TextField
+                  label="Thêm bằng cấp"
+                  value={newSpecialization}
+                  onChange={handleSpecializationChange}
+                  disabled={!isEditing}
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton
+                        onClick={handleAddSpecialization}
+                        disabled={!newSpecialization.trim()}
+                      >
+                        <AddCircleOutline color="success" />
+                      </IconButton>
+                    ),
+                  }}
+                  fullWidth
                 />
+
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="subtitle1">
+                    Danh sách bằng cấp:
+                  </Typography>
+                  <Box
+                    sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 1 }}
+                  >
+                    {formData.employeeSpecialization.map((spec, index) => (
+                      <Chip
+                        key={index}
+                        label={spec}
+                        onDelete={() => handleDeleteSpecialization(index)}
+                        deleteIcon={<Delete />}
+                        color="primary"
+                        disabled={!isEditing} // Chỉ xóa được khi đang chỉnh sửa
+                      />
+                    ))}
+                  </Box>
+                </Box>
               </Box>
             </Box>
           </Box>
-
+          <Box
+            sx={{
+              marginTop: 2,
+              gap: "0.5rem",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h6">Trạng thái làm việc:</Typography>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData?.isWorking || false}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      isWorking: e.target.checked,
+                    })
+                  }
+                  disabled={!isEditing}
+                />
+              }
+              label="Đang hoạt động"
+            />
+          </Box>
           <Box sx={{ marginTop: 2 }}>
             <Typography variant="h6">Giờ làm việc</Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
@@ -527,15 +602,15 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
             </Box>
           </Box>
 
-          {!loading ? (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                marginTop: 2,
-              }}
-            >
-              {isEditing ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: 2,
+            }}
+          >
+            {!loading ? (
+              isEditing ? (
                 <>
                   <Button
                     onClick={handleCancelEdit}
@@ -555,11 +630,12 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
               ) : (
                 <>
                   <Button
+                    variant="contained"
                     onClick={handleClose}
-                    color="primary"
+                    color="error"
                     sx={{ marginRight: 2 }}
                   >
-                    {buttonText} {/* Hiển thị giá trị của buttonText */}
+                    Đóng
                   </Button>
                   <Button
                     onClick={handleEditToggle}
@@ -569,13 +645,29 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
                     Chỉnh sửa
                   </Button>
                 </>
-              )}
-            </Box>
-          ) : (
-            <Typography sx={{ mr: "1px", width: "100%" }}>
-              Đang cập nhật....
-            </Typography>
-          )}
+              )
+            ) : (
+              <Typography
+                className="wave-effect"
+                sx={{
+                  mr: "1px",
+                  width: "100%",
+                  textAlign: "right",
+                  fontWeight: "bold",
+                  fontSize: "1.2rem",
+                }}
+              >
+                {"Đang cập nhật ...".split("").map((char, index) => (
+                  <span
+                    key={index}
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    {char}
+                  </span>
+                ))}
+              </Typography>
+            )}
+          </Box>
         </DialogContent>
       </Dialog>
     </LocalizationProvider>

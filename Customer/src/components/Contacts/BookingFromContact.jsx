@@ -4,6 +4,8 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
+  Radio,
+  RadioGroup,
   TextareaAutosize,
   TextField,
   Typography,
@@ -17,11 +19,20 @@ import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import PhoneInTalkOutlinedIcon from "@mui/icons-material/PhoneInTalkOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
-import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
+import logo from "..//images/phong-kham/logo.png"
+//import Phongkham from "..//components/images/phong-kham/phongkham1.png"
 
-const BookingFormContact = () => {
+const BookingForm = () => {
   const [selectedDate, setSelectedDate] = useState(dayjs());
-  const [selectedTime, setSelectedTime] = useState(dayjs());
+  const [selectedTime, setSelectedTime] = useState(dayjs().hour(9).minute(0)); // Default time set to 9:00 AM
+  const [gender, setGender] = useState('Nam'); // Default gender selection
+
+  // Helper function to generate 2-hour time slots
+  const handleTimeChange = (newTime) => {
+    const hour = newTime.hour();
+    const validHour = hour >= 9 && hour <= 17 ? hour : 9; // Ensure valid hours between 9 and 17
+    setSelectedTime(dayjs().hour(validHour).minute(0)); // Set time to selected hour, resetting minutes
+  };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -32,16 +43,15 @@ const BookingFormContact = () => {
           margin: "0 auto",
           backgroundColor: "rgba(21,171,255,0.1)",
           display: "flex",
-          flexDirection: { xs: "column", sm: "row", md: "row" }, // Row cho tablet và desktop, column cho mobile
+          flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
           gap: "1rem",
           minHeight: "500px",
           height: "auto",
-          paddingY: { xs: "1rem", sm: "1rem", md: "1rem" },
         }}
       >
-        <Box
+       <Box
           className="container-text"
           sx={{
             display: "flex",
@@ -71,9 +81,17 @@ const BookingFormContact = () => {
                 fontSize: { xs: "1.5rem", sm: "1.5rem", md: "2rem" },
               }}
             >
-              NHA KHOA HOÀNG KIM
+              NHA KHOA HBT
             </Typography>
-
+            <Box
+                component="img"
+                src={logo}
+                alt="Logo"
+                sx={{
+                  width: { xs: "3rem", sm: "3.5rem", md: "4.5rem" },
+                  marginRight: { xs: "0.5rem", sm: "1rem" },
+                }}
+              />
             <Box
               className="contact"
               sx={{
@@ -111,7 +129,7 @@ const BookingFormContact = () => {
                     },
                   }}
                 >
-                  12 Nguyễn Văn Bảo, Phường 4, Quận Gò Vấp, TP.Hồ Chí Minh
+                  877 Tân Kỳ Tân Quý, Phường Bình Hưng Hoà A, Quận Bình Tân, Tp.Hồ Chí Minh
                 </Typography>
               </Box>
 
@@ -136,7 +154,7 @@ const BookingFormContact = () => {
                     },
                   }}
                 >
-                  8:00 AM - 6:00 PM
+                  9:00 AM - 5:00 PM
                 </Typography>
               </Box>
 
@@ -161,7 +179,7 @@ const BookingFormContact = () => {
                     },
                   }}
                 >
-                  0123456789
+                  0906070338
                 </Typography>
               </Box>
 
@@ -186,7 +204,7 @@ const BookingFormContact = () => {
                     },
                   }}
                 >
-                  hoangkim@nhakhoa.com
+                  phongkhamnhakhoahbt@gmail.com
                 </Typography>
               </Box>
 
@@ -211,7 +229,7 @@ const BookingFormContact = () => {
                     },
                   }}
                 >
-                  www.nhakhoahoangkim.com
+                  www.nhakhoahbt.com
                 </Typography>
               </Box>
             </Box>
@@ -234,10 +252,10 @@ const BookingFormContact = () => {
               mb: "1rem",
             }}
           >
-            <Typography
-              variant="h5"
-              sx={{ color: "rgba(0,74,211,1)", fontWeight: 700 }}
-            >
+            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+              Nhận tư vấn miễn phí từ bác sĩ
+            </Typography>
+            <Typography variant="h5" sx={{ color: "rgba(0,74,211,1)" }}>
               ĐẶT LỊCH THĂM KHÁM NGAY
             </Typography>
           </Box>
@@ -316,37 +334,69 @@ const BookingFormContact = () => {
                   gap: { xs: "0.5rem", sm: "0.5rem", md: "1rem" },
                 }}
               >
-                <FormControlLabel
-                  control={<Checkbox />}
-                  label="Sứ nha khoa thẩm mỹ"
-                  sx={{
-                    fontSize: { xs: "0.875rem", sm: "0.875rem", md: "1rem" },
-                  }}
-                />
-                <FormControlLabel
-                  control={<Checkbox />}
-                  label="Điều trị bệnh lý nha khoa"
-                  sx={{
-                    fontSize: { xs: "0.875rem", sm: "0.875rem", md: "1rem" },
-                  }}
-                />
-                <FormControlLabel
-                  control={<Checkbox />}
-                  label="Niềng răng - cải thiện khớp cắn"
-                  sx={{
-                    fontSize: { xs: "0.875rem", sm: "0.875rem", md: "1rem" },
-                  }}
-                />
-                <FormControlLabel
-                  control={<Checkbox />}
-                  label="Phục hình răng đã mất"
-                  sx={{
-                    fontSize: { xs: "0.875rem", sm: "0.875rem", md: "1rem" },
-                  }}
-                />
+                <Box>
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Nha khoa thẩm mỹ"
+                  />
+                  <Typography variant="body2" sx={{ marginLeft: "1.5rem" }}>
+                    - Tẩy trắng răng
+                    <br />
+                    - Dán sứ veneer
+                    <br />
+                    - Trám răng
+                    <br />
+                    - Cạo vôi răng
+                    <br />
+                  </Typography>
+                </Box>
+                <Box>
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Điều trị bệnh lý nha khoa"
+                  />
+                  <Typography variant="body2" sx={{ marginLeft: "1.5rem" }}>
+                    - Nha khoa trẻ em
+                    <br />
+                    - Khám và điều trị sâu răng
+                    <br />
+                    - Điều trị nướu
+                    <br />
+                    - Điều trị tủy
+                    <br />
+                    - Điều trị nha chu
+                  </Typography>
+                </Box>
+                <Box>
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Niềng răng - cải thiện khớp cắn"
+                  />
+                  <Typography variant="body2" sx={{ marginLeft: "1.5rem" }}>
+                    - Niềng răng mắc cài
+                    <br />
+                    - Niềng răng tháo lắp
+                    <br />
+                    - Niềng răng trong suốt
+                  </Typography>
+                </Box>
+                <Box>
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Phục hình răng đã mất"
+                  />
+                  <Typography variant="body2" sx={{ marginLeft: "1.5rem" }}>
+                    - Hàm giả tháo lắp
+                    <br />
+                    - Cấy ghép implant
+                    <br />
+                    - Răng sứ thẩm mỹ
+                  </Typography>
+                </Box>
               </Box>
             </Box>
 
+            {/* Date & Time Selection */}
             <Box
               className="booking-date-time"
               sx={{
@@ -365,7 +415,7 @@ const BookingFormContact = () => {
             >
               {/* DatePicker */}
               <Box sx={{ flex: 1 }}>
-                <Typography sx={{ marginBottom: "0.5rem" }}>
+                <Typography sx={{ marginBottom: "0.5rem", fontWeight: "bold" }}>
                   Ngày đặt lịch hẹn
                 </Typography>
                 <DatePicker
@@ -391,7 +441,7 @@ const BookingFormContact = () => {
 
               {/* TimePicker */}
               <Box sx={{ flex: 1 }}>
-                <Typography sx={{ marginBottom: "0.5rem" }}>
+                <Typography sx={{ marginBottom: "0.5rem", fontWeight: "bold" }}>
                   Giờ đặt lịch hẹn
                 </Typography>
                 <TimePicker
@@ -414,6 +464,21 @@ const BookingFormContact = () => {
                   )}
                 />
               </Box>
+            </Box>
+
+            {/* Gender Selection */}
+            <Box sx={{ width: "100%", padding: "1rem", textAlign: "left" }}>
+              <Typography variant="body1" sx={{ fontWeight: "bold", mb: "0.5rem" }}>
+                Chọn giới tính bác sĩ:
+              </Typography>
+              <RadioGroup
+                value={gender}
+                onChange={(event) => setGender(event.target.value)}
+                row
+              >
+                <FormControlLabel value="Nam" control={<Radio />} label="Nam" />
+                <FormControlLabel value="Nữ" control={<Radio />} label="Nữ" />
+              </RadioGroup>
             </Box>
 
             <TextareaAutosize
@@ -475,4 +540,4 @@ const BookingFormContact = () => {
   );
 };
 
-export default BookingFormContact;
+export default BookingForm;

@@ -14,8 +14,15 @@ import {
   FormLabel,
   Avatar,
   Typography,
+  IconButton,
 } from "@mui/material";
-import { Add, RestartAlt, Save, Cancel } from "@mui/icons-material";
+import {
+  Add,
+  RestartAlt,
+  Save,
+  Cancel,
+  RemoveCircle,
+} from "@mui/icons-material";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -23,6 +30,7 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import useCreateDoctor from "../../hooks/doctor/useCreateDoctor";
 import useUserStore from "../../hooks/auth/useUserStore";
+import "../../css/loadingEffect.css";
 
 const CreateDoctor = ({ open, onClose }) => {
   const [name, setName] = useState("");
@@ -33,6 +41,7 @@ const CreateDoctor = ({ open, onClose }) => {
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [degree, setDegree] = useState("");
+  const [degreeList, setDegreeList] = useState([]);
   const [avatar, setAvatar] = useState(null);
   const [createBy, setCreateBy] = useState("");
   const [imageFile, setImageFile] = useState(null);
@@ -47,6 +56,17 @@ const CreateDoctor = ({ open, onClose }) => {
   });
   const { createDoctor, loading, error, success } = useCreateDoctor();
   const { userLoggedIn, setUserLoggedIn, token } = useUserStore();
+
+  const handleAddDegree = () => {
+    if (degree.trim()) {
+      setDegreeList((prevDegrees) => [...prevDegrees, degree]);
+      setDegree(""); // Reset text field sau khi thêm
+    }
+  };
+
+  const handleRemoveDegree = (index) => {
+    setDegreeList((prevDegrees) => prevDegrees.filter((_, i) => i !== index));
+  };
 
   useEffect(() => {
     // const token = Cookies.get("token");
@@ -95,6 +115,7 @@ const CreateDoctor = ({ open, onClose }) => {
       Sunday: [],
     });
     setImageFile(null);
+    setDegreeList([]);
   };
 
   useEffect(() => {
@@ -119,7 +140,7 @@ const CreateDoctor = ({ open, onClose }) => {
       citizenID: idCard,
       address,
       workingTime: filteredWorkingTime,
-      employeeSpecialization: [degree], // Bằng cấp
+      employeeSpecialization: degreeList, // Bằng cấp
       createBy: userLoggedIn?.user.details.employeeName,
     };
     createDoctor(doctorData, imageFile); // Gọi hàm tạo bác sĩ từ hook
@@ -266,9 +287,32 @@ const CreateDoctor = ({ open, onClose }) => {
                 value={degree}
                 onChange={(e) => setDegree(e.target.value)}
                 fullWidth
-                required
                 autoFocus
               />
+              <Button
+                variant="contained"
+                onClick={handleAddDegree}
+                startIcon={<Add />}
+              >
+                Thêm bằng cấp
+              </Button>
+              {/* Hiển thị danh sách các bằng cấp đã thêm */}
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                {degreeList.map((item, index) => (
+                  <Box
+                    key={index}
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    <Typography>{item}</Typography>
+                    <IconButton
+                      color="error"
+                      onClick={() => handleRemoveDegree(index)}
+                    >
+                      <RemoveCircle />
+                    </IconButton>
+                  </Box>
+                ))}
+              </Box>
             </Box>
           </Box>
 
@@ -360,7 +404,27 @@ const CreateDoctor = ({ open, onClose }) => {
                 Hủy
               </Button>
             )}
-            {loading && <Typography>Đang thêm bác sĩ...</Typography>}
+            {loading && (
+              <Typography
+                className="wave-effect"
+                sx={{
+                  mr: "1px",
+                  width: "100%",
+                  textAlign: "right",
+                  fontWeight: "bold",
+                  fontSize: "1.2rem",
+                }}
+              >
+                {"Đang thêm bác sĩ ...".split("").map((char, index) => (
+                  <span
+                    key={index}
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    {char}
+                  </span>
+                ))}
+              </Typography>
+            )}
           </Box>
         </DialogContent>
       </Dialog>

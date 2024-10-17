@@ -1,10 +1,13 @@
 import { Box, Typography } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import React from "react";
-
+import Lydo1 from "../images/ly-do/lydo1.jpg";
+import Lydo2 from "../images/ly-do/lydo2.jpg";
+import Lydo3 from "../images/ly-do/lydo3.jpg";
+import Lydo4 from "../images/ly-do/lydo4.jpg";
 const reasons = [
   {
-    img: "https://picsum.photos/240/160?random=1",
+    img: Lydo1,
     texts: [
       "Đội ngũ bác sĩ chuyên nghiệp",
       "Được đào tạo bài bản-Chuyên sâu",
@@ -12,18 +15,18 @@ const reasons = [
     ],
   },
   {
-    img: "https://picsum.photos/240/160?random=2",
+    img: Lydo2,
     texts: [
       "Chúng tôi cam kết chất lượng dịch vụ dành cho khách hàng",
       "Chế độ bảo hành cũng như giải quyết khiếu nại ở mức cao nhất",
     ],
   },
   {
-    img: "https://picsum.photos/240/160?random=3",
+    img: Lydo3,
     texts: ["Chăm sóc tận tình", "Hỗ trợ 24/7", "Phục vụ chu đáo mọi nhu cầu"],
   },
   {
-    img: "https://picsum.photos/240/160?random=4",
+    img: Lydo4,
     texts: [
       "Giá cả hợp lý",
       "Không phát sinh chi phí",

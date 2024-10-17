@@ -14,6 +14,7 @@ import PhoneInTalkOutlinedIcon from "@mui/icons-material/PhoneInTalkOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
+import logo from "../components/images/phong-kham/logo.png";
 
 const Footer = () => {
   return (
@@ -31,9 +32,9 @@ const Footer = () => {
           width: "100vw",
           height: "auto",
           display: "flex",
-          flexDirection: { xs: "column", sm: "row" }, // Column on mobile, row on tablet and desktop
+          flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
-          alignItems: { xs: "flex-start", sm: "center" }, // Align items for mobile and larger screens
+          alignItems: { xs: "flex-start", sm: "center" },
           gap: { sm: "2", md: "0" },
           marginX: { xs: "0", sm: "0", md: "0" },
           paddingY: { xs: "1rem", sm: "2rem", md: "2rem" },
@@ -47,7 +48,7 @@ const Footer = () => {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            width: { xs: "100%", sm: "30%", md: "35%" }, // Adjust widths for mobile/tablet/desktop
+            width: { xs: "100%", sm: "30%", md: "35%" },
             height: { xs: "auto", sm: "auto", md: "auto" },
             mt: { xs: "2rem", sm: "0", md: "0" },
           }}
@@ -72,8 +73,9 @@ const Footer = () => {
                 fontWeight: "bold",
               }}
             >
-              Thông tin liên hệ
+              THÔNG TIN LIÊN HỆ
             </Typography>
+
             <Typography
               variant="h4"
               sx={{
@@ -82,7 +84,16 @@ const Footer = () => {
                 fontSize: { xs: "1.5rem", sm: "1.5rem", md: "2rem" },
               }}
             >
-              NHA KHOA HOÀNG KIM
+              <Box
+                component="img"
+                src={logo}
+                alt="Logo"
+                sx={{
+                  width: { xs: "3rem", sm: "3.5rem", md: "4.5rem" },
+                  marginRight: { xs: "0.5rem", sm: "1rem" },
+                }}
+              />
+              NHA KHOA HBT
             </Typography>
 
             <Box
@@ -96,7 +107,7 @@ const Footer = () => {
                 textAlign: "justify",
                 display: "flex",
                 flexDirection: "column",
-                justifyConten: "center",
+                justifyContent: "center",
                 alignItems: "flex-start",
                 gap: "1rem",
               }}
@@ -105,7 +116,7 @@ const Footer = () => {
                 sx={{
                   display: "flex",
                   alignItems: "flex-start",
-                  flexWrap: "wrap", // Cho phép xuống dòng khi không đủ không gia
+                  flexWrap: "wrap",
                   gap: "0.5rem",
                 }}
               >
@@ -115,14 +126,14 @@ const Footer = () => {
                     flex: 1,
                   }}
                 >
-                  12 Nguyễn Văn Bảo, Phường 4, Quận Gò Vấp, TP.Hồ Chí Minh
+                  877 Tân Kỳ Tân Quý, Phường Bình Hưng Hoà A, Quận Bình Tân, Tp.Hồ Chí Minh
                 </Typography>
               </Typography>
               <Typography
                 sx={{
                   display: "flex",
                   alignItems: "flex-start",
-                  flexWrap: "wrap", // Cho phép xuống dòng khi không đủ không gian
+                  flexWrap: "wrap",
                   gap: "0.5rem",
                 }}
               >
@@ -132,14 +143,14 @@ const Footer = () => {
                     flex: 1,
                   }}
                 >
-                  8:00 AM - 6:00 PM
+                  9:00 AM - 5:00 PM
                 </Typography>
               </Typography>
               <Typography
                 sx={{
                   display: "flex",
                   alignItems: "flex-start",
-                  flexWrap: "wrap", // Cho phép xuống dòng khi không đủ không gian
+                  flexWrap: "wrap",
                   gap: "0.5rem",
                 }}
               >
@@ -150,14 +161,14 @@ const Footer = () => {
                     flex: 1,
                   }}
                 >
-                  0123456789
+                  0906070338
                 </Typography>
               </Typography>
               <Typography
                 sx={{
                   display: "flex",
                   alignItems: "flex-start",
-                  flexWrap: "wrap", // Cho phép xuống dòng khi không đủ không gian
+                  flexWrap: "wrap",
                   gap: "0.5rem",
                 }}
               >
@@ -167,14 +178,14 @@ const Footer = () => {
                     flex: 1,
                   }}
                 >
-                  hoangkim@nhakhoa.com
+                  phongkhamnhakhoahbt@gmail.com
                 </Typography>
               </Typography>
               <Typography
                 sx={{
                   display: "flex",
                   alignItems: "flex-start",
-                  flexWrap: "wrap", // Cho phép xuống dòng khi không đủ không gian
+                  flexWrap: "wrap",
                   gap: "0.5rem",
                 }}
               >
@@ -184,7 +195,7 @@ const Footer = () => {
                     flex: 1,
                   }}
                 >
-                  www.nhakhoahoangkim.com
+                  www.nhakhoahbt.com
                 </Typography>
               </Typography>
             </Box>
@@ -326,6 +337,24 @@ const Footer = () => {
         </Box>
       </Box>
 
+      {/* Google Maps Section */}
+      <Box
+        sx={{
+          width: "100vw",
+          height: "400px",
+          margin: "2rem 0",
+        }}
+      >
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.276222213822!2d106.6030617!3d10.7901435!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ddcd606f70d%3A0x2110af5b7e1538f!2sNha%20Khoa%20HBT!5e0!3m2!1svi!2s!4v1728461171449!5m2!1svi!2s"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen=""
+          loading="lazy"
+        />
+      </Box>
+
       <Box
         mt={3}
         sx={{
@@ -336,9 +365,9 @@ const Footer = () => {
         <Typography variant="body2" color="textSecondary" align="center">
           {"Copyright © "}
           {new Date().getFullYear()}
-          {" Nha Khoa HOÀNG KIM - "}
+          {" Nha Khoa HBT - "}
           <Link color="inherit" href="/">
-            12, đường Nguyễn Văn Bảo, phường 4, Quận Gò Vấp
+            877 Tân Kỳ Tân Quý, Phường Bình Hưng Hoà A, Quận Bình Tân, Tp.Hồ Chí Minh
           </Link>
         </Typography>
       </Box>

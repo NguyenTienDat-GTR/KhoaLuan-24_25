@@ -1,17 +1,18 @@
 import React from "react";
 import { Box, Paper } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
-
+import Slide1 from "../images/phong-kham/1.png";
+import Slide2 from "../images/phong-kham/2.png"
 const items = [
   {
     name: "First Slide",
     description: "This is the first carousel slide description",
-    img: "https://picsum.photos/2000/500",
+    img: Slide1,
   },
   {
     name: "Second Slide",
     description: "This is the second carousel slide description",
-    img: "https://picsum.photos/2001/500",
+    img: Slide2,
   },
 ];
 
@@ -58,7 +59,7 @@ function CarouselItem(props) {
         sx={{
           width: "100%",
           height: { xs: "20rem", sm: "25rem", md: "30rem" },
-          objectFit: "cover", // Ensure the image covers the area without distortion
+          objectFit: "fill", // Ensure the image covers the area without distortion
         }}
         src={props.item.img}
         alt={props.item.name}

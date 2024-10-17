@@ -1,5 +1,8 @@
 import { Box, Typography } from "@mui/material";
 import React from "react";
+import Bacsi1 from "../images/bac-si/bs1.png";
+import Bacsi2 from "../images/bac-si/bs2.png";
+import Bacsi3 from "../images/bac-si/bs3.png"
 
 const DoctorContainer = () => {
   return (
@@ -26,7 +29,7 @@ const DoctorContainer = () => {
           textAlign: "center", // Căn giữa text trên mobile
         }}
       >
-        ĐỘI NGŨ CHUYÊN GIA & BÁC SĨ NHA KHOA HOÀNG KIM
+        ĐỘI NGŨ CHUYÊN GIA & BÁC SĨ NHA KHOA HBT
       </Typography>
 
       {/* Đoạn mô tả */}
@@ -37,7 +40,7 @@ const DoctorContainer = () => {
           textAlign: "center", // Căn giữa đoạn text
         }}
       >
-        Nha khoa Hoàng Kim khao khát xây dựng đội ngũ nhân viên, y bác sĩ phục
+        Nha khoa HBT khao khát xây dựng đội ngũ nhân viên, y bác sĩ phục
         vụ tận tâm,
         <br />
         trách nhiệm đảm bảo an toàn và chuyên nghiệp trong từng dịch vụ
@@ -56,9 +59,9 @@ const DoctorContainer = () => {
         }}
       >
         {[
-          { name: "BS. Nguyễn Văn A", image: "https://picsum.photos/250/350" },
-          { name: "BS. Nguyễn Văn B", image: "https://picsum.photos/250/350" },
-          { name: "BS. Nguyễn Văn C", image: "https://picsum.photos/250/350" },
+          { name: "BS. Nguyễn Văn An", image: Bacsi1},
+          { name: "BS. Nguyễn Anh Thi", image: Bacsi2 },
+          { name: "BS. Nguyễn Thị Lan Anh", image: Bacsi3},
         ].map((doctor, index) => (
           <Box key={index} sx={{ margin: { xs: "1rem 0", sm: "0 1rem" } }}>
             {/* Ảnh bác sĩ */}

@@ -1,12 +1,12 @@
 import React, { Suspense } from "react";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, CircularProgress, Typography, Divider } from "@mui/material";
 
 const ServiceGrid = React.lazy(() =>
   import("../components/Services/ServiceGrid")
 );
 const Header = React.lazy(() => import("../components/Header"));
 const Footer = React.lazy(() => import("../components/Footer"));
-
+const BookingForm = React.lazy(() => import("../components/BookingForm"));
 const Services = () => {
   return (
     <Box
@@ -57,9 +57,25 @@ const Services = () => {
             fontWeight: "bold",
           }}
         >
-          CÁC DỊCH VỤ CỦA HOÀNG KIM
+          CÁC DỊCH VỤ CỦA HBT
         </Typography>
       </Box>
+      <Box
+          sx={{
+            width: { xs: "100vw", sm: "100vw", md: "100vw" },
+            mt: "1rem",
+            mb: "1rem",
+          }}
+        >
+          <Divider
+            sx={{
+              borderBottomWidth: 1,
+              borderColor: "#000",
+              width: { xs: "30%", sm: "50%", md: "70%" },
+              margin: "0 auto",
+            }}
+          />
+        </Box>
       <Suspense
         fallback={
           <Box
@@ -82,6 +98,29 @@ const Services = () => {
       >
         <ServiceGrid />
       </Suspense>
+      <br></br>
+      <Suspense
+          fallback={
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100vh", // Full screen height for vertical centering
+                width: "100vw", // Full screen width for horizontal centering
+              }}
+            >
+              <CircularProgress
+                sx={{
+                  width: { xs: "50px", sm: "70px", md: "100px" }, // Responsive width
+                  height: { xs: "50px", sm: "70px", md: "100px" }, // Responsive height
+                }}
+              />
+            </Box>
+          }
+        >
+          <BookingForm />
+        </Suspense>
       <Suspense
         fallback={
           <Box

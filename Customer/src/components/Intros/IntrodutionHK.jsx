@@ -10,6 +10,9 @@ import {
 import VolunteerActivismOutlinedIcon from "@mui/icons-material/VolunteerActivismOutlined";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import Diversity1OutlinedIcon from "@mui/icons-material/Diversity1Outlined";
+import rang1 from "..//images/intro/r3.png";
+import rang2 from "..//images/intro/r1.png";
+
 const IntrodutionHK = () => {
   return (
     <Box>
@@ -72,7 +75,7 @@ const IntrodutionHK = () => {
               }}
             >
               <Typography sx={{ textAlign: "justify", textIndent: "30px" }}>
-                <strong>Nha Khoa Hoàng Kim</strong> là một hệ thống phòng khám
+                <strong>Nha Khoa HBT</strong> là một hệ thống phòng khám
                 nha khoa nổi tiếng, chuyên cung cấp các dịch vụ chăm sóc và điều
                 trị răng miệng chất lượng cao. Với hơn nhiều năm kinh nghiệm
                 trong ngành, sở hữu đội ngũ bác sĩ nha khoa giàu kinh nghiệm và
@@ -83,12 +86,11 @@ const IntrodutionHK = () => {
               <Typography sx={{ textAlign: "justify", textIndent: "30px" }}>
                 Phòng khám cam kết sử dụng trang thiết bị hiện đại, cùng với các
                 công nghệ tiên tiến trong điều trị nhằm mang đến hiệu quả điều
-                trị tối ưu và an toàn cho khách hàng. Đặc biệt, Nha Khoa Hoàng
-                Kim luôn chú trọng đến chất lượng dịch vụ và sự hài lòng của
+                trị tối ưu và an toàn cho khách hàng. Đặc biệt, Nha Khoa HBT luôn chú trọng đến chất lượng dịch vụ và sự hài lòng của
                 khách hàng, với phương châm “Nụ cười là niềm tin”.
               </Typography>
               <Typography sx={{ textAlign: "justify", textIndent: "30px" }}>
-                Hệ thống phòng khám của Nha Khoa Hoàng Kim không chỉ tập trung
+                Hệ thống phòng khám của Nha Khoa HBT không chỉ tập trung
                 vào việc điều trị mà còn cung cấp các gói dịch vụ thẩm mỹ răng
                 miệng, giúp khách hàng cải thiện thẩm mỹ và tự tin hơn trong
                 giao tiếp.
@@ -110,13 +112,13 @@ const IntrodutionHK = () => {
         >
           <Box
             component="img"
-            src="https://picsum.photos/200"
+            src={rang1}
             alt="giới thiệu nha khoa"
             sx={{
               width: { xs: "100vw", sm: "26rem", md: "100%" }, // Giảm width của ảnh
               height: { xs: "15rem", sm: "30rem", md: "34rem" },
               margin: { xs: "0 auto", sm: "0", md: "0" },
-              objectFit: "cover",
+              objectFit: "full",
               mx: { xs: "auto" }, // Canh giữa ảnh
             }}
           />
@@ -195,7 +197,7 @@ const IntrodutionHK = () => {
               }}
             >
               <Typography sx={{ textAlign: "justify", textIndent: "30px" }}>
-                <strong>Nha Khoa Hoàng Kim </strong>cam kết mang đến dịch vụ nha
+                <strong>Nha Khoa HBT </strong>cam kết mang đến dịch vụ nha
                 khoa chất lượng cao, an toàn và hiện đại nhất cho khách hàng.
               </Typography>
               <Typography sx={{ textAlign: "justify", textIndent: "30px" }}>
@@ -254,7 +256,7 @@ const IntrodutionHK = () => {
                   textIndent: "30px",
                 }}
               >
-                Nha Khoa Hoàng Kim mong muốn trở thành một trong những hệ thống
+                Nha Khoa HBT mong muốn trở thành một trong những hệ thống
                 nha khoa hàng đầu tại Việt Nam, đem đến tiêu chuẩn quốc tế trong
                 chăm sóc sức khỏe răng miện
               </ListItem>
@@ -287,7 +289,7 @@ const IntrodutionHK = () => {
                   textIndent: "30px",
                 }}
               >
-                Bên cạnh đó, Nha Khoa Hoàng Kim cũng chú trọng đến việc giáo dục
+                Bên cạnh đó, Nha Khoa HBT cũng chú trọng đến việc giáo dục
                 sức khỏe răng miệng, giúp khách hàng hiểu rõ hơn về cách chăm
                 sóc răng miệng hiệu quả.
               </ListItem>
@@ -321,7 +323,7 @@ const IntrodutionHK = () => {
         >
           <Box
             component="img"
-            src="https://picsum.photos/700/240"
+            src={rang2}
             alt="giới thiệu nha khoa"
             sx={{
               width: { xs: "21rem", sm: "27rem", md: "40rem" }, // Giảm width của ảnh
@@ -397,7 +399,7 @@ const IntrodutionHK = () => {
                   primary={
                     <Typography component="span">
                       <strong>Tận Tâm: </strong>
-                      Mọi hoạt động của Nha Khoa Hoàng Kim đều lấy khách hàng
+                      Mọi hoạt động của Nha Khoa HBT đều lấy khách hàng
                       làm trung tâm, chú trọng đến sự thoải mái và hài lòng của
                       khách hàng.
                     </Typography>

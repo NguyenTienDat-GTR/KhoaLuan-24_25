@@ -4,6 +4,8 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
+  Radio,
+  RadioGroup,
   TextareaAutosize,
   TextField,
   Typography,
@@ -12,10 +14,19 @@ import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"; // Sử dụng Day.js để xử lý ngày
 import dayjs from "dayjs"; // Import dayjs
+import Phongkham from "..//components/images/phong-kham/phongkham1.png"
 
 const BookingForm = () => {
   const [selectedDate, setSelectedDate] = useState(dayjs());
-  const [selectedTime, setSelectedTime] = useState(dayjs());
+  const [selectedTime, setSelectedTime] = useState(dayjs().hour(9).minute(0)); // Default time set to 9:00 AM
+  const [gender, setGender] = useState('Nam'); // Default gender selection
+
+  // Helper function to generate 2-hour time slots
+  const handleTimeChange = (newTime) => {
+    const hour = newTime.hour();
+    const validHour = hour >= 9 && hour <= 17 ? hour : 9; // Ensure valid hours between 9 and 17
+    setSelectedTime(dayjs().hour(validHour).minute(0)); // Set time to selected hour, resetting minutes
+  };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -46,7 +57,7 @@ const BookingForm = () => {
         >
           <Box
             component="img"
-            src="https://picsum.photos/350/400"
+            src={Phongkham}
             sx={{
               width: { sm: "18rem", md: "22rem" },
               height: { sm: "30rem", md: "30rem" },
@@ -152,37 +163,69 @@ const BookingForm = () => {
                   gap: { xs: "0.5rem", sm: "0.5rem", md: "1rem" },
                 }}
               >
-                <FormControlLabel
-                  control={<Checkbox />}
-                  label="Sứ nha khoa thẩm mỹ"
-                  sx={{
-                    fontSize: { xs: "0.875rem", sm: "0.875rem", md: "1rem" },
-                  }}
-                />
-                <FormControlLabel
-                  control={<Checkbox />}
-                  label="Điều trị bệnh lý nha khoa"
-                  sx={{
-                    fontSize: { xs: "0.875rem", sm: "0.875rem", md: "1rem" },
-                  }}
-                />
-                <FormControlLabel
-                  control={<Checkbox />}
-                  label="Niềng răng - cải thiện khớp cắn"
-                  sx={{
-                    fontSize: { xs: "0.875rem", sm: "0.875rem", md: "1rem" },
-                  }}
-                />
-                <FormControlLabel
-                  control={<Checkbox />}
-                  label="Phục hình răng đã mất"
-                  sx={{
-                    fontSize: { xs: "0.875rem", sm: "0.875rem", md: "1rem" },
-                  }}
-                />
+                <Box>
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Nha khoa thẩm mỹ"
+                  />
+                  <Typography variant="body2" sx={{ marginLeft: "1.5rem" }}>
+                    - Tẩy trắng răng
+                    <br />
+                    - Dán sứ veneer
+                    <br />
+                    - Trám răng
+                    <br />
+                    - Cạo vôi răng
+                    <br />
+                  </Typography>
+                </Box>
+                <Box>
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Điều trị bệnh lý nha khoa"
+                  />
+                  <Typography variant="body2" sx={{ marginLeft: "1.5rem" }}>
+                    - Nha khoa trẻ em
+                    <br />
+                    - Khám và điều trị sâu răng
+                    <br />
+                    - Điều trị nướu
+                    <br />
+                    - Điều trị tủy
+                    <br />
+                    - Điều trị nha chu
+                  </Typography>
+                </Box>
+                <Box>
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Niềng răng - cải thiện khớp cắn"
+                  />
+                  <Typography variant="body2" sx={{ marginLeft: "1.5rem" }}>
+                    - Niềng răng mắc cài
+                    <br />
+                    - Niềng răng tháo lắp
+                    <br />
+                    - Niềng răng trong suốt
+                  </Typography>
+                </Box>
+                <Box>
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Phục hình răng đã mất"
+                  />
+                  <Typography variant="body2" sx={{ marginLeft: "1.5rem" }}>
+                    - Hàm giả tháo lắp
+                    <br />
+                    - Cấy ghép implant
+                    <br />
+                    - Răng sứ thẩm mỹ
+                  </Typography>
+                </Box>
               </Box>
             </Box>
 
+            {/* Date & Time Selection */}
             <Box
               className="booking-date-time"
               sx={{
@@ -201,7 +244,7 @@ const BookingForm = () => {
             >
               {/* DatePicker */}
               <Box sx={{ flex: 1 }}>
-                <Typography sx={{ marginBottom: "0.5rem" }}>
+                <Typography sx={{ marginBottom: "0.5rem", fontWeight: "bold" }}>
                   Ngày đặt lịch hẹn
                 </Typography>
                 <DatePicker
@@ -227,7 +270,7 @@ const BookingForm = () => {
 
               {/* TimePicker */}
               <Box sx={{ flex: 1 }}>
-                <Typography sx={{ marginBottom: "0.5rem" }}>
+                <Typography sx={{ marginBottom: "0.5rem", fontWeight: "bold" }}>
                   Giờ đặt lịch hẹn
                 </Typography>
                 <TimePicker
@@ -250,6 +293,21 @@ const BookingForm = () => {
                   )}
                 />
               </Box>
+            </Box>
+
+            {/* Gender Selection */}
+            <Box sx={{ width: "100%", padding: "1rem", textAlign: "left" }}>
+              <Typography variant="body1" sx={{ fontWeight: "bold", mb: "0.5rem" }}>
+                Chọn giới tính bác sĩ:
+              </Typography>
+              <RadioGroup
+                value={gender}
+                onChange={(event) => setGender(event.target.value)}
+                row
+              >
+                <FormControlLabel value="Nam" control={<Radio />} label="Nam" />
+                <FormControlLabel value="Nữ" control={<Radio />} label="Nữ" />
+              </RadioGroup>
             </Box>
 
             <TextareaAutosize

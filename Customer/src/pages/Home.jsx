@@ -30,6 +30,9 @@ const Home = () => {
         fallback={
           <Box
             sx={{
+              // position: fixed, // Giữ menu cố định 
+              // top: 0, // Đặt menu ở vị trí đầu trang 
+              // width: "100%", // Đảm bảo menu rộng bằng trang 
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -78,7 +81,7 @@ const Home = () => {
             fontWeight: "bold",
           }}
         >
-          NHA KHOA HOÀNG KIM
+          NHA KHOA HBT
         </Typography>
       </Box>
       <Suspense
@@ -165,7 +168,7 @@ const Home = () => {
               padding: "0.3rem",
             }}
           >
-            Nha khoa Hoàng Kim tự hào là một trong những nha khoa chuẩn quốc tế,
+            Nha khoa HBT tự hào là một trong những nha khoa chuẩn quốc tế,
             uy tín.
             <br />
             Với sứ mệnh chăm sóc răng miệng và nụ cười cho mọi nhà
@@ -214,7 +217,7 @@ const Home = () => {
             color: "rgba(0,120,233,1)",
           }}
         >
-          LÍ DO NHA KHOA HOÀNG KIM LUÔN ĐƯỢC KHÁCH HÀNG TIN TƯỞNG
+          LÍ DO NHA KHOA HBT LUÔN ĐƯỢC KHÁCH HÀNG TIN TƯỞNG
         </Typography>
       </Box>
       <Divider
