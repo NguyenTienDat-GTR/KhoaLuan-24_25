@@ -13,23 +13,33 @@ import {
   Radio,
   FormControl,
   FormLabel,
+  Avatar,
+  Input,
 } from "@mui/material";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+import axios from "../../config/axiosConfig";
+import { toast } from "react-toastify";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+import useUserStore from "../../hooks/auth/useUserStore";
 
 const DoctorDetail = ({ open, onClose, doctor }) => {
   const [formData, setFormData] = useState({
-    id: "",
-    name: "",
-    dob: null,
+    employeeID: "",
+    employeeName: "",
+    birthDate: null,
     gender: "male",
-    idCard: "",
-    phone: "",
-    email: "",
+    citizenID: "",
+    employeePhone: "",
+    employeeEmail: "",
     address: "",
-    degree: "",
-    workingSchedule: {
+    employeeSpecialization: "",
+    workingTime: {
       Monday: [],
       Tuesday: [],
       Wednesday: [],
@@ -38,25 +48,71 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
       Saturday: [],
       Sunday: [],
     },
+    urlAvatar: "",
+    isWorking: true,
+    editBy: "",
   });
   const [isEditing, setIsEditing] = useState(false);
+  const [avatar, setAvatar] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  // const [token, setToken] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [buttonText, setButtonText] = useState("Đóng");
+  const { userLoggedIn, setUserLoggedIn, token } = useUserStore();
+
+  useEffect(() => {
+    // setToken(Cookies.get("token"));
+    if (token) {
+      const decodedUser = jwtDecode(token);
+      setUserLoggedIn(token);
+    }
+  }, [token]);
+
+  // Chuyển đổi workingTime từ mảng sang đối tượng
+  const workingTimeObject = {
+    Monday: [],
+    Tuesday: [],
+    Wednesday: [],
+    Thursday: [],
+    Friday: [],
+    Saturday: [],
+    Sunday: [],
+  };
 
   useEffect(() => {
     if (doctor) {
+      doctor.workingTime.forEach((time) => {
+        workingTimeObject[time.day] = time.timeSlots;
+      });
+
+      const parsedBirthDate = doctor.birthDate
+        ? dayjs(doctor.birthDate, "DD/MM/YYYY")
+        : null;
+
       setFormData({
-        id: doctor.id,
-        name: doctor.name,
-        dob: doctor.dob,
+        employeeID: doctor.employeeID,
+        employeeName: doctor.employeeName,
+        birthDate: parsedBirthDate,
         gender: doctor.gender,
-        idCard: doctor.idCard,
-        phone: doctor.phone,
-        email: doctor.email,
+        citizenID: doctor.citizenID,
+        employeePhone: doctor.employeePhone,
+        employeeEmail: doctor.employeeEmail,
         address: doctor.address,
-        degree: doctor.degree,
-        workingSchedule: doctor.workingSchedule,
+        employeeSpecialization: doctor.employeeSpecialization.join(", "), // Chuyển đổi thành chuỗi nếu là mảng
+        workingTime: workingTimeObject,
+        urlAvatar: doctor.urlAvatar,
+        isWorking: doctor.isWorking,
       });
     }
   }, [doctor]);
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAvatar(URL.createObjectURL(file)); // Create a local URL for the selected file
+      setImageFile(file);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -65,14 +121,14 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
 
   const handleScheduleChange = (day, time) => {
     setFormData((prevData) => {
-      const updatedSchedule = { ...prevData.workingSchedule };
+      const updatedSchedule = { ...prevData.workingTime };
       const timeIndex = updatedSchedule[day]?.indexOf(time);
       if (timeIndex > -1) {
         updatedSchedule[day]?.splice(timeIndex, 1);
       } else {
         updatedSchedule[day]?.push(time);
       }
-      return { ...prevData, workingSchedule: updatedSchedule };
+      return { ...prevData, workingTime: updatedSchedule };
     });
   };
 
@@ -81,8 +137,28 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
   };
 
   const handleCancelEdit = () => {
-    setFormData(doctor);
+    setFormData({
+      employeeID: doctor.employeeID,
+      employeeName: doctor.employeeName,
+      birthDate: doctor.birthDate ? dayjs(doctor.birthDate) : null,
+      gender: doctor.gender,
+      citizenID: doctor.citizenID,
+      employeePhone: doctor.employeePhone,
+      employeeEmail: doctor.employeeEmail,
+      address: doctor.address,
+      employeeSpecialization: doctor.employeeSpecialization.join(", "), // Chuyển đổi thành chuỗi nếu là mảng
+      workingTime: workingTimeObject,
+      urlAvatar: doctor.urlAvatar,
+      isWorking: doctor.isWorking,
+    });
     setIsEditing(false);
+  };
+  // Hàm xử lý khi dialog đóng
+  const handleClose = () => {
+    if (isEditing) {
+      setIsEditing(false); // Nếu đang chỉnh sửa, đặt lại isEditing thành false
+    }
+    onClose(); // Gọi hàm onClose từ component cha để đóng Dialog
   };
 
   const daysOfWeek = {
@@ -95,48 +171,192 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
     Sunday: "Chủ Nhật",
   };
 
-  const timeSlots = ["8:00 - 12:00", "13:00 - 17:00"];
+  const updateDoctor = async () => {
+    console.log("file trước", imageFile);
+    console.log("token trước", token);
+    // Tạo FormData từ formData state
+    const formDataToSend = new FormData();
+
+    // Chuyển đổi `workingTime` thành định dạng mà backend mong đợi
+    const workingTimeArray = Object.keys(formData.workingTime).map((day) => ({
+      day: day,
+      timeSlots: formData.workingTime[day],
+    }));
+
+    // Chuyển đổi employeeSpecialization từ chuỗi thành mảng
+    const specializationArray = formData.employeeSpecialization
+      ? formData.employeeSpecialization.split(",").map((item) => item.trim())
+      : [];
+
+    // Thêm các trường vào FormData
+    for (const key in formData) {
+      if (key === "workingTime") {
+        formDataToSend.append(key, JSON.stringify(workingTimeArray)); // Chuyển đổi thành JSON
+      } else if (key === "birthDate") {
+        formDataToSend.append(
+          key,
+          formData.birthDate ? formData.birthDate.format("DD/MM/YYYY") : ""
+        ); // Đảm bảo định dạng là DD/MM/YYYY
+      } else if (key === "employeeSpecialization") {
+        formDataToSend.append(key, JSON.stringify(specializationArray)); // Chuyển đổi thành JSON
+      } else {
+        formDataToSend.append(key, formData[key]);
+      }
+    }
+
+    // Cập nhật editBy thành một mảng đối tượng
+    const editByObject = [
+      {
+        by: userLoggedIn?.user.details.employeeName,
+        at: new Date().toLocaleString("en-US", {
+          timeZone: "Asia/Ho_Chi_Minh", // Thay đổi múi giờ sang giờ Việt Nam
+        }),
+      },
+    ];
+    formDataToSend.append("editBy", JSON.stringify(editByObject));
+    // Nếu có hình đại diện, thêm nó vào FormData
+    if (imageFile) {
+      formDataToSend.append("employeeAvatar", imageFile);
+    }
+    setLoading(true);
+    try {
+      const response = await axios.put(
+        `/employee/update/${formDataToSend.get("employeeID")}`,
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data) {
+        setLoading(false);
+        setImageFile(null);
+        console.log("file sau", imageFile);
+        setButtonText("Đóng");
+        setIsEditing(false);
+      }
+
+      if (response.data.token) {
+        // setToken(response.data.token); // Cập nhật token
+        Cookies.set("token", response.data.token, { expires: 1 }); // Lưu token vào cookie
+        // Cập nhật thông tin người dùng và avatar
+        const decodedUser = jwtDecode(response.data.token);
+        setUserLoggedIn(response.data.token);
+        setFormData((prev) => ({
+          ...prev,
+          urlAvatar: decodedUser.user.details.urlAvatar, // Cập nhật avatar
+        }));
+      }
+      toast.success(response.data.message, {
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
+      console.log("Cập nhật thành công:", response.data);
+    } catch (error) {
+      toast.error(error.response?.data.message, {
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
+      console.error("Cập nhật thất bại:", error);
+    }
+  };
+
+  const handleUpdateDotor = (e) => {
+    e.preventDefault();
+    updateDoctor();
+  };
+
+  const timeSlots = ["08:00 - 12:00", "13:00 - 17:00"];
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
+      <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
         <DialogTitle>Thông tin bác sĩ</DialogTitle>
         <DialogContent>
           <Box sx={{ display: "flex", flexDirection: "row", gap: 4, mt: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 2,
+                marginTop: "1rem",
+              }}
+            >
+              <Avatar
+                alt="Avatar Preview"
+                src={!imageFile ? formData?.urlAvatar : avatar} // Display selected avatar
+                sx={{ width: 120, height: 120 }}
+              />
+              <Button
+                variant="contained"
+                component="label"
+                sx={{
+                  backgroundColor: !isEditing ? "#C5C5C5" : "primary",
+                  cursor: !isEditing ? "not-allowed" : "pointer",
+                }}
+              >
+                Tải lên ảnh đại diện
+                <input
+                  required
+                  autoFocus
+                  disabled={!isEditing}
+                  type="file"
+                  name="employeeAvatar"
+                  hidden
+                  accept="image/*"
+                  onChange={handleAvatarChange} // Handle file selection
+                  style={{
+                    backgroundColor: !isEditing ? "#5C5C5C" : "transparent", // Change background color based on isEditing
+                    cursor: !isEditing ? "not-allowed" : "pointer", // Change cursor style when not editing
+                  }}
+                />
+              </Button>
+            </Box>
             <Box
               sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}
             >
               <TextField
                 label="Mã bác sĩ"
                 variant="outlined"
-                name="id"
-                value={formData?.id || ""}
+                name="employeeID"
+                value={formData?.employeeID || ""}
                 InputProps={{
                   readOnly: true,
+                  style: {
+                    cursor: "not-allowed", // Always set to not-allowed
+                  },
                 }}
                 InputLabelProps={{
-                  shrink: !!formData?.id,
+                  shrink: !!formData?.employeeID,
                 }}
               />
               <TextField
                 label="Họ tên"
                 variant="outlined"
-                name="name"
-                value={formData?.name || ""}
+                name="employeeName"
+                value={formData?.employeeName || ""}
                 onChange={handleInputChange}
                 InputProps={{
                   readOnly: !isEditing,
+                  style: {
+                    cursor: isEditing ? "text" : "not-allowed", // Only show text cursor when editing
+                  },
                 }}
                 InputLabelProps={{
-                  shrink: !!formData?.id,
+                  shrink: !!formData?.employeeName,
                 }}
               />
               <DesktopDatePicker
                 label="Ngày tháng năm sinh"
-                value={formData?.dob}
+                value={formData?.birthDate}
                 onChange={(newValue) =>
-                  setFormData({ ...formData, dob: newValue })
+                  setFormData({ ...formData, birthDate: newValue })
                 }
+                format="DD/MM/YYYY"
                 componentsProps={{
                   textField: {
                     fullWidth: true,
@@ -146,6 +366,19 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
                   },
                 }}
               />
+              <TextField
+                label="Căn cước công dân"
+                variant="outlined"
+                name="citizenID"
+                value={formData?.citizenID || ""}
+                onChange={handleInputChange}
+                InputProps={{
+                  readOnly: !isEditing,
+                }}
+                InputLabelProps={{
+                  shrink: !!formData?.citizenID,
+                }}
+              />
               <FormControl component="fieldset">
                 <FormLabel component="legend">Giới tính</FormLabel>
                 <RadioGroup
@@ -153,17 +386,18 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
                   name="gender"
                   value={formData?.gender || ""}
                   onChange={handleInputChange}
-                  disabled={!isEditing}
                 >
                   <FormControlLabel
                     value="male"
                     control={<Radio />}
                     label="Nam"
+                    disabled={!isEditing}
                   />
                   <FormControlLabel
                     value="female"
                     control={<Radio />}
                     label="Nữ"
+                    disabled={!isEditing}
                   />
                 </RadioGroup>
               </FormControl>
@@ -173,42 +407,29 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
               sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}
             >
               <TextField
-                label="Căn cước công dân"
-                variant="outlined"
-                name="idCard"
-                value={formData?.idCard || ""}
-                onChange={handleInputChange}
-                InputProps={{
-                  readOnly: !isEditing,
-                }}
-                InputLabelProps={{
-                  shrink: !!formData?.id,
-                }}
-              />
-              <TextField
                 label="Số điện thoại"
                 variant="outlined"
-                name="phone"
-                value={formData?.phone || ""}
+                name="employeePhone"
+                value={formData?.employeePhone || ""}
                 onChange={handleInputChange}
                 InputProps={{
                   readOnly: !isEditing,
                 }}
                 InputLabelProps={{
-                  shrink: !!formData?.id,
+                  shrink: !!formData?.employeePhone,
                 }}
               />
               <TextField
                 label="Email"
                 variant="outlined"
-                name="email"
-                value={formData?.email || ""}
+                name="employeeEmail"
+                value={formData?.employeeEmail || ""}
                 onChange={handleInputChange}
                 InputProps={{
                   readOnly: !isEditing,
                 }}
                 InputLabelProps={{
-                  shrink: !!formData?.id,
+                  shrink: !!formData?.employeeEmail,
                 }}
               />
               <TextField
@@ -221,113 +442,140 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
                   readOnly: !isEditing,
                 }}
                 InputLabelProps={{
-                  shrink: !!formData?.id,
+                  shrink: !!formData?.address,
                 }}
               />
               <TextField
                 label="Bằng cấp"
                 variant="outlined"
-                name="degree"
-                value={formData?.degree || ""}
+                name="employeeSpecialization"
+                value={formData?.employeeSpecialization || ""}
                 onChange={handleInputChange}
                 InputProps={{
                   readOnly: !isEditing,
                 }}
-                InputLabelProps={{
-                  shrink: !!formData?.id,
-                }}
               />
+              <Box
+                sx={{
+                  marginTop: 2,
+                  gap: "0.5rem",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="h6">Trạng thái làm việc:</Typography>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData?.isWorking || false}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          isWorking: e.target.checked,
+                        })
+                      }
+                      disabled={!isEditing}
+                    />
+                  }
+                  label="Đang hoạt động"
+                />
+              </Box>
             </Box>
           </Box>
 
-          <Box>
-            <Typography variant="h6">Lịch làm việc</Typography>
+          <Box sx={{ marginTop: 2 }}>
+            <Typography variant="h6">Giờ làm việc</Typography>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+              {Object.keys(daysOfWeek)
+                .reduce((acc, day, index) => {
+                  if (index % 3 === 0) {
+                    acc.push([]); // Tạo một mảng mới mỗi 3 ngày
+                  }
+                  acc[acc.length - 1].push(day); // Thêm ngày vào hàng hiện tại
+                  return acc;
+                }, [])
+                .map((dayGroup, groupIndex) => (
+                  <Box
+                    key={groupIndex}
+                    sx={{ display: "flex", flexDirection: "column", flex: 1 }}
+                  >
+                    {dayGroup.map((day) => (
+                      <Box key={day} sx={{ marginTop: 1 }}>
+                        <Typography variant="body1">
+                          {daysOfWeek[day]}
+                        </Typography>
+                        {timeSlots.map((time) => (
+                          <FormControlLabel
+                            key={time}
+                            control={
+                              <Checkbox
+                                checked={
+                                  formData?.workingTime[day]?.includes(time) ||
+                                  false
+                                }
+                                onChange={() => handleScheduleChange(day, time)}
+                                disabled={!isEditing}
+                              />
+                            }
+                            label={time}
+                          />
+                        ))}
+                      </Box>
+                    ))}
+                  </Box>
+                ))}
+            </Box>
+          </Box>
+
+          {!loading ? (
             <Box
               sx={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 2,
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: 2,
               }}
             >
-              {Object.keys(daysOfWeek).map((dayKey) => (
-                <Box
-                  key={dayKey}
-                  sx={{
-                    padding: 2,
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
-                    opacity:
-                      !isEditing &&
-                      formData?.workingSchedule?.[dayKey]?.length === 0
-                        ? 0.5
-                        : 1,
-                  }}
-                >
-                  <Typography variant="subtitle1" gutterBottom>
-                    {daysOfWeek[dayKey]}
-                  </Typography>
-                  {timeSlots.map((time) => (
-                    <Typography key={time}>
-                      {formData?.workingSchedule?.[dayKey]?.includes(time) ? (
-                        <span>✔ {time}</span>
-                      ) : (
-                        <span>{time}</span>
-                      )}
-                    </Typography>
-                  ))}
-                  {isEditing && (
-                    <Box>
-                      {timeSlots.map((time) => (
-                        <FormControlLabel
-                          key={time}
-                          control={
-                            <Checkbox
-                              checked={formData?.workingSchedule?.[
-                                dayKey
-                              ]?.includes(time)}
-                              onChange={() =>
-                                handleScheduleChange(dayKey, time)
-                              }
-                            />
-                          }
-                          label={time}
-                        />
-                      ))}
-                    </Box>
-                  )}
-                </Box>
-              ))}
+              {isEditing ? (
+                <>
+                  <Button
+                    onClick={handleCancelEdit}
+                    color="error"
+                    sx={{ marginRight: 2 }}
+                  >
+                    Hủy
+                  </Button>
+                  <Button
+                    onClick={handleUpdateDotor}
+                    variant="contained"
+                    color="primary"
+                  >
+                    Lưu
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    onClick={handleClose}
+                    color="primary"
+                    sx={{ marginRight: 2 }}
+                  >
+                    {buttonText} {/* Hiển thị giá trị của buttonText */}
+                  </Button>
+                  <Button
+                    onClick={handleEditToggle}
+                    variant="contained"
+                    color="primary"
+                  >
+                    Chỉnh sửa
+                  </Button>
+                </>
+              )}
             </Box>
-          </Box>
-
-          {/* Button Đóng, Hủy và Chỉnh sửa */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: 2,
-              gap: 2,
-            }}
-          >
-            <Button variant="outlined" onClick={onClose}>
-              Đóng
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={handleCancelEdit}
-              disabled={!isEditing} // Hủy chỉ nhấn được khi isEditing là true
-            >
-              Hủy
-            </Button>
-            <Button
-              variant="contained"
-              color={!isEditing ? "primary" : "success"}
-              onClick={handleEditToggle}
-            >
-              {isEditing ? "Lưu thông tin" : "Chỉnh sửa thông tin"}
-            </Button>
-          </Box>
+          ) : (
+            <Typography sx={{ mr: "1px", width: "100%" }}>
+              Đang cập nhật....
+            </Typography>
+          )}
         </DialogContent>
       </Dialog>
     </LocalizationProvider>

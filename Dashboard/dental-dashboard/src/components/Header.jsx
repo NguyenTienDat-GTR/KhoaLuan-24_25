@@ -20,20 +20,19 @@ import {
 } from "@mui/icons-material";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
+import useUserStore from "../hooks/auth/useUserStore";
 
 const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
   const pathParts = currentPath.split("/");
   const { logout, isLoggedIn } = useAuth();
-  const [user, setUser] = useState(null);
+  const { userLoggedIn, setUserLoggedIn, token } = useUserStore();
   const navigation = useNavigate();
 
   useEffect(() => {
-    const token = Cookies.get("token");
     if (token) {
-      const decodedUser = jwtDecode(token);
-      setUser(decodedUser);
+      setUserLoggedIn(token);
     }
-  }, [Cookies.get("token")]); // Theo dõi token
+  }, [token]); // Theo dõi token
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -107,8 +106,8 @@ const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
         </IconButton>
         <IconButton color="inherit" onClick={handleMenuOpen}>
           <Avatar
-            alt="User Name"
-            src={user?.user.details?.urlAvatar}
+            alt={userLoggedIn?.user?.details?.employeeName}
+            src={userLoggedIn?.user?.details?.urlAvatar}
             sx={{ width: 50, height: 50 }}
           />
         </IconButton>
@@ -149,50 +148,54 @@ const Header = ({ sidebarOpen, currentPath, menuItems, onPathChange }) => {
           <Typography variant="body1">Đăng xuất</Typography>
         </MenuItem>
       </Menu>
-
-      {/* Path Navigation */}
-      {/* <Box
-        className="path"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          backgroundColor: "#f7f7f7",
-          width: "100%",
-          paddingLeft: "1rem",
-          color: "#808080",
-        }}
-      >
-        {pathParts.map((part, index) => (
-          <span key={index}>
-            <Link
-              to={generateLink(index)}
-              onClick={() => onPathChange(part)}
-              style={{ textDecoration: "none", color: "#8B8970" }}
-            >
-              <Typography
-                variant="h6"
-                noWrap
-                component="div"
-                sx={{ flexGrow: 1, display: "inline" }}
-              >
-                {part}
-              </Typography>
-            </Link>
-            {index < pathParts.length - 1 && (
-              <Typography
-                variant="h6"
-                noWrap
-                component="span"
-                sx={{ margin: "0 0.5rem" }}
-              >
-                /
-              </Typography>
-            )}
-          </span>
-        ))}
-      </Box> */}
     </AppBar>
   );
 };
 
 export default Header;
+
+{
+  /* Path Navigation */
+}
+{
+  /* <Box
+  className="path"
+  sx={{
+    display: "flex",
+    alignItems: "center",
+    backgroundColor: "#f7f7f7",
+    width: "100%",
+    paddingLeft: "1rem",
+    color: "#808080",
+  }}
+>
+  {pathParts.map((part, index) => (
+    <span key={index}>
+      <Link
+        to={generateLink(index)}
+        onClick={() => onPathChange(part)}
+        style={{ textDecoration: "none", color: "#8B8970" }}
+      >
+        <Typography
+          variant="h6"
+          noWrap
+          component="div"
+          sx={{ flexGrow: 1, display: "inline" }}
+        >
+          {part}
+        </Typography>
+      </Link>
+      {index < pathParts.length - 1 && (
+        <Typography
+          variant="h6"
+          noWrap
+          component="span"
+          sx={{ margin: "0 0.5rem" }}
+        >
+          /
+        </Typography>
+      )}
+    </span>
+  ))}
+</Box> */
+}

@@ -19,10 +19,16 @@ export const useAuth = create((set) => ({
 
       // Cập nhật trạng thái đăng nhập
       set({ isLoggedIn: true, token });
-      toast.success(response.data.message);
+      toast.success(response.data.message, {
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
       return true;
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message);
+      toast.error(error.response?.data?.message || error.message, {
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
       console.error(
         "Login failed:",
         error.response?.data?.message || error.message

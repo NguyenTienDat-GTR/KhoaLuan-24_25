@@ -22,6 +22,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import useCreateDoctor from "../../hooks/doctor/useCreateDoctor";
+import useUserStore from "../../hooks/auth/useUserStore";
 
 const CreateDoctor = ({ open, onClose }) => {
   const [name, setName] = useState("");
@@ -45,14 +46,12 @@ const CreateDoctor = ({ open, onClose }) => {
     Sunday: [],
   });
   const { createDoctor, loading, error, success } = useCreateDoctor();
-  const [userLoggedIn, setUserLoggedIn] = useState(null);
+  const { userLoggedIn, setUserLoggedIn, token } = useUserStore();
 
   useEffect(() => {
-    const token = Cookies.get("token");
+    // const token = Cookies.get("token");
     if (token) {
-      const decodedUser = jwtDecode(token);
-      setUserLoggedIn(decodedUser);
-      console.log(userLoggedIn);
+      setUserLoggedIn(token);
     }
   }, []);
 
@@ -70,7 +69,6 @@ const CreateDoctor = ({ open, onClose }) => {
   // Handling avatar change
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
-    console.log(file);
     if (file) {
       setAvatar(URL.createObjectURL(file)); // Create a local URL for the selected file
       setImageFile(file);
@@ -96,6 +94,7 @@ const CreateDoctor = ({ open, onClose }) => {
       Saturday: [],
       Sunday: [],
     });
+    setImageFile(null);
   };
 
   useEffect(() => {
@@ -103,7 +102,6 @@ const CreateDoctor = ({ open, onClose }) => {
   }, [success]);
 
   const handleCreate = () => {
-    console.log("tạo bác sĩ");
     // Chỉ lấy những ngày có ít nhất 1 timeSlot
     const filteredWorkingTime = Object.entries(workingSchedule)
       .filter(([day, slots]) => slots.length > 0) // Chỉ giữ lại những ngày có timeSlot
@@ -115,7 +113,7 @@ const CreateDoctor = ({ open, onClose }) => {
     const doctorData = {
       employeeName: name,
       gender,
-      birthDate: dob ? dob.format("YYYY-MM-DD") : "",
+      birthDate: dob ? dob.format("DD/MM/YYYY") : "",
       employeePhone: phone,
       employeeEmail: email,
       citizenID: idCard,
@@ -302,14 +300,14 @@ const CreateDoctor = ({ open, onClose }) => {
                           control={
                             <Checkbox
                               checked={workingSchedule[day].includes(
-                                "8:00 - 12:00"
+                                "08:00 - 12:00"
                               )}
                               onChange={() =>
-                                handleCheckboxChange(day, "8:00 - 12:00")
+                                handleCheckboxChange(day, "08:00 - 12:00")
                               }
                             />
                           }
-                          label="8:00 - 12:00"
+                          label="08:00 - 12:00"
                         />
                         <FormControlLabel
                           control={

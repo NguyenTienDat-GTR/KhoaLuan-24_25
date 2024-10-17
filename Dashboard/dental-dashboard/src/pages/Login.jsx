@@ -13,6 +13,8 @@ import { styled } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/auth/useAuth";
 import Cookies from "js-cookie";
+import useUserStore from "../hooks/auth/useUserStore";
+import { jwtDecode } from "jwt-decode";
 
 const FullScreenContainer = styled(Box)({
   display: "flex",
@@ -55,6 +57,7 @@ const Login = () => {
   const { login } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { userLoggedIn, setUserLoggedIn } = useUserStore();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -63,6 +66,7 @@ const Login = () => {
     if (success) {
       // Kiểm tra xem đăng nhập có thành công không
       const token = Cookies.get("token");
+      setUserLoggedIn(token); // Cập nhật thông tin người dùng
       if (token) {
         navigate("/dashboard/tong-quan"); // Chuyển hướng đến trang tổng quan
       }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -16,13 +16,17 @@ import {
   IconButton,
   Tooltip,
   FormControl,
+  RadioGroup,
   FormControlLabel,
   Radio,
-  RadioGroup,
 } from "@mui/material";
-import { Add, Edit, Visibility } from "@mui/icons-material";
+import { Add, Visibility } from "@mui/icons-material";
 import CreateDoctor from "../../components/ManageDoctor/CreateDoctor";
 import DoctorDetail from "../../components/ManageDoctor/DoctorDetail";
+import Cookies from "js-cookie";
+import useDoctorStore from "../../hooks/doctor/useGetAllDoctor";
+import { jwtDecode } from "jwt-decode";
+import useUserStore from "../../hooks/auth/useUserStore";
 
 const daysOfWeek = {
   Monday: "Thứ Hai",
@@ -40,79 +44,51 @@ const ManageDoctor = () => {
   const [selectedTime, setSelectedTime] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openCreateDoctor, setOpenCreateDoctor] = useState(false);
   const [openDoctorDetail, setOpenDoctorDetail] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const { doctors, loading, error, getAllDoctors } = useDoctorStore();
+  const { userLoggedIn, setUserLoggedIn, token } = useUserStore();
 
-  const doctors = [
-    {
-      id: "BS00001",
-      name: "Nguyễn Văn A",
-      phone: "0123456789",
-      email: "a@gmail.com",
-      workingSchedule: {
-        Monday: ["08:00 - 12:00", "13:00 - 17:00"],
-        Wednesday: ["08:00 - 12:00"],
-        Friday: ["13:00 - 17:00"],
-      },
-      status: "active",
-    },
-    {
-      id: "BS00002",
-      name: "Trần Thị B",
-      phone: "0987654321",
-      email: "b@gmail.com",
-      workingSchedule: {
-        Tuesday: ["08:00 - 12:00"],
-        Thursday: ["13:00 - 17:00"],
-      },
-      status: "inactive",
-    },
-    {
-      id: "BS00003",
-      name: "Lê Thị C",
-      phone: "0912345678",
-      email: "c@gmail.com",
-      workingSchedule: {
-        Monday: ["08:00 - 17:00"],
-        Wednesday: ["08:00 - 17:00"],
-        Friday: ["08:00 - 17:00"],
-      },
-      status: "active",
-    },
-    {
-      id: "BS00004",
-      name: "Phạm Văn D",
-      phone: "0123456780",
-      email: "d@gmail.com",
-      workingSchedule: {
-        Saturday: ["08:00 - 12:00", "13:00 - 17:00"],
-        Sunday: ["08:00 - 12:00"],
-      },
-      status: "inactive",
-    },
-    {
-      id: "BS00005",
-      name: "Trần Thị E",
-      phone: "0987654320",
-      email: "e@gmail.com",
-      workingSchedule: {
-        Saturday: ["08:00 - 12:00"],
-        Sunday: ["13:00 - 17:00"],
-      },
-      status: "active",
-    },
-  ];
+  // const token = Cookies.get("token");
 
+  useEffect(() => {
+    if (token) {
+      setUserLoggedIn(token);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (token) {
+      getAllDoctors(token);
+    }
+  }, [token, doctors]);
+
+  // Lọc danh sách bác sĩ dựa trên các filter
+  // Lọc danh sách bác sĩ dựa trên các filter
   const filteredDoctors = doctors.filter((doctor) => {
+    const worksOnSelectedDay =
+      selectedDay === "" ||
+      doctor.workingTime.some((time) => daysOfWeek[time.day] === selectedDay);
+
+    const worksInSelectedTime =
+      selectedTime === "" ||
+      doctor.workingTime.some((time) => {
+        // Kiểm tra nếu bác sĩ làm việc trong khoảng thời gian được chọn
+        return time.timeSlots.includes(selectedTime);
+      });
+
     return (
-      (doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doctor.phone.includes(searchTerm) ||
-        doctor.email.toLowerCase().includes(searchTerm)) &&
-      (selectedDay === "" || doctor.workingHours.includes(selectedDay)) &&
-      (selectedTime === "" || doctor.workingHours.includes(selectedTime)) &&
-      (statusFilter === "" || doctor.status === statusFilter)
+      (doctor.employeeID.includes(searchTerm) ||
+        doctor.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        doctor.employeePhone.includes(searchTerm) ||
+        doctor.employeeEmail
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())) &&
+      worksOnSelectedDay &&
+      worksInSelectedTime &&
+      (statusFilter === "" || doctor.isWorking === (statusFilter === "true"))
     );
   });
 
@@ -134,6 +110,7 @@ const ManageDoctor = () => {
   };
 
   const handleOpenDoctorDetail = (doctor) => {
+    console.log(doctor);
     setSelectedDoctor(doctor);
     setOpenDoctorDetail(true);
   };
@@ -158,7 +135,7 @@ const ManageDoctor = () => {
           size="small"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          sx={{ width: "40%", bgcolor: "#f5f5f5" }} // Thay đổi màu nền
+          sx={{ width: "40%", bgcolor: "#f5f5f5" }}
         />
         <Box
           className="filter"
@@ -206,13 +183,11 @@ const ManageDoctor = () => {
                 <MenuItem value="">
                   <em>Tất cả ngày</em>
                 </MenuItem>
-                <MenuItem value="Thứ Hai">Thứ Hai</MenuItem>
-                <MenuItem value="Thứ Ba">Thứ Ba</MenuItem>
-                <MenuItem value="Thứ Tư">Thứ Tư</MenuItem>
-                <MenuItem value="Thứ Năm">Thứ Năm</MenuItem>
-                <MenuItem value="Thứ Sáu">Thứ Sáu</MenuItem>
-                <MenuItem value="Thứ Bảy">Thứ Bảy</MenuItem>
-                <MenuItem value="Chủ Nhật">Chủ Nhật</MenuItem>
+                {Object.values(daysOfWeek).map((day) => (
+                  <MenuItem key={day} value={day}>
+                    {day}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Box>
@@ -238,12 +213,12 @@ const ManageDoctor = () => {
                 </MenuItem>
                 <MenuItem value="08:00 - 12:00">08:00 - 12:00</MenuItem>
                 <MenuItem value="13:00 - 17:00">13:00 - 17:00</MenuItem>
-                <MenuItem value="Cả ngày">Cả ngày</MenuItem>
               </Select>
             </FormControl>
           </Box>
         </Box>
       </Box>
+
       <Box>
         <Typography variant="caption">Trạng thái:</Typography>
         <RadioGroup
@@ -253,27 +228,26 @@ const ManageDoctor = () => {
         >
           <FormControlLabel value="" control={<Radio />} label="Tất cả" />
           <FormControlLabel
-            value="active"
+            value="true"
             control={<Radio />}
             label="Còn hoạt động"
           />
-          <FormControlLabel
-            value="inactive"
-            control={<Radio />}
-            label="Đã nghỉ"
-          />
+          <FormControlLabel value="false" control={<Radio />} label="Đã nghỉ" />
         </RadioGroup>
       </Box>
 
       <Box sx={{ marginBottom: 2 }}>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          sx={{ bgcolor: "#4caf50" }}
-          onClick={handleOpenCreateDoctor}
-        >
-          Thêm mới bác sĩ
-        </Button>
+        {/* Chỉ hiển thị nút "Thêm mới bác sĩ" nếu người dùng là admin */}
+        {userLoggedIn?.user.role === "admin" && (
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            sx={{ bgcolor: "#4caf50" }}
+            onClick={handleOpenCreateDoctor}
+          >
+            Thêm mới bác sĩ
+          </Button>
+        )}
       </Box>
 
       <TableContainer sx={{ boxShadow: 2, borderRadius: 1 }}>
@@ -295,37 +269,36 @@ const ManageDoctor = () => {
               .map((doctor, index) => (
                 <TableRow
                   key={`${doctor.id}-${index}`}
-                  hover
                   sx={{
                     backgroundColor:
-                      doctor.status === "inactive" ? "#ffebee" : "inherit", // Màu đỏ nhạt cho bác sĩ đã nghỉ
+                      doctor.status === "inactive" ? "#ffebee" : "inherit",
+                    "&:hover": { backgroundColor: "#e0f7fa" },
                   }}
                 >
                   <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
-                  <TableCell>{doctor.id}</TableCell>
-                  <TableCell>{doctor.name}</TableCell>
-                  <TableCell>{doctor.phone}</TableCell>
-                  <TableCell>{doctor.email}</TableCell>
+                  <TableCell>{doctor.employeeID}</TableCell>
+                  <TableCell>{doctor.employeeName}</TableCell>
+                  <TableCell>{doctor.employeePhone}</TableCell>
+                  <TableCell>{doctor.employeeEmail}</TableCell>
                   <TableCell>
-                    {/* Chuyển đổi lịch làm việc thành chuỗi để hiển thị */}
-                    {Object.entries(doctor.workingSchedule).map(
-                      ([day, times]) => (
-                        <div key={day}>
-                          {daysOfWeek[day]}: {times.join(", ")}{" "}
-                          {/* Sử dụng từ điển để hiển thị ngày bằng tiếng Việt */}
-                        </div>
-                      )
-                    )}
+                    {doctor.workingTime?.map((time, i) => (
+                      <Typography key={i}>
+                        {daysOfWeek[time.day]}: {time.timeSlots.join(", ")}
+                      </Typography>
+                    ))}
                   </TableCell>
-
                   <TableCell>
-                    <Tooltip title="Xem chi tiết">
-                      <IconButton
-                        onClick={() => handleOpenDoctorDetail(doctor)}
-                      >
-                        <Visibility sx={{ color: "green" }} />
-                      </IconButton>
-                    </Tooltip>
+                    {/* Chỉ hiển thị nút "Xem chi tiết" nếu người dùng là admin */}
+                    {userLoggedIn?.user.role === "admin" && (
+                      <Tooltip title="Chi tiết">
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleOpenDoctorDetail(doctor)}
+                        >
+                          <Visibility />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -334,17 +307,15 @@ const ManageDoctor = () => {
       </TableContainer>
 
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
         component="div"
         count={filteredDoctors.length}
-        rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-      {/* Dialog thêm mới bác sĩ */}
+
       <CreateDoctor open={openCreateDoctor} onClose={handleCloseCreateDoctor} />
-      {/* Dialog xem chi tiết bác sĩ */}
       <DoctorDetail
         open={openDoctorDetail}
         onClose={() => setOpenDoctorDetail(false)}

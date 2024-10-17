@@ -18,16 +18,17 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
+import useUserStore from "../hooks/auth/useUserStore";
 
 const Sidebar = ({ open, onToggleSidebar, onPathChange, menuItems }) => {
   const [openSubMenu, setOpenSubMenu] = useState({});
-  const [user, setUser] = useState(null);
+  const { userLoggedIn, setUserLoggedIn, token } = useUserStore();
 
   useEffect(() => {
-    const token = Cookies.get("token");
+    // const token = Cookies.get("token");
     if (token) {
-      const decodedUser = jwtDecode(token);
-      setUser(decodedUser);
+      // const decodedUser = jwtDecode(token);
+      setUserLoggedIn(token);
     }
   }, [Cookies.get("token")]);
 
@@ -70,7 +71,7 @@ const Sidebar = ({ open, onToggleSidebar, onPathChange, menuItems }) => {
                   fontSize: "1.2rem",
                 }}
               >
-                {user?.user.details.employeeName}
+                {userLoggedIn?.user.details.employeeName}
               </Typography>
             </>
           )}
