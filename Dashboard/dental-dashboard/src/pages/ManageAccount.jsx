@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -26,57 +26,9 @@ import { Edit, Delete } from "@mui/icons-material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import CreateAccount from "../components/ManageAccount/CreateAccount";
 import EditAccount from "../components/ManageAccount/EditAccount";
-
-const initialAccounts = [
-  {
-    id: 1,
-    code: "AC001",
-    name: "Nguyễn Văn A",
-    username: "nvana",
-    role: "Admin",
-    status: "Active",
-  },
-  {
-    id: 2,
-    code: "AC002",
-    name: "Trần Thị B",
-    username: "ttb",
-    role: "Nhân viên",
-    status: "Inactive",
-  },
-  {
-    id: 3,
-    code: "AC003",
-    name: "Lê Văn C",
-    username: "lvc",
-    role: "Admin",
-    status: "Active",
-  },
-  {
-    id: 4,
-    code: "AC004",
-    name: "Phạm Thị D",
-    username: "ptd",
-    role: "Bác sĩ",
-    status: "Active",
-  },
-  {
-    id: 5,
-    code: "AC005",
-    name: "Ngô Văn E",
-    username: "nve",
-    role: "Bác sĩ",
-    status: "Inactive",
-  },
-  {
-    id: 6,
-    code: "AC006",
-    name: "Ngô Văn F",
-    username: "nvef",
-    role: "Bác sĩ",
-    status: "active",
-  },
-];
+import useGetAllAccounts from "../hooks/account/useGetAllAccount";
+import useUserStore from "../hooks/auth/useUserStore";
+import { toast } from "react-toastify";
 
 const ManageAccount = ({ isSidebarOpen }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -87,18 +39,26 @@ const ManageAccount = ({ isSidebarOpen }) => {
   const [editAccountDialogOpen, setEditAccountDialogOpen] = useState(false);
   const [deleteConfirmDialogOpen, setDeleteConfirmDialogOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState(null);
-  const [accounts, setAccounts] = useState(initialAccounts);
+  const { accounts, loading, error, getAllAccount } = useGetAllAccounts();
+  const { userLoggedIn, setUserLoggedIn, token } = useUserStore();
+  const [listAccount, setListAccount] = useState([]);
+
+  useEffect(() => {
+    if (token) {
+      getAllAccount(token);
+    }
+  }, [token, accounts]);
 
   const filteredAccounts = accounts.filter((account) => {
     const matchesSearch =
-      account.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      account.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      account.employeeID.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      account.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       account.username.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
       filterStatus === "all" ||
-      (filterStatus === "active" && account.status === "Active") ||
-      (filterStatus === "inactive" && account.status === "Inactive");
+      (filterStatus === "true" && account.isActive === true) ||
+      (filterStatus === "false" && account.isActive === false);
 
     return matchesSearch && matchesStatus;
   });
@@ -131,10 +91,21 @@ const ManageAccount = ({ isSidebarOpen }) => {
   };
 
   const handleConfirmDelete = () => {
-    setAccounts(accounts.filter((acc) => acc.id !== selectedAccount.id));
+    // setAccounts(accounts.filter((acc) => acc.id !== selectedAccount.id));
     setDeleteConfirmDialogOpen(false);
   };
-
+  // if (loading) {
+  //   return toast.warning("Đang tải danh sách tài khoản...", {
+  //     autoClose: 3000,
+  //     hideProgressBar: false,
+  //   });
+  // }
+  // if (error) {
+  //   return toast.error(error, {
+  //     autoClose: 3000,
+  //     hideProgressBar: false,
+  //   });
+  // }
   return (
     <Box sx={{ paddingY: 6, paddingX: 0.5 }}>
       <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 2 }}>
@@ -168,11 +139,15 @@ const ManageAccount = ({ isSidebarOpen }) => {
         <Typography variant="body1">Lọc trạng thái:</Typography>
         <RadioGroup row value={filterStatus} onChange={handleFilterChange}>
           <FormControlLabel value="all" control={<Radio />} label="Tất cả" />
-          <FormControlLabel value="active" control={<Radio />} label="Active" />
           <FormControlLabel
-            value="inactive"
+            value={true}
             control={<Radio />}
-            label="Inactive"
+            label="Hoạt động"
+          />
+          <FormControlLabel
+            value={false}
+            control={<Radio />}
+            label="Vô hiệu hóa"
           />
         </RadioGroup>
       </Box>
@@ -204,17 +179,25 @@ const ManageAccount = ({ isSidebarOpen }) => {
                   <TableCell sx={{ width: "5%" }}>
                     {index + 1 + page * rowsPerPage}
                   </TableCell>
-                  <TableCell>{account.code}</TableCell>
-                  <TableCell sx={{ width: "25%" }}>{account.name}</TableCell>
+                  <TableCell>{account.employeeID}</TableCell>
+                  <TableCell sx={{ width: "25%" }}>
+                    {account.employeeName}
+                  </TableCell>
                   <TableCell>{account.username}</TableCell>
-                  <TableCell>{account.role}</TableCell>
+                  <TableCell>
+                    {account.role === "admin"
+                      ? "admin"
+                      : account.role === "bác sĩ"
+                      ? "bác sĩ"
+                      : "nhân viên"}
+                  </TableCell>
                   <TableCell
                     sx={{
-                      color: account.status === "Active" ? "green" : "red",
+                      color: account.isActive === true ? "green" : "red",
                       fontWeight: "bold",
                     }}
                   >
-                    {account.status}
+                    {account.isActive === true ? "Hoạt động" : "Vô hiệu hóa"}
                   </TableCell>
                   <TableCell>
                     <Tooltip title="Chỉnh sửa" arrow>

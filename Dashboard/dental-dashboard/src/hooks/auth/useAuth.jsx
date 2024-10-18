@@ -1,11 +1,12 @@
 import { create } from "zustand";
 import Cookies from "js-cookie";
 import axios from "../../config/axiosConfig";
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useEffect } from "react";
 import { toast } from "react-toastify";
+import useUserStore from "./useUserStore";
 
 export const useAuth = create((set) => ({
-  isLoggedIn: !!Cookies.get("token"), // Kiểm tra token trong cookie
+  isLoggedIn: !!Cookies.get("token"),
   token: Cookies.get("token") || null,
 
   login: async (username, password) => {
@@ -19,6 +20,10 @@ export const useAuth = create((set) => ({
 
       // Cập nhật trạng thái đăng nhập
       set({ isLoggedIn: true, token });
+
+      // Cập nhật userLoggedIn trong useUserStore
+      useUserStore.getState().setUserLoggedIn(token);
+
       toast.success(response.data.message, {
         autoClose: 3000,
         hideProgressBar: false,
@@ -39,14 +44,20 @@ export const useAuth = create((set) => ({
   logout: () => {
     // Xóa token khỏi cookie và cập nhật trạng thái đăng xuất
     Cookies.remove("token");
-    Cookies.remove("user");
     set({ isLoggedIn: false, token: null });
+    useUserStore.getState().clearUser();
   },
 }));
 
 const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
-  const { isLoggedIn, login, logout } = useAuth(); // Lấy trạng thái và hàm từ hook useAuth
+  const { isLoggedIn, login, logout } = useAuth();
+  const { restoreUserFromCookie } = useUserStore();
+
+  useEffect(() => {
+    // Khôi phục lại user từ cookie khi trang load lần đầu
+    restoreUserFromCookie();
+  }, [restoreUserFromCookie]);
 
   return (
     <AuthContext.Provider value={{ isLoggedIn, login, logout }}>

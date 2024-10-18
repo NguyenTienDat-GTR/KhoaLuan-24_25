@@ -2,12 +2,13 @@ import { useState } from "react";
 import axios from "../../config/axiosConfig"; // Đường dẫn này có thể tùy chỉnh theo project
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import useUserStore from "../auth/useUserStore";
 
 const useCreateDoctor = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const token = Cookies.get("token");
+  const { token } = useUserStore();
 
   const createDoctor = async (doctorData, avatarFile) => {
     setLoading(true);
