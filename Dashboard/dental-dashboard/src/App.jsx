@@ -96,7 +96,7 @@ const LazyComponent = ({ Component }) => {
             fontSize: { xs: "1rem", sm: "1.2rem", md: "1.5rem" }, // Responsive font size
           }}
         >
-          Kéo xuống để tải thêm...
+          Đang tải....
         </Box>
       )}
     </Box>
@@ -146,19 +146,19 @@ function App() {
       path: "dashboard/lich-hen",
     },
     {
-      text: "Dịch vụ",
+      text: "Quản lý dịch vụ",
       icon: <MedicalServices sx={{ color: "rgba(21,182,210)" }} />,
       path: "dashboard/dich-vu",
-      subItems: [
-        {
-          text: "Dịch vụ tổng quát",
-          path: "tong-quat",
-        },
-        {
-          text: "Dịch vụ chuyên khoa",
-          path: "chuyen-khoa",
-        },
-      ],
+      // subItems: [
+      //   {
+      //     text: "Loại dịch vụ",
+      //     path: "tong-quat",
+      //   },
+      //   {
+      //     text: "Dịch vụ chuyên khoa",
+      //     path: "chuyen-khoa",
+      //   },
+      // ],
     },
     {
       text: "Quản lý bệnh nhân",

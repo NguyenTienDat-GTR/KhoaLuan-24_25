@@ -50,6 +50,7 @@ const ManageDoctor = () => {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const { doctors, loading, error, getAllDoctors } = useDoctorStore();
   const { userLoggedIn, setUserLoggedIn, token } = useUserStore();
+  const [searchType, setSearchType] = useState("employeeID");
 
   // const token = Cookies.get("token");
 
@@ -66,7 +67,6 @@ const ManageDoctor = () => {
   }, [token, doctors]);
 
   // Lọc danh sách bác sĩ dựa trên các filter
-  // Lọc danh sách bác sĩ dựa trên các filter
   const filteredDoctors = doctors.filter((doctor) => {
     const worksOnSelectedDay =
       selectedDay === "" ||
@@ -74,18 +74,16 @@ const ManageDoctor = () => {
 
     const worksInSelectedTime =
       selectedTime === "" ||
-      doctor.workingTime.some((time) => {
-        // Kiểm tra nếu bác sĩ làm việc trong khoảng thời gian được chọn
-        return time.timeSlots.includes(selectedTime);
-      });
+      doctor.workingTime.some((time) => time.timeSlots.includes(selectedTime));
+
+    // Tìm kiếm dựa trên trường searchType được chọn
+    const isMatch = doctor[searchType]
+      .toString()
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
 
     return (
-      (doctor.employeeID.includes(searchTerm) ||
-        doctor.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doctor.employeePhone.includes(searchTerm) ||
-        doctor.employeeEmail
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())) &&
+      isMatch &&
       worksOnSelectedDay &&
       worksInSelectedTime &&
       (statusFilter === "" || doctor.isWorking === (statusFilter === "true"))
@@ -129,17 +127,67 @@ const ManageDoctor = () => {
           gap: 4,
         }}
       >
-        <TextField
-          label="Tìm kiếm theo mã, họ tên, số điện thoại hoặc email"
-          variant="outlined"
-          size="small"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          sx={{ width: "40%", bgcolor: "#f5f5f5" }}
-        />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            width: "45%",
+            border: "1px solid #ccc",
+            paddingX: 2,
+            paddingBottom: 1,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: 1,
+              justifyContent: "space-evenly",
+            }}
+          >
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+              Tìm kiếm theo:
+            </Typography>
+            <RadioGroup
+              row
+              value={searchType}
+              onChange={(e) => setSearchType(e.target.value)}
+            >
+              <FormControlLabel
+                value="employeeID"
+                control={<Radio />}
+                label="Mã"
+              />
+              <FormControlLabel
+                value="employeeName"
+                control={<Radio />}
+                label="Tên"
+              />
+              <FormControlLabel
+                value="employeePhone"
+                control={<Radio />}
+                label="SĐT"
+              />
+              <FormControlLabel
+                value="employeeEmail"
+                control={<Radio />}
+                label="Email"
+              />
+            </RadioGroup>
+          </Box>
+          <TextField
+            label="Tìm kiếm"
+            variant="outlined"
+            size="small"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            sx={{ bgcolor: "#f5f5f5" }}
+          />
+        </Box>
         <Box
           className="filter"
           sx={{
+            mt: 2,
             position: "relative",
             width: "50%",
             padding: 2,
@@ -160,6 +208,7 @@ const ManageDoctor = () => {
               px: 0.5,
               fontSize: "0.875rem",
               color: "#333",
+              fontWeight: "bold",
             }}
           >
             Thời gian làm việc
@@ -219,35 +268,57 @@ const ManageDoctor = () => {
         </Box>
       </Box>
 
-      <Box>
-        <Typography variant="caption">Trạng thái:</Typography>
-        <RadioGroup
-          row
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
+      <Box
+        sx={{
+          marginBottom: 2,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-evenly",
+            width: "50%",
+            alignItems: "center",
+          }}
         >
-          <FormControlLabel value="" control={<Radio />} label="Tất cả" />
-          <FormControlLabel
-            value="true"
-            control={<Radio />}
-            label="Còn hoạt động"
-          />
-          <FormControlLabel value="false" control={<Radio />} label="Đã nghỉ" />
-        </RadioGroup>
-      </Box>
-
-      <Box sx={{ marginBottom: 2 }}>
-        {/* Chỉ hiển thị nút "Thêm mới bác sĩ" nếu người dùng là admin */}
-        {userLoggedIn?.user.role === "admin" && (
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            sx={{ bgcolor: "#4caf50" }}
-            onClick={handleOpenCreateDoctor}
+          <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+            Trạng thái:
+          </Typography>
+          <RadioGroup
+            row
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
           >
-            Thêm mới bác sĩ
-          </Button>
-        )}
+            <FormControlLabel value="" control={<Radio />} label="Tất cả" />
+            <FormControlLabel
+              value="true"
+              control={<Radio />}
+              label="Còn hoạt động"
+            />
+            <FormControlLabel
+              value="false"
+              control={<Radio />}
+              label="Đã nghỉ"
+            />
+          </RadioGroup>
+        </Box>
+
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          {/* Chỉ hiển thị nút "Thêm mới bác sĩ" nếu người dùng là admin */}
+          {userLoggedIn?.user.role === "admin" && (
+            <Button
+              variant="contained"
+              startIcon={<Add />}
+              sx={{ bgcolor: "#4caf50" }}
+              onClick={handleOpenCreateDoctor}
+            >
+              Thêm mới bác sĩ
+            </Button>
+          )}
+        </Box>
       </Box>
 
       <TableContainer sx={{ boxShadow: 2, borderRadius: 1 }}>

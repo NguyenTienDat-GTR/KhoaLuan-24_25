@@ -13,17 +13,17 @@ const ModalAuthorization = ({ open, onClose }) => {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Thông báo</DialogTitle>
-      <DialogContent>
-        <Typography>
-          Bạn cần đăng nhập để truy cập trang này. Vui lòng quay về trang đăng
-          nhập.
-        </Typography>
+      <DialogContent sx={{ width: "auto" }}>
+        <Typography>Bạn cần đăng nhập để truy cập trang này.</Typography>
+        <Typography>Vui lòng quay về trang đăng nhập.</Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
-          Đóng
-        </Button>
-        <Button component={Link} to="/dashboard/login" color="primary">
+        <Button
+          component={Link}
+          to="/dashboard/login"
+          color="primary"
+          variant="contained"
+        >
           Đăng nhập
         </Button>
       </DialogActions>

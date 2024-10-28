@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -11,21 +11,75 @@ import {
 } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import axios from "../../config/axiosConfig";
+import useUserStore from "../../hooks/auth/useUserStore";
+import { toast } from "react-toastify";
 
-const users = [
-  { id: "AC001", name: "Nguyễn Văn A" },
-  { id: "AC002", name: "Trần Thị B" },
-  { id: "AC003", name: "Lê Văn C" },
-];
-
-const CreateAccount = ({ open, onClose }) => {
+const CreateAccount = ({ open, onClose, onAccountCreated }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [role, setRole] = useState("");
+  const { userLoggedIn, setUserLoggedIn, token } = useUserStore();
+  const [userList, setUserList] = useState([]);
+
+  const getListUsers = async () => {
+    try {
+      const respone = await axios.get("/account/employee-without-account", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setUserList(respone.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  useEffect(() => {
+    if (token) {
+      getListUsers();
+    }
+  }, [token, userList]);
+
+  const createAccount = async () => {
+    toast.warning("Đang tạo tài khoản", {
+      autoClose: 3000,
+      hideProgressBar: false,
+    });
+    console.log("Tạo tài khoản với:", selectedUser.employeeID);
+    try {
+      const data = {
+        username: selectedUser.employeeID,
+        role: role,
+        createBy: userLoggedIn?.user.details.employeeName,
+      };
+      const response = await axios.post("/account/create", data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data);
+      toast.success(response.data.message, {
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
+      if (response.status == 201) {
+        onAccountCreated();
+        onClose();
+        setRole("");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data.message, {
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
+    }
+  };
 
   const handleCreateAccount = () => {
     // Xử lý tạo tài khoản mới
+    createAccount();
     console.log("Tạo tài khoản với:", { selectedUser, role });
-    onClose(); // Đóng dialog sau khi tạo tài khoản
   };
 
   return (
@@ -36,8 +90,10 @@ const CreateAccount = ({ open, onClose }) => {
       <DialogContent>
         <Box sx={{ marginY: 2 }}>
           <Autocomplete
-            options={users}
-            getOptionLabel={(option) => `${option.id} - ${option.name}`}
+            options={userList}
+            getOptionLabel={(option) =>
+              `${option.employeeID} - ${option.employeeName}`
+            }
             onChange={(event, newValue) => {
               setSelectedUser(newValue); // Cập nhật người dùng được chọn
             }}
@@ -53,8 +109,12 @@ const CreateAccount = ({ open, onClose }) => {
             filterOptions={(options, { inputValue }) =>
               options.filter(
                 (option) =>
-                  option.id.toLowerCase().includes(inputValue.toLowerCase()) ||
-                  option.name.toLowerCase().includes(inputValue.toLowerCase())
+                  option.employeeID
+                    .toLowerCase()
+                    .includes(inputValue.toLowerCase()) ||
+                  option.employeeName
+                    .toLowerCase()
+                    .includes(inputValue.toLowerCase())
               )
             }
           />
@@ -71,9 +131,9 @@ const CreateAccount = ({ open, onClose }) => {
             variant="outlined"
             sx={{ marginTop: 1 }}
           >
-            <MenuItem value="Admin">Admin</MenuItem>
-            <MenuItem value="User">Bác sĩ</MenuItem>
-            <MenuItem value="Staff">Nhân Viên</MenuItem>
+            <MenuItem value="admin">Admin</MenuItem>
+            <MenuItem value="doctor">Bác sĩ</MenuItem>
+            <MenuItem value="employee">Nhân Viên</MenuItem>
           </TextField>
         </Box>
       </DialogContent>

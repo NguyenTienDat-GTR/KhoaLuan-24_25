@@ -28,7 +28,6 @@ import CreateAccount from "../components/ManageAccount/CreateAccount";
 import EditAccount from "../components/ManageAccount/EditAccount";
 import useGetAllAccounts from "../hooks/account/useGetAllAccount";
 import useUserStore from "../hooks/auth/useUserStore";
-import { toast } from "react-toastify";
 
 const ManageAccount = ({ isSidebarOpen }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -94,18 +93,14 @@ const ManageAccount = ({ isSidebarOpen }) => {
     // setAccounts(accounts.filter((acc) => acc.id !== selectedAccount.id));
     setDeleteConfirmDialogOpen(false);
   };
-  // if (loading) {
-  //   return toast.warning("Đang tải danh sách tài khoản...", {
-  //     autoClose: 3000,
-  //     hideProgressBar: false,
-  //   });
-  // }
-  // if (error) {
-  //   return toast.error(error, {
-  //     autoClose: 3000,
-  //     hideProgressBar: false,
-  //   });
-  // }
+
+  // Hàm này sẽ được gọi khi tài khoản mới được tạo thành công
+  const refreshAccountList = () => {
+    if (token) {
+      getAllAccount(token); // Gọi lại API để lấy danh sách mới
+    }
+  };
+
   return (
     <Box sx={{ paddingY: 6, paddingX: 0.5 }}>
       <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 2 }}>
@@ -236,6 +231,7 @@ const ManageAccount = ({ isSidebarOpen }) => {
       <CreateAccount
         open={createAccountDialogOpen}
         onClose={() => setCreateAccountDialogOpen(false)}
+        onAccountCreated={refreshAccountList}
       />
       <EditAccount
         open={editAccountDialogOpen}
