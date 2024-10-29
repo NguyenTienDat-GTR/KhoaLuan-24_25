@@ -15,6 +15,7 @@ import {
   Avatar,
   Typography,
   IconButton,
+  DialogActions,
 } from "@mui/material";
 import {
   Add,
@@ -355,60 +356,60 @@ const CreateEmployee = ({ open, onClose }) => {
             </Box>
           </Box>
           {/* Actions */}
-          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-            {!loading && (
-              <Button
-                variant="outlined"
-                startIcon={<RestartAlt />}
-                onClick={handleReset}
-                color="primary"
-              >
-                Reset
-              </Button>
-            )}
-            {!loading && (
-              <Button
-                variant="contained"
-                startIcon={<Save />}
-                onClick={handleCreate}
-                color="success"
-              >
-                Tạo
-              </Button>
-            )}
-            {!loading && (
-              <Button
-                variant="outlined"
-                startIcon={<Cancel />}
-                onClick={onClose}
-                color="error"
-              >
-                Hủy
-              </Button>
-            )}
-            {loading && (
-              <Typography
-                className="wave-effect"
-                sx={{
-                  mr: "1px",
-                  width: "100%",
-                  textAlign: "right",
-                  fontWeight: "bold",
-                  fontSize: "1.2rem",
-                }}
-              >
-                {"Đang thêm nhân viên ...".split("").map((char, index) => (
-                  <span
-                    key={index}
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    {char}{" "}
-                  </span>
-                ))}
-              </Typography>
-            )}
-          </Box>
         </DialogContent>
+        <DialogActions>
+          {!loading && (
+            <Button
+              variant="outlined"
+              startIcon={<RestartAlt />}
+              onClick={handleReset}
+              color="primary"
+            >
+              Reset
+            </Button>
+          )}
+          {!loading && (
+            <Button
+              variant="contained"
+              startIcon={<Save />}
+              onClick={handleCreate}
+              color="success"
+            >
+              Tạo
+            </Button>
+          )}
+          {!loading && (
+            <Button
+              variant="outlined"
+              startIcon={<Cancel />}
+              onClick={onClose}
+              color="error"
+            >
+              Hủy
+            </Button>
+          )}
+          {loading && (
+            <Typography
+              className="wave-effect"
+              sx={{
+                mr: "1px",
+                width: "100%",
+                textAlign: "right",
+                fontWeight: "bold",
+                fontSize: "1.2rem",
+              }}
+            >
+              {"Đang thêm nhân viên ...".split("").map((char, index) => (
+                <span
+                  key={index}
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  {char}{" "}
+                </span>
+              ))}
+            </Typography>
+          )}
+        </DialogActions>
       </Dialog>
     </LocalizationProvider>
   );

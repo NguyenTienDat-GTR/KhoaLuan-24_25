@@ -43,6 +43,9 @@ const ManageDoctor = React.lazy(() =>
 const ManageEmployee = React.lazy(() =>
   import("./pages/ManageHuman/ManageEmployee")
 );
+const MangeService = React.lazy(() =>
+  import("./pages/ManageService")
+);
 
 const LazyComponent = ({ Component }) => {
   const [isInView, setIsInView] = useState(false);
@@ -148,15 +151,15 @@ function App() {
     {
       text: "Quản lý dịch vụ",
       icon: <MedicalServices sx={{ color: "rgba(21,182,210)" }} />,
-      path: "dashboard/dich-vu",
+      path: "dashboard/quan-ly-dich-vu",
       // subItems: [
       //   {
       //     text: "Loại dịch vụ",
-      //     path: "tong-quat",
+      //     path: "loai-dich-vu",
       //   },
       //   {
-      //     text: "Dịch vụ chuyên khoa",
-      //     path: "chuyen-khoa",
+      //     text: "Dịch vụ cung cấp",
+      //     path: "dich-vu-cung-cap",
       //   },
       // ],
     },
@@ -278,6 +281,16 @@ function App() {
                     <LazyComponent
                       Component={() => (
                         <ManageEmployee isSidebarOpen={sidebarOpen} />
+                      )}
+                    />
+                  }
+                />
+                <Route
+                  path="/dashboard/quan-ly-dich-vu"
+                  element={
+                    <LazyComponent
+                      Component={() => (
+                        <MangeService isSidebarOpen={sidebarOpen} />
                       )}
                     />
                   }

@@ -17,6 +17,7 @@ import {
   Input,
   IconButton,
   Chip,
+  DialogActions,
 } from "@mui/material";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -300,7 +301,6 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
         autoClose: 3000,
         hideProgressBar: false,
       });
-      console.log("Cập nhật thành công:", response.data);
     } catch (error) {
       toast.error(error.response?.data.message, {
         autoClose: 3000,
@@ -601,74 +601,67 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
                 ))}
             </Box>
           </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: 2,
-            }}
-          >
-            {!loading ? (
-              isEditing ? (
-                <>
-                  <Button
-                    onClick={handleCancelEdit}
-                    color="error"
-                    sx={{ marginRight: 2 }}
-                  >
-                    Hủy
-                  </Button>
-                  <Button
-                    onClick={handleUpdateDotor}
-                    variant="contained"
-                    color="primary"
-                  >
-                    Lưu
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    variant="contained"
-                    onClick={handleClose}
-                    color="error"
-                    sx={{ marginRight: 2 }}
-                  >
-                    Đóng
-                  </Button>
-                  <Button
-                    onClick={handleEditToggle}
-                    variant="contained"
-                    color="primary"
-                  >
-                    Chỉnh sửa
-                  </Button>
-                </>
-              )
-            ) : (
-              <Typography
-                className="wave-effect"
-                sx={{
-                  mr: "1px",
-                  width: "100%",
-                  textAlign: "right",
-                  fontWeight: "bold",
-                  fontSize: "1.2rem",
-                }}
-              >
-                {"Đang cập nhật ...".split("").map((char, index) => (
-                  <span
-                    key={index}
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    {char}
-                  </span>
-                ))}
-              </Typography>
-            )}
-          </Box>
         </DialogContent>
+        <DialogActions>
+          {!loading ? (
+            isEditing ? (
+              <>
+                <Button
+                  onClick={handleCancelEdit}
+                  color="error"
+                  sx={{ marginRight: 2 }}
+                >
+                  Hủy
+                </Button>
+                <Button
+                  onClick={handleUpdateDotor}
+                  variant="contained"
+                  color="primary"
+                >
+                  Lưu
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="contained"
+                  onClick={handleClose}
+                  color="error"
+                  sx={{ marginRight: 2 }}
+                >
+                  Đóng
+                </Button>
+                <Button
+                  onClick={handleEditToggle}
+                  variant="contained"
+                  color="primary"
+                >
+                  Chỉnh sửa
+                </Button>
+              </>
+            )
+          ) : (
+            <Typography
+              className="wave-effect"
+              sx={{
+                mr: "1px",
+                width: "100%",
+                textAlign: "right",
+                fontWeight: "bold",
+                fontSize: "1.2rem",
+              }}
+            >
+              {"Đang cập nhật ...".split("").map((char, index) => (
+                <span
+                  key={index}
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  {char}
+                </span>
+              ))}
+            </Typography>
+          )}
+        </DialogActions>
       </Dialog>
     </LocalizationProvider>
   );

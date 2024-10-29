@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -17,13 +17,34 @@ import {
 } from "@mui/material";
 import { LockReset } from "@mui/icons-material";
 
+// Ánh xạ role tiếng Anh sang tiếng Việt
+const roleMap = {
+  admin: "Admin",
+  doctor: "Bác sĩ",
+  employee: "Nhân viên",
+};
+
+// Chuyển đổi vai trò từ tiếng Việt sang tiếng Anh để gửi lên server
+const roleMapReverse = {
+  Admin: "admin",
+  "Bác sĩ": "doctor",
+  "Nhân viên": "employee",
+};
+
 const roles = ["Admin", "Bác sĩ", "Nhân viên"];
 const statuses = ["Active", "Inactive"];
 
 const EditAccount = ({ open, onClose, account, onUpdate }) => {
-  const [role, setRole] = useState(account?.role);
-  const [status, setStatus] = useState(account?.status);
+  const [role, setRole] = useState(roleMap[account?.role]); // Chuyển role từ model sang tiếng Việt
+  const [status, setStatus] = useState(
+    account?.isActive ? "Active" : "Inactive"
+  );
   const [isChanged, setIsChanged] = useState(false);
+
+  useEffect(() => {
+    setRole(roleMap[account?.role]);
+    setStatus(account?.isActive ? "Active" : "Inactive");
+  }, [account]);
 
   const handleRoleChange = (e) => {
     setRole(e.target.value);
@@ -41,7 +62,9 @@ const EditAccount = ({ open, onClose, account, onUpdate }) => {
   };
 
   const handleUpdate = () => {
-    onUpdate({ ...account, role, status }); // Update with new role and status
+    // Chuyển role từ tiếng Việt sang tiếng Anh khi cập nhật
+    const updatedRole = roleMapReverse[role];
+    onUpdate({ ...account, role: updatedRole, isActive: status === "Active" });
     onClose();
   };
 
@@ -53,10 +76,10 @@ const EditAccount = ({ open, onClose, account, onUpdate }) => {
       <DialogContent>
         <Box sx={{ marginBottom: 2 }}>
           <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-            Mã: {account?.code}
+            Mã: {account?.employeeID}
           </Typography>
           <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-            Họ tên: {account?.name}
+            Họ tên: {account?.employeeName}
           </Typography>
           <Typography variant="body1" sx={{ fontWeight: "bold" }}>
             Tên tài khoản: {account?.username}

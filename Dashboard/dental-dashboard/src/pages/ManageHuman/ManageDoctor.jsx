@@ -361,7 +361,7 @@ const ManageDoctor = () => {
                   <TableCell>
                     {/* Chỉ hiển thị nút "Xem chi tiết" nếu người dùng là admin */}
                     {userLoggedIn?.user.role === "admin" && (
-                      <Tooltip title="Chi tiết">
+                      <Tooltip title="Chi tiết và chỉnh sửa">
                         <IconButton
                           color="primary"
                           onClick={() => handleOpenDoctorDetail(doctor)}

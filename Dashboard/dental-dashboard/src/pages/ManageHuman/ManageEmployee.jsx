@@ -323,7 +323,7 @@ const ManageEmployee = () => {
                   <TableCell>{employee.employeeEmail}</TableCell>
                   <TableCell>
                     {userLoggedIn?.user.role === "admin" && (
-                      <Tooltip title="Chi tiết">
+                      <Tooltip title="Chi tiết và chỉnh sửa">
                         <IconButton
                           color="primary"
                           onClick={() => handleOpenEmployeeDetail(employee)}

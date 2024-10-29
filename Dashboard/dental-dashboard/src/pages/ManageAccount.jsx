@@ -121,14 +121,16 @@ const ManageAccount = ({ isSidebarOpen }) => {
           onChange={handleSearchChange}
           sx={{ flexGrow: 1, marginRight: 1 }}
         />
-        <Button
-          variant="contained"
-          sx={{ bgcolor: "#4caf50" }}
-          startIcon={<PersonAddIcon />}
-          onClick={() => setCreateAccountDialogOpen(true)}
-        >
-          Tạo tài khoản mới
-        </Button>
+        {userLoggedIn?.user.role === "admin" && (
+          <Button
+            variant="contained"
+            sx={{ bgcolor: "#4caf50" }}
+            startIcon={<PersonAddIcon />}
+            onClick={() => setCreateAccountDialogOpen(true)}
+          >
+            Tạo tài khoản mới
+          </Button>
+        )}
       </Box>
       <Box sx={{ marginBottom: 2 }}>
         <Typography variant="body1">Lọc trạng thái:</Typography>
@@ -182,7 +184,7 @@ const ManageAccount = ({ isSidebarOpen }) => {
                   <TableCell>
                     {account.role === "admin"
                       ? "admin"
-                      : account.role === "bác sĩ"
+                      : account.role === "doctor"
                       ? "bác sĩ"
                       : "nhân viên"}
                   </TableCell>
@@ -194,24 +196,26 @@ const ManageAccount = ({ isSidebarOpen }) => {
                   >
                     {account.isActive === true ? "Hoạt động" : "Vô hiệu hóa"}
                   </TableCell>
-                  <TableCell>
-                    <Tooltip title="Chỉnh sửa" arrow>
-                      <IconButton
-                        sx={{ color: "blue" }}
-                        onClick={() => handleEditClick(account)}
-                      >
-                        <Edit />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Xóa" arrow>
-                      <IconButton
-                        sx={{ color: "red" }}
-                        onClick={() => handleDeleteClick(account)}
-                      >
-                        <Delete />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
+                  {userLoggedIn?.user.role === "admin" && (
+                    <TableCell>
+                      <Tooltip title="Chỉnh sửa" arrow>
+                        <IconButton
+                          sx={{ color: "blue" }}
+                          onClick={() => handleEditClick(account)}
+                        >
+                          <Edit />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Xóa" arrow>
+                        <IconButton
+                          sx={{ color: "red" }}
+                          onClick={() => handleDeleteClick(account)}
+                        >
+                          <Delete />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
           </TableBody>
