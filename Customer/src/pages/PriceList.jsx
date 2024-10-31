@@ -43,13 +43,30 @@ const PriceList = () => {
       <Typography
         sx={{
           textAlign: "center",
-          fontSize: { xs: "1rem", sm: "1.5rem", md: "2rem" }, // Responsive font sizeF
+          fontSize: { xs: "2rem", sm: "2rem", md: "2rem" }, // Responsive font sizeF
           fontWeight: "bold",
-          padding: { xs: "10px", sm: "20px", md: "30px" }, // Responsive padding
+          padding: { xs: "5px", sm: "10px", md: "15px" }, // Responsive padding
+          paddingTop:{md: "8rem",xs:"6rem", sm:"9rem"}
         }}
       >
         BẢNG GIÁ NHA KHOA HOÀNG KIM
       </Typography>
+      <Box
+        sx={{
+          width: { xs: "100vw", sm: "100vw", md: "100vw" },
+          mt: "1rem",
+          mb: "1rem",
+        }}
+      >
+        <Divider
+          sx={{
+            borderBottomWidth: 1,
+            borderColor: "#000",
+            width: { xs: "30%", sm: "50%", md: "70%" },
+            margin: "0 auto",
+          }}
+        />
+      </Box>
       <Suspense
         fallback={
           <Box
@@ -72,7 +89,22 @@ const PriceList = () => {
       >
         <PriceService />
       </Suspense>
-
+      <Box
+        sx={{
+          width: { xs: "100vw", sm: "100vw", md: "100vw" },
+          mt: "1rem",
+          mb: "1rem",
+        }}
+      >
+        <Divider
+          sx={{
+            borderBottomWidth: 1,
+            borderColor: "#000",
+            width: { xs: "30%", sm: "50%", md: "70%" },
+            margin: "0 auto",
+          }}
+        />
+      </Box>
       <Suspense
         fallback={
           <Box

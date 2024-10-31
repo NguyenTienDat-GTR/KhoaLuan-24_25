@@ -59,9 +59,9 @@ const DoctorContainer = () => {
         }}
       >
         {[
-          { name: "BS. Nguyễn Văn An", image: Bacsi1},
+          { name: "BS. Trần Hoàng Bình", image: Bacsi1},
           { name: "BS. Nguyễn Anh Thi", image: Bacsi2 },
-          { name: "BS. Nguyễn Thị Lan Anh", image: Bacsi3},
+          { name: "BS. Nguyễn Thị  Thúy Lan ", image: Bacsi3},
         ].map((doctor, index) => (
           <Box key={index} sx={{ margin: { xs: "1rem 0", sm: "0 1rem" } }}>
             {/* Ảnh bác sĩ */}

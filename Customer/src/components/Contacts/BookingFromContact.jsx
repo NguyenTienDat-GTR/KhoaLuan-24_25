@@ -4,11 +4,16 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
-  Radio,
-  RadioGroup,
+  MenuItem,
   TextareaAutosize,
   TextField,
   Typography,
+  Snackbar,
+  Alert,
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormLabel,
 } from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -23,16 +28,48 @@ import logo from "..//images/phong-kham/logo.png"
 //import Phongkham from "..//components/images/phong-kham/phongkham1.png"
 
 const BookingForm = () => {
-  const [selectedDate, setSelectedDate] = useState(dayjs());
-  const [selectedTime, setSelectedTime] = useState(dayjs().hour(9).minute(0)); // Default time set to 9:00 AM
-  const [gender, setGender] = useState('Nam'); // Default gender selection
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    doctorGender: "", // Giới tính bác sĩ
+    date: new Date().toISOString().split("T")[0], // Chọn ngày mặc định là hôm nay
+    time: "9h", // Giờ mặc định là 8h
+    notes: "",
+  });
 
-  // Helper function to generate 2-hour time slots
-  const handleTimeChange = (newTime) => {
-    const hour = newTime.hour();
-    const validHour = hour >= 9 && hour <= 17 ? hour : 9; // Ensure valid hours between 9 and 17
-    setSelectedTime(dayjs().hour(validHour).minute(0)); // Set time to selected hour, resetting minutes
+  const [errors, setErrors] = useState({});
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.name) newErrors.name = "Vui lòng nhập họ và tên";
+    if (!formData.phone) newErrors.phone = "Vui lòng nhập số điện thoại";
+    if (!formData.email) newErrors.email = "Vui lòng nhập email";
+    if (!formData.doctorGender) newErrors.doctorGender = "Vui lòng chọn giới tính bác sĩ";
+    if (!formData.date) newErrors.date = "Vui lòng chọn ngày";
+    if (!formData.time) newErrors.time = "Vui lòng chọn giờ";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = () => {
+    if (validateForm()) {
+      setSnackbarMessage("Đặt lịch thành công, vui lòng kiểm tra email sau 15 phút!");
+      setSnackbarOpen(true);
+    } else {
+      setSnackbarMessage("Vui lòng nhập đầy đủ thông tin các trường!");
+      setSnackbarOpen(true);
+    }
+  };
+
+  const handleCloseSnackbar = () => setSnackbarOpen(false);
+
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -51,7 +88,7 @@ const BookingForm = () => {
           height: "auto",
         }}
       >
-       <Box
+        <Box
           className="container-text"
           sx={{
             display: "flex",
@@ -84,14 +121,14 @@ const BookingForm = () => {
               NHA KHOA HBT
             </Typography>
             <Box
-                component="img"
-                src={logo}
-                alt="Logo"
-                sx={{
-                  width: { xs: "3rem", sm: "3.5rem", md: "4.5rem" },
-                  marginRight: { xs: "0.5rem", sm: "1rem" },
-                }}
-              />
+              component="img"
+              src={logo}
+              alt="Logo"
+              sx={{
+                width: { xs: "3rem", sm: "3.5rem", md: "4.5rem" },
+                marginRight: { xs: "0.5rem", sm: "1rem" },
+              }}
+            />
             <Box
               className="contact"
               sx={{
@@ -281,34 +318,108 @@ const BookingForm = () => {
               }}
             >
               <TextField
-                placeholder="Họ và tên"
+                label="Họ và tên"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                error={!!errors.name}
+                helperText={errors.name}
                 fullWidth
-                sx={{
-                  flex: 1,
-                  maxWidth: { xs: "100%", sm: "48%" },
-                  "& .MuiInputBase-root": {
-                    height: { xs: "2.5rem", sm: "3rem" },
-                  },
-                }}
               />
               <TextField
-                placeholder="Số điện thoại"
+                label="Số điện thoại"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                error={!!errors.phone}
+                helperText={errors.phone}
                 fullWidth
-                sx={{
-                  flex: 1,
-                  maxWidth: { xs: "100%", sm: "48%" },
-                  "& .MuiInputBase-root": {
-                    height: { xs: "2.5rem", sm: "3rem" },
-                  },
-                }}
               />
             </Box>
+            <br/>
+            <TextField
+              label="Email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              error={!!errors.email}
+              helperText={errors.email}
+              fullWidth
+              sx={{ maxWidth: "600px" }} // Added to maintain width consistency
+            />
+          
+
+            {/* Date & Time Selection */}
+            <Box
+              className="booking-date-time"
+              sx={{
+                width: "100%",
+                textAlign: "left",
+                padding: "1rem",
+                display: "flex",
+                flexDirection: { xs: "column", sm: "column", md: "row" },
+                alignItems: {
+                  xs: "flex-start",
+                  sm: "flex-start",
+                  md: "center",
+                },
+                gap: "1rem",
+              }}
+            >
+              {/* DatePicker */}
+              <TextField
+                label="Ngày "
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                error={!!errors.date}
+                helperText={errors.date}
+                fullWidth
+              />
+              <TextField
+                label="Thời gian"
+                name="time"
+                select
+                value={formData.time}
+                onChange={handleChange}
+                fullWidth
+              >
+                {[...Array(9).keys()].map((hour) => (
+                  <MenuItem key={hour} value={`${9 + hour}h`}>
+                    {9 + hour}h
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+
+            {/* Gender Selection */}
+            <FormControl component="fieldset"
+              fullWidth error={!!errors.doctorGender}
+              sx={{ mb: 2, maxWidth: "600px" }}>
+              <FormLabel component="legend">Chọn giới tính bác sĩ</FormLabel>
+              <RadioGroup
+                row
+                name="doctorGender"
+                value={formData.doctorGender}
+                onChange={handleChange}
+              >
+                <FormControlLabel value="Nam" control={<Radio />} label="Nam" />
+                <FormControlLabel value="Nữ" control={<Radio />} label="Nữ" />
+              </RadioGroup>
+              {errors.doctorGender && (
+                <Typography variant="body2" color="error">
+                  {errors.doctorGender}
+                </Typography>
+              )}
+            </FormControl>
             <Box
               className="problem"
               sx={{
                 width: "100%",
                 textAlign: "left",
                 padding: { xs: "0 1rem", sm: "0 1rem", md: "0 2rem" },
+                maxWidth: "600px" // Added to maintain width consistency
               }}
             >
               <Typography
@@ -347,7 +458,6 @@ const BookingForm = () => {
                     - Trám răng
                     <br />
                     - Cạo vôi răng
-                    <br />
                   </Typography>
                 </Box>
                 <Box>
@@ -396,106 +506,24 @@ const BookingForm = () => {
               </Box>
             </Box>
 
-            {/* Date & Time Selection */}
-            <Box
-              className="booking-date-time"
-              sx={{
-                width: "100%",
-                textAlign: "left",
-                padding: "1rem",
-                display: "flex",
-                flexDirection: { xs: "column", sm: "column", md: "row" },
-                alignItems: {
-                  xs: "flex-start",
-                  sm: "flex-start",
-                  md: "center",
-                },
-                gap: "1rem",
-              }}
-            >
-              {/* DatePicker */}
-              <Box sx={{ flex: 1 }}>
-                <Typography sx={{ marginBottom: "0.5rem", fontWeight: "bold" }}>
-                  Ngày đặt lịch hẹn
-                </Typography>
-                <DatePicker
-                  label="Chọn ngày"
-                  value={selectedDate}
-                  onChange={(newDate) => setSelectedDate(newDate)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      fullWidth
-                      sx={{
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderWidth: 0,
-                        },
-                        "& .MuiInputBase-root": {
-                          height: { xs: "2.5rem", sm: "3rem" },
-                        },
-                      }}
-                    />
-                  )}
-                />
-              </Box>
-
-              {/* TimePicker */}
-              <Box sx={{ flex: 1 }}>
-                <Typography sx={{ marginBottom: "0.5rem", fontWeight: "bold" }}>
-                  Giờ đặt lịch hẹn
-                </Typography>
-                <TimePicker
-                  label="Chọn giờ"
-                  value={selectedTime}
-                  onChange={(newTime) => setSelectedTime(newTime)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      fullWidth
-                      sx={{
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderWidth: 0,
-                        },
-                        "& .MuiInputBase-root": {
-                          height: { xs: "2.5rem", sm: "3rem" },
-                        },
-                      }}
-                    />
-                  )}
-                />
-              </Box>
-            </Box>
-
-            {/* Gender Selection */}
-            <Box sx={{ width: "100%", padding: "1rem", textAlign: "left" }}>
-              <Typography variant="body1" sx={{ fontWeight: "bold", mb: "0.5rem" }}>
-                Chọn giới tính bác sĩ:
-              </Typography>
-              <RadioGroup
-                value={gender}
-                onChange={(event) => setGender(event.target.value)}
-                row
-              >
-                <FormControlLabel value="Nam" control={<Radio />} label="Nam" />
-                <FormControlLabel value="Nữ" control={<Radio />} label="Nữ" />
-              </RadioGroup>
-            </Box>
-
+<br></br>
             <TextareaAutosize
-              placeholder="Ghi chú..."
-              minRows={2}
-              maxRows={3}
+              aria-label="Ghi chú thêm"
+              minRows={3}
+              placeholder="Ghi chú thêm"
+              name="notes"
+              value={formData.notes}
+              onChange={handleChange}
               style={{
-                width: "93%",
-                height: "4rem",
-                maxHeight: "4rem",
-                overflowY: "auto",
+                width: "100%",
                 padding: "0.5rem",
                 borderRadius: "4px",
-                border: "1px solid #ccc",
-                margin: "0 auto",
+                borderColor: "#c4c4c4",
+                fontSize: "1rem",
+                maxWidth: "600px" // Added to maintain width consistency
               }}
             />
+
 
             <Box
               className="button-container"
@@ -513,8 +541,14 @@ const BookingForm = () => {
                 height: { xs: "7rem", sm: "5rem", md: "5rem" },
               }}
             >
+              <Button variant="contained" color="primary"
+                onClick={handleSubmit} sx={{ width: "100%", maxWidth: "300px" ,
+                 height: { xs: "2.5rem", sm: "3rem" }}}>
+                ĐẶT LỊCH NGAY
+              </Button>
+
               <Button
-                variant="outlined"
+                variant="contained" color="error"
                 sx={{
                   width: { xs: "100%", sm: "40%" },
                   height: { xs: "2.5rem", sm: "3rem" },
@@ -522,20 +556,16 @@ const BookingForm = () => {
               >
                 Nhập lại
               </Button>
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: "rgba(0,74,211,1)",
-                  width: { xs: "100%", sm: "40%" },
-                  height: { xs: "2.5rem", sm: "3rem" },
-                }}
-              >
-                Đặt lịch
-              </Button>
             </Box>
           </form>
         </Box>
       </Box>
+      {/* Snackbar */}
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+        <Alert onClose={handleCloseSnackbar} severity={Object.keys(errors).length > 0 ? "error" : "success"}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </LocalizationProvider>
   );
 };

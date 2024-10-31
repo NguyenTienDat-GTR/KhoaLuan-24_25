@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import axios from "axios";
-import { REACT_APP_IP_ADDRESS, REACT_APP_PORT } from "../../env";
+import { REACT_APP_IP_ADDRESS, REACT_APP_PORT } from "../env";
 
 const BASE_URL = `http://${REACT_APP_IP_ADDRESS}:${REACT_APP_PORT}`;
 

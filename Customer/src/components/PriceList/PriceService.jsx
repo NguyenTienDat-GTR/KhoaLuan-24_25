@@ -1,139 +1,236 @@
 import { Box, Typography, Grid } from "@mui/material";
+import { Divider } from "@mui/material";
+
 import React from "react";
+import caoVoi from "..//images/pricelist/cao-voi-rang.png"; // Chỉnh lại đường dẫn cho đúng
+import cercon from "..//images/pricelist/cercon.png";
+import serrconHT from "..//images/pricelist/cercon-ht.jpg";
+import ddbio from "..//images/pricelist/ddbio.jpg";
+import lavaPlus from "..//images/pricelist/Lava-Plus.jpg";
+import nhaChu from "..//images/pricelist/nha-chu.jpg";
+import nhaKhoaTreEm from "..//images/pricelist/nha-khoa-tre-em.jpg";
+import orodentBleach from "..//images/pricelist/orodent-bleachjpg.jpg";
+import rangSuEmax from "..//images/pricelist/rang-su-emax.jpg";
+import spGold from "..//images/pricelist/sp-gold.png";
+import sauRang from "..//images/pricelist/sau-rang.jpg";
+import spWhite from "..//images/pricelist/sp-white.png";
+import suDuc from "..//images/pricelist/su-dua.png";
+import suMy from "..//images/pricelist/su-my.jpg";
+import suTitan from "..//images/pricelist/su-titan.jpg";
+import tayRang from "..//images/pricelist/tay-trang-rang.jpg";
+import trongSuot from "..//images/pricelist/trong-suot.jpg";
+import Zirconia from "..//images/pricelist/zirconia.jpg";
+import danSu from "..//Services/img/dan-su/dan-su-venner.jpg";
+import tramRang from "..//Services/img/tram_rang/tram-rang.jpg";
+import rangThaoLap from "..//Services/img/phuc-hinh/rang-gia-thao-lap.jpg";
+import thaoLap from "..//Services/img/nieng-rang/thao-lap.jpg";
+import rangMacCai from "..//Services/img/nieng-rang/nieng-rang-mac-cai.jpg";
+import Implant from "..//images/intro/TRIP.jpg";
+
+import nuou from "..//Services/img/benh/nuou.jpg";
+
+import tuy from "..//Services/img/benh/tuy.jpg";
+
 
 const PriceService = () => {
   const services = [
     {
       categoryId: 1,
-      categoryName: "Cạo Vôi đánh bóng",
-      services: [{ serviceId: 1, name: "Cạo vôi răng", price: "99.000" }],
+      categoryName: "Nha khoa thẩm mỹ",
+      services: [
+        {
+          serviceId: 1,
+          name: "Cạo vôi răng",
+          price: "99.000 VNĐ/hàm",
+          img: caoVoi,
+        },
+        {
+          serviceId: 1,
+          name: "Tẩy trắng răng",
+          price: "99.000 VNĐ/hàm",
+          img: tayRang,
+        },
+        {
+          serviceId: 1,
+          name: "Dán sứ Veener",
+          price: "6.000.000 VNĐ/răng",
+          img: danSu,
+        },
+        {
+          serviceId: 1,
+          name: "Trám răng",
+          price: "99.000 VNĐ/răng",
+          img: tramRang,
+        },
+      ],
+
     },
     {
       categoryId: 2,
-      categoryName: "ĐIỀU TRỊ VIÊM LỢI – NHA CHU",
+      categoryName: "ĐIỀU TRỊ LỢI – NHA CHU",
+
       services: [
-        { serviceId: 2, name: "Điều trị viêm lợi cấp 1  ", price: "1.500.000" },
         {
-          serviceId: 3,
-          name: "Điều trị viêm nha chu mức độ 2 (hàm)",
-          price: "2.000.000",
+          serviceId: 2,
+          name: "Điều trị sâu răng  ",
+          price: "500.000 - 1.000.000 VNĐ/răng",
+          img: sauRang,
         },
+        {
+          serviceId: 2,
+          name: "Điều trị viêm nha chu ",
+          price: "500.000 - 1.000.000 VNĐ/răng",
+          img: nhaChu,
+        },
+        {
+          serviceId: 2,
+          name: "Điều trị nướu",
+          price: "500.000 - 1.000.000 VNĐ/răng",
+          img:nuou ,
+        },
+        {
+          serviceId: 2,
+          name: "Điều trị tủy",
+          price: "500.000 - 1.000.000 VNĐ/răng",
+          img: tuy,
+        },
+        {
+          serviceId: 2,
+          name: "Nha khoa trẻ em",
+          price: "500.000 - 1.000.000 VNĐ/răng",
+          img: nhaKhoaTreEm,
+        },
+        
       ],
     },
     {
       categoryId: 3,
-      categoryName: "TRÁM RĂNG",
+      categoryName: "niềng răng cố định - chỉnh nha",
       services: [
         {
-          serviceId: 4,
-          name: "Trám răng GIC",
-          price: "50.000",
+          serviceId: 3,
+          name: "Niềng răng mắc cài",
+          price: "30.000.000 - 50.000.000 VNĐ/liệu trình",
+          img: rangMacCai,
         },
         {
-          serviceId: 5,
-          name: "Trám răng Composite 3M Mỹ",
-          price: "100.000",
+          serviceId: 3,
+          name: "Niềng răng tháo lắp",
+          price: "5.000.000 - 8.000.000 VNĐ/hàm",
+          img: thaoLap,
         },
         {
-          serviceId: 6,
-          name: "Trám răng Tokuyama Nhật",
-          price: "100.000",
+          serviceId: 3,
+          name: "Niềng răng trong suốt",
+          price: "32.000.000 - 70.000.000 VNĐ/hàm",
+          img: trongSuot,
         },
       ],
     },
     {
       categoryId: 4,
-      categoryName: "ĐIỀU TRỊ TUỶ",
+      categoryName: "phục hình răng đã mất",
       services: [
         {
-          serviceId: 7,
-          name: "Điều trị tuỷ răng trẻ em",
-          price: "500.000",
+          serviceId: 4,
+          name: "Hàm giả tháo lắp",
+          price: "800.000 - 1.000.000 VNĐ/răng",
+          img : rangThaoLap,
         },
         {
-          serviceId: 8,
-          name: "Điều trị tuỷ răng 1 chân",
-          price: "500.000",
+          serviceId: 4,
+          name: "Cấy ghép Implant",
+          price: "3.000.000 - 13.000.000 VNĐ/răng",
+          img: Implant,
         },
-        {
-          serviceId: 9,
-          name: "Điều trị tuỷ răng 2 chân",
-          price: "1.000.000",
-        },
-        {
-          serviceId: 10,
-          name: "Điều trị tuỷ lại răng đã điều trị hỏng",
-          price: "1.000.000",
-        },
-        {
-          serviceId: 11,
-          name: "Chốt sợi điều trị tuỷ",
-          price: "300.000",
-        },
+        
       ],
     },
     {
       categoryId: 5,
-      categoryName: "NHỔ RĂNG",
+      categoryName: "răng sứ",
       services: [
         {
-          serviceId: 12,
-          name: "Nhổ răng sữa có chích tê",
-          price: "50.000",
+          serviceId: 5,
+          name: "Sứ kim loại Titan",
+          price: "1.500.000 VNĐ/răng",
+          img:suTitan ,
         },
         {
-          serviceId: 13,
-          name: "Rạch lợi trùm",
-          price: "300.000",
+          serviceId: 5,
+          name: "Sứ kim loại Mỹ",
+          price: "800.000  VNĐ/răng",
+          img: suMy,
         },
         {
-          serviceId: 14,
-          name: "Nhổ chân răng các vị trí",
-          price: "500.000",
+          serviceId: 5,
+          name: "Sứ kim loại Đức",
+          price: "1.000.000  VNĐ/răng",
+          img:suDuc ,
         },
         {
-          serviceId: 15,
-          name: "Nhổ răng vị trí 1, 2, 3, 4, 5",
-          price: "500.000",
+          serviceId: 5,
+          name: "Sứ Zirconia ",
+          price: "2.200.000  VNĐ/răng",
+          img: Zirconia,
         },
         {
-          serviceId: 16,
-          name: "Nhổ răng vị trí 6,7",
-          price: "1.000.000",
+          serviceId: 5,
+          name: "Sứ Cercon",
+          price: "3.000.000  VNĐ/răng",
+          img: cercon,
         },
         {
-          serviceId: 17,
-          name: "Nhổ răng khôn",
-          price: "1.000.000",
+          serviceId: 5,
+          name: "Sứ Cercon HT",
+          price: "3.900.000  VNĐ/răng",
+          img: serrconHT ,
         },
         {
-          serviceId: 18,
-          name: "Phương pháp quay ly tâm (PRF)",
-          price: "1.000.000",
+          serviceId: 5,
+          name: "Sứ DDBIO ",
+          price: "3.500.000 VNĐ/răng",
+          img: ddbio,
         },
+        {
+          serviceId: 5,
+          name: "Sứ Emax ",
+          price: "4.900.000  VNĐ/răng",
+          img: rangSuEmax,
+        },
+        {
+          serviceId: 5,
+          name: "Sứ Lava Plus",
+          price: "6.000.000  VNĐ/răng",
+          img: lavaPlus ,
+        },
+        {
+          serviceId: 5,
+          name: "Sứ Orodent Bleach",
+          price: "12.000.000  VNĐ/răng",
+          img: orodentBleach ,
+        },
+        {
+          serviceId: 5,
+          name: "Sứ Orodnet White",
+          price: "7.000.000  VNĐ/răng",
+          img: spWhite,
+        },
+        {
+          serviceId: 5,
+          name: "Sứ Orodent Gold",
+          price: "8.000.000  VNĐ/răng",
+          img: spGold ,
+        },
+        // {
+        //   serviceId: 5,
+        //   name: "Sứ kim loại Titan",
+        //   price: "1.000.000",
+        //   img: ,
+        // },
       ],
     },
-    {
-      categoryId: 6,
-      categoryName: "CHỈNH NHA",
-      services: [
-        {
-          serviceId: 19,
-          name: "Chỉnh nha cố định",
-          price: "30.000.000",
-        },
-        {
-          serviceId: 20,
-          name: "Chỉnh nha mắc cài",
-          price: "20.000.000",
-        },
-        {
-          serviceId: 21,
-          name: "Chỉnh nha mắc cài tự nhiên",
-          price: "25.000.000",
-        },
-      ],
-    },
+    
   ];
 
   return (
@@ -143,11 +240,12 @@ const PriceService = () => {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        width: { xs: "95%", sm: "90%", md: "80%" },
-        margin: { xs: "0 auto", sm: "0 auto", md: "0 auto" },
+        width: { xs: "90%", sm: "90%", md: "80%" },
+        margin: { xs: "0 0", sm: "0 auto", md: "0 auto" },
         padding: { xs: "1rem 0.5rem", sm: "1rem 0.5rem", md: "1rem 0.5rem" },
       }}
     >
+
       {services.map((service) => (
         <Box
           key={service.categoryId}
@@ -158,15 +256,17 @@ const PriceService = () => {
         >
           <Typography
             sx={{
+              fontWeight: "bold",
               textAlign: "center",
               color: "primary.main",
               marginBottom: "1rem",
               textTransform: "uppercase",
-              fontSize: { sx: "1rem", sm: "2rem", md: "2rem" },
+              fontSize: { xs: "2rem", sm: "2rem", md: "2rem" },
             }}
           >
             {service.categoryName}
           </Typography>
+
           <Grid container spacing={2} sx={{ padding: "0.5rem" }}>
             {service.services.map((item) => (
               <React.Fragment key={item.serviceId}>
@@ -178,11 +278,29 @@ const PriceService = () => {
                   sx={{
                     textAlign: "left",
                     fontWeight: "bold",
-                    fontSize: { sx: "0.4rem", sm: "1.5rem", md: "1.5rem" },
+                    marginTop: { md: "4rem", sm: "3rem", xs: "1rem" },
+                    fontSize: { xs: "1rem", sm: "1.5rem", md: "2rem" },
                   }}
                 >
                   {item.name}
+                  {item.img && (
+                    <Box
+                      component="img"
+                      src={item.img}
+                      sx={{
+                        width: { xs: "8rem", sm: "15rem", md: "20rem" },
+                        height: { xs: "4rem", sm: "10rem", md: "10rem" },
+
+                        margin: {
+                          xs: "-3rem 10rem 1rem",
+                          md: "-6rem 28rem 1rem"
+                        }, // Canh giữa hình ảnh
+                      }}
+                    />
+                  )}
                 </Grid>
+
+
                 <Grid
                   item
                   xs={5}
@@ -191,13 +309,31 @@ const PriceService = () => {
                   sx={{
                     textAlign: "right",
                     color: "secondary.main",
-                    fontSize: { sx: "0.4rem", sm: "1.5rem", md: "1.5rem" },
+                    marginTop: { md: "4rem", sm: "3rem", xs: "1rem" },
+                    fontSize: { xs: "1rem", sm: "1.5rem", md: "1.5rem" },
                   }}
                 >
-                  {item.price} VND
+                  {item.price} 
                 </Grid>
+                <Box
+                  sx={{
+                    width: { xs: "100vw", sm: "100vw", md: "100vw" },
+                    mt: "1rem",
+                    mb: "1rem",
+                  }}
+                >
+                  <Divider
+                    sx={{
+                      borderBottomWidth: 1,
+                      borderColor: "#000",
+                      width: { xs: "30%", sm: "50%", md: "70%" },
+                      margin: "0 auto",
+                    }}
+                  />
+                </Box>
               </React.Fragment>
             ))}
+
           </Grid>
         </Box>
       ))}

@@ -33,7 +33,7 @@ import useUserStore from "../../hooks/auth/useUserStore";
 import { AddCircleOutline, Delete } from "@mui/icons-material";
 import "../../css/loadingEffect.css";
 
-const DoctorDetail = ({ open, onClose, doctor }) => {
+const DoctorDetail = ({ open, onClose, doctor, onSuccess }) => {
   const [formData, setFormData] = useState({
     employeeID: "",
     employeeName: "",
@@ -282,8 +282,8 @@ const DoctorDetail = ({ open, onClose, doctor }) => {
       if (response.data) {
         setLoading(false);
         setImageFile(null);
-        console.log("file sau", imageFile);
         setIsEditing(false);
+        onSuccess();
       }
 
       if (response.data.token) {

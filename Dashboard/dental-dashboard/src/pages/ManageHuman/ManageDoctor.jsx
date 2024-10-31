@@ -66,6 +66,10 @@ const ManageDoctor = () => {
     }
   }, [token, doctors]);
 
+  const refreshData = () => {
+    getAllDoctors(token);
+  };
+
   // Lọc danh sách bác sĩ dựa trên các filter
   const filteredDoctors = doctors.filter((doctor) => {
     const worksOnSelectedDay =
@@ -328,6 +332,7 @@ const ManageDoctor = () => {
               <TableCell sx={{ fontWeight: "bold" }}>Số thứ tự</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Mã</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Họ tên</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Giới tính</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Số điện thoại</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Giờ làm việc</TableCell>
@@ -349,6 +354,9 @@ const ManageDoctor = () => {
                   <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
                   <TableCell>{doctor.employeeID}</TableCell>
                   <TableCell>{doctor.employeeName}</TableCell>
+                  <TableCell>
+                    {doctor.gender === "male" ? "Nam" : "Nữ"}
+                  </TableCell>
                   <TableCell>{doctor.employeePhone}</TableCell>
                   <TableCell>{doctor.employeeEmail}</TableCell>
                   <TableCell>
@@ -391,6 +399,7 @@ const ManageDoctor = () => {
         open={openDoctorDetail}
         onClose={() => setOpenDoctorDetail(false)}
         doctor={selectedDoctor}
+        onSuccess={refreshData}
       />
     </Box>
   );

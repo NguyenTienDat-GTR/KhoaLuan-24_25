@@ -15,7 +15,7 @@ const articles = [
     title: "Cách sử dụng baking soda làm trắng răng hiệu quả tại nhà",
     content: "Hàm răng trắng sáng là mơ ước của nhiều người bởi nó giúp tăng thêm sự tự tin và cải thiện vẻ ngoài. ",
     image: baking,
-    route: "/articles/Cach-su-dung-baking-soda-lam-trang-rang-hieu-qua-tai-nha",
+    route: "/Cach-su-dung-baking-soda-lam-trang-rang-hieu-qua-tai-nha",
   },
   {
     id: 2,

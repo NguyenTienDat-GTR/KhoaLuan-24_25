@@ -41,6 +41,7 @@ const Booking = () => {
             alignItems: { xs: "flex-start", sm: "flex-start", md: "center" },
             height: "auto",
             width: "100vw",
+            paddingTop:{md: "8rem",xs:"6rem", sm:"8rem"}
           }}
         >
           <Typography
@@ -48,7 +49,7 @@ const Booking = () => {
             sx={{
               color: "RGB (54,49,52)",
               fontSize: {
-                xs: "1rem",
+                xs: "2rem",
                 sm: "2rem",
                 md: "2rem",
               },

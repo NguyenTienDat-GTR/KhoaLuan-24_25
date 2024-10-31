@@ -39,6 +39,7 @@ const Infor = () => {
         <Box
           sx={{
             flex: 1, // Chiếm phần còn lại của không gian
+            paddingTop:{md: "8rem",xs:"5rem"}
           }}
         >
           {/* Nội dung của trang */}

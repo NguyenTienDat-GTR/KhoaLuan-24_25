@@ -52,9 +52,11 @@ const CreateServiceType = ({ open, onClose, onSuccess }) => {
 
   const handleSubmit = () => {
     create(token);
-    setTypeName("");
-    // Đóng dialog sau khi thêm
-    onClose();
+    if (!loading) {
+      setTypeName("");
+      // Đóng dialog sau khi thêm
+      onClose();
+    }
   };
 
   const handleClose = () => {
@@ -63,7 +65,7 @@ const CreateServiceType = ({ open, onClose, onSuccess }) => {
   };
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>Thêm mới loại dịch vụ</DialogTitle>
       <DialogContent>
         <TextField

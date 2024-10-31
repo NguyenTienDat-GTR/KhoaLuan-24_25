@@ -1,126 +1,151 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import {
-  Grid,
+  Box,
+  Typography,
+  TextField,
+  MenuItem,
   Card,
   CardMedia,
   CardContent,
-  Typography,
   Button,
 } from "@mui/material";
-import rang3 from "..//images/intro/rs.jpg";
-import rang4 from "..//images/intro/TRIP.jpg";
-import rang5 from "..//images/intro/NRCN.png";
-import rang6 from "..//images/intro/NKTQ.png";
-const servicesData = [
-  {
-    id: "nha-khoa-tham-my",
-    title: "Nha Khoa Thẩm Mỹ",
-    description:
-      "Sự lựa chọn tuyệt vời cho những ai muốn cải thiện nụ cười của mình.",
-    imgSrc: rang3,
-  },
-  {
-    id: "phuc-hinh-rang-da-mat",
-    title: "Phục Hình Răng Đã Mất",
-    description:
-      "Giải pháp hiệu quả cho những người mất răng, mang lại lợi ích về thẩm mỹ và chức năng.",
-    imgSrc:rang4,
-  },
-  {
-    id: "nieng-rang-chinh-nha",
-    title: "Niềng Răng - Chỉnh Nha",
-    description:
-      "Giải pháp hiệu quả để cải thiện sự sắp xếp của răng và hàm, mang lại lợi ích về thẩm mỹ và chức năng.",
-    imgSrc: rang5,
-  },
-  {
-    id: "dieu-tri-tong-quat",
-    title: "Điều Trị Tổng Quát",
-    description:
-      "Một phần quan trọng trong chăm sóc sức khỏe răng miệng, giúp duy trì và cải thiện tình trạng răng miệng của bệnh nhân.",
-    imgSrc: rang6,
-  },
-];
+import { useNavigate } from "react-router-dom";
+import useServiceStore from "../../hooks/useServiceStore";
+import CreateAppointmentRequest from "./createAppointmentRequest";
 
 const ServiceGrid = () => {
+  const navigate = useNavigate();
+  const { category, getAllService } = useServiceStore();
+  const [selectedCategory, setSelectedCategory] = useState("Tất cả");
+  const [filteredCategories, setFilteredCategories] = useState(category);
+  const [open, setOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+
+  const handleOpen = (service) => {
+    setSelectedService(service);
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setSelectedService(null);
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    getAllService();
+  }, [getAllService]);
+
+  useEffect(() => {
+    if (selectedCategory === "Tất cả") {
+      setFilteredCategories(category);
+    } else {
+      setFilteredCategories(
+        category.filter((cat) => cat.typeName === selectedCategory)
+      );
+    }
+  }, [selectedCategory, category]);
+
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value);
+  };
+
   return (
-    <Grid
-      container
-      spacing={3}
-      sx={{
-        padding: "30px",
-        justifyContent: { xs: "center", sm: "flex-start", md: "flex-start" },
-      }}
-    >
-      {servicesData.map((service) => (
-        <Grid
-          item
-          key={service.id}
-          xs={12}
-          sm={6}
-          md={4}
-          lg={3}
-          sx={{
-            textAlign: { xs: "center", sm: "left", md: "left" },
-          }}
-        >
-          <Card
+    <Box sx={{ padding: "20px", maxWidth: "100vw" }}>
+      <TextField
+        select
+        label="Chọn loại dịch vụ"
+        value={selectedCategory}
+        onChange={handleCategoryChange}
+        sx={{ marginBottom: "20px", minWidth: 200 }}
+      >
+        <MenuItem value="Tất cả">Tất cả</MenuItem>
+        {category.map((cat) => (
+          <MenuItem key={cat._id} value={cat.typeName}>
+            {cat.typeName}
+          </MenuItem>
+        ))}
+      </TextField>
+
+      {filteredCategories.map((cat) => (
+        <Box key={cat._id} sx={{ marginBottom: "40px" }}>
+          <Typography variant="h5" gutterBottom>
+            {cat.typeName}
+          </Typography>
+
+          <Box
             sx={{
-              height: "100%",
               display: "flex",
-              flexDirection: "column",
-              backgroundColor: "#f6f6f6",
-              padding: { xs: "10px", sm: "12px", md: "16px" },
+              flexWrap: "wrap",
+              gap: 2,
+              justifyContent: "center",
             }}
           >
-            <CardMedia
-              component="img"
-              image={service.imgSrc}
-              alt={service.title}
-              sx={{
-                height: 150,
-                objectFit: "cover",
-                borderRadius: "8px",
-                marginBottom: { xs: "8px", sm: "12px", md: "16px" },
-              }}
-            />
-            <CardContent sx={{ flexGrow: 1 }}>
-              <Typography
-                variant="h6"
-                component="h3"
-                gutterBottom
+            {cat.serviceList.map((service) => (
+              <Card
+                key={service._id}
                 sx={{
-                  fontSize: { xs: "1.1rem", sm: "1rem", md: "1.25rem" },
+                  width: "23%", // Chiều rộng chiếm khoảng 1/4 để thành 4 cột
+                  minWidth: "13rem",
+                  maxWidth: "15rem",
+                  display: "flex",
+                  flexDirection: "column",
+                  backgroundColor: "#76B0EA",
+                  padding: "10px",
+                  margin: "10px",
                 }}
               >
-                {service.title}
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{
-                  fontSize: { xs: "0.9rem", sm: "0.8rem", md: "1rem" },
-                }}
-              >
-                {service.description}
-              </Typography>
-            </CardContent>
-            <Button
-              component={Link}
-              to={`/Services/${service.id}`}
-              variant="contained"
-              color="error"
-              sx={{
-                margin: 2,
-                fontSize: { xs: "0.8rem", sm: "0.75rem", md: "0.875rem" },
-              }}
-            >
-              Xem thêm
-            </Button>
-          </Card>
-        </Grid>
+                <CardMedia
+                  component="img"
+                  sx={{ height: "150px", objectFit: "cover" }}
+                  image={service.imageUrls?.[0] || "fallback-image-url"}
+                  alt={service.name || "Service Image"}
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h6">
+                    {service.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Giá:{" "}
+                    {service.priceRange.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-around",
+                      mt: 2,
+                    }}
+                  >
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => navigate(`/service/${service._id}`)}
+                      size="small"
+                    >
+                      Xem thêm
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      onClick={() => handleOpen(service)}
+                    >
+                      Đặt lịch
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
+        </Box>
       ))}
-    </Grid>
+      <CreateAppointmentRequest
+        open={open} // Chuyển từ handleOpen thành open
+        handleClose={handleClose}
+        selectedService={selectedService}
+      />
+    </Box>
   );
 };
 

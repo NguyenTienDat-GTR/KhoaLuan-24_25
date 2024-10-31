@@ -26,7 +26,7 @@ const Header = () => {
   return (
     <>
       <AppBar
-        position="static"
+        position="fixed"
         sx={{
           backgroundColor: "#fff",
           boxShadow: "none",
@@ -34,6 +34,7 @@ const Header = () => {
           height: "auto",
           overflow: "hidden",
           top: 0,
+          zIndex: 100,
         }}
       >
         <Toolbar
@@ -50,12 +51,12 @@ const Header = () => {
             sx={{
               backgroundColor: "rgba(21,182,210,0.63)",
               width: "100vw",
-              height: "auto",
+              height: "80px",
               display: "flex",
               flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
               alignItems: "center",
-              zIndex: 1000,
+             
               padding: { xs: "0.5rem", sm: "1rem", md: "1.5rem" },
               boxSizing: "border-box",
               gap: { sm: "2", md: "0" },
@@ -206,6 +207,7 @@ const Header = () => {
               padding: "0.5rem 0",
               boxSizing: "border-box",
               margin: "0",
+              
             }}
           >
             <RouterLink to="/" style={{ textDecoration: "none" }}>
@@ -252,7 +254,7 @@ const Header = () => {
                 Bảng giá
               </Typography>
             </RouterLink>
-            <RouterLink to="/Braces" style={{ textDecoration: "none" }}>
+            <RouterLink to="/nieng-rang-mac-cai" style={{ textDecoration: "none" }}>
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{

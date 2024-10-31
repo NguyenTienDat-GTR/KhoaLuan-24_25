@@ -47,35 +47,37 @@ const Services = () => {
           height: "auto",
           width: "100vw",
           mt: { xs: "1rem", sm: "1rem", md: "1rem" },
+          paddingTop: { md: "8rem", xs: "5rem" },
         }}
       >
         <Typography
           variant="h3"
           sx={{
             color: "RGB(54,49,52)",
-            fontSize: { xs: "1rem", sm: "2rem", md: "2rem" },
+            fontSize: { xs: "2rem", sm: "2rem", md: "2rem" },
             fontWeight: "bold",
+            paddingTop: { md: "0", xs: "0.5rem", sm: "2rem" },
           }}
         >
           CÁC DỊCH VỤ CỦA HBT
         </Typography>
       </Box>
       <Box
+        sx={{
+          width: { xs: "100vw", sm: "100vw", md: "100vw" },
+          mt: "1rem",
+          mb: "1rem",
+        }}
+      >
+        <Divider
           sx={{
-            width: { xs: "100vw", sm: "100vw", md: "100vw" },
-            mt: "1rem",
-            mb: "1rem",
+            borderBottomWidth: 1,
+            borderColor: "#000",
+            width: { xs: "30%", sm: "50%", md: "70%" },
+            margin: "0 auto",
           }}
-        >
-          <Divider
-            sx={{
-              borderBottomWidth: 1,
-              borderColor: "#000",
-              width: { xs: "30%", sm: "50%", md: "70%" },
-              margin: "0 auto",
-            }}
-          />
-        </Box>
+        />
+      </Box>
       <Suspense
         fallback={
           <Box
@@ -100,27 +102,27 @@ const Services = () => {
       </Suspense>
       <br></br>
       <Suspense
-          fallback={
-            <Box
+        fallback={
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh", // Full screen height for vertical centering
+              width: "100vw", // Full screen width for horizontal centering
+            }}
+          >
+            <CircularProgress
               sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100vh", // Full screen height for vertical centering
-                width: "100vw", // Full screen width for horizontal centering
+                width: { xs: "50px", sm: "70px", md: "100px" }, // Responsive width
+                height: { xs: "50px", sm: "70px", md: "100px" }, // Responsive height
               }}
-            >
-              <CircularProgress
-                sx={{
-                  width: { xs: "50px", sm: "70px", md: "100px" }, // Responsive width
-                  height: { xs: "50px", sm: "70px", md: "100px" }, // Responsive height
-                }}
-              />
-            </Box>
-          }
-        >
-          <BookingForm />
-        </Suspense>
+            />
+          </Box>
+        }
+      >
+        <BookingForm />
+      </Suspense>
       <Suspense
         fallback={
           <Box

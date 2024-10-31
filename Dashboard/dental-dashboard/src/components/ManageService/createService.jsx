@@ -73,6 +73,14 @@ const convertNumberToText = (num) => {
   return text.trim() + " đồng";
 };
 
+const units = {
+  tooth: "Răng",
+  jaw: "Hàm",
+  treatment: "Liệu trình",
+  set: "Bộ",
+  session: "Lần",
+};
+
 const CreateService = ({ open, onClose, onSuccess }) => {
   const [serviceType, setServiceType] = useState("");
   const [serviceName, setServiceName] = useState("");
@@ -85,6 +93,9 @@ const CreateService = ({ open, onClose, onSuccess }) => {
   const { services } = useGetAllService();
   const [loading, setLoading] = useState(false);
   const { token } = useUserStore();
+  const [minPrice, setMinPrice] = useState(""); // Giá thấp nhất
+  const [maxPrice, setMaxPrice] = useState(""); // Giá cao nhất
+  const [unit, setUnit] = useState("");
 
   // Cập nhật giá trị priceText và hiển thị giá bằng chữ khi nhập giá
   const handlePriceChange = (event) => {
@@ -115,6 +126,9 @@ const CreateService = ({ open, onClose, onSuccess }) => {
     setDescription("");
     setDuration("");
     setImages([]);
+    setUnit("");
+    setMinPrice("");
+    setMaxPrice("");
   };
   const handleClose = () => {
     onClose();
@@ -123,20 +137,29 @@ const CreateService = ({ open, onClose, onSuccess }) => {
 
   const handleAddService = async () => {
     setLoading(true);
+    // Chuyển đổi giá trị từ string sang number để so sánh
+    const minPriceNum = parseInt(minPrice);
+    const maxPriceNum = parseInt(maxPrice);
     if (
       serviceType &&
       serviceName &&
       price > 0 &&
       description &&
-      images.length > 0
+      images.length > 0 &&
+      minPrice &&
+      maxPrice &&
+      minPriceNum <= maxPriceNum &&
+      unit
     ) {
       const formData = new FormData();
       formData.append("name", serviceName);
       formData.append("price", price);
       formData.append("description", description);
+      formData.append("priceRange", `${minPrice} - ${maxPrice}`);
       formData.append("serviceTypeName", serviceType);
       formData.append("discount", discount);
       formData.append("duration", Number.parseInt(duration));
+      formData.append("unit", unit);
 
       images.forEach((image) => formData.append("serviceImage", image));
 
@@ -166,7 +189,12 @@ const CreateService = ({ open, onClose, onSuccess }) => {
         setLoading(false);
       }
     } else {
-      toast.error("Vui lòng điền đầy đủ thông tin dịch vụ.");
+      if (minPriceNum > maxPriceNum) {
+        toast.error("Giá thấp nhất phải nhỏ hơn hoặc bằng giá cao nhất.");
+      } else {
+        toast.error("Vui lòng điền đầy đủ thông tin dịch vụ.");
+      }
+      setLoading(false);
     }
   };
 
@@ -198,7 +226,24 @@ const CreateService = ({ open, onClose, onSuccess }) => {
           value={serviceName}
           onChange={(e) => setServiceName(e.target.value)}
         />
-
+        <Box display="flex" gap={2} mt={2}>
+          <TextField
+            label="Giá thấp nhất (VND)"
+            type="number"
+            fullWidth
+            required
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
+          />
+          <TextField
+            label="Giá cao nhất (VND)"
+            type="number"
+            fullWidth
+            required
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+          />
+        </Box>
         <TextField
           label="Giá (VND)"
           type="number"
@@ -212,7 +257,21 @@ const CreateService = ({ open, onClose, onSuccess }) => {
         <Typography variant="caption" display="block">
           Giá trị bằng chữ: {priceText}
         </Typography>
-
+        <FormControl fullWidth required margin="normal">
+          {/* <InputLabel shrink={Boolean(unit)}>Đơn vị tính</InputLabel> */}
+          <Select
+            value={unit}
+            onChange={(e) => setUnit(e.target.value)}
+            displayEmpty
+          >
+            <MenuItem value="">Chọn đơn vị tính *</MenuItem>
+            {Object.entries(units).map(([key, value]) => (
+              <MenuItem key={key} value={key}>
+                {value}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <TextField
           label="Giảm giá (%)"
           type="number"

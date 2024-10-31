@@ -6,14 +6,10 @@ const useGetAllService = create((set) => ({
   error: null,
   services: [],
 
-  getAllService: async (token) => {
+  getAllService: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get("/service-type/all", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get("/service-type/all")
       set({ services: response.data, loading: false });
     } catch (error) {
       set({

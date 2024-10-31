@@ -22,7 +22,7 @@ import {
 } from "@mui/material";
 import { Add, Visibility } from "@mui/icons-material";
 import CreateEmployee from "../../components/ManageEmployee/CreateEmployee";
-// import EmployeeDetail from "../../components/ManageEmployee/EmployeeDetail";
+import EmployeeDetail from "../../components/ManageEmployee/EmployeeDetail";
 import useEmployeeStore from "../../hooks/employee/useGetAllEmployee";
 import useUserStore from "../../hooks/auth/useUserStore";
 
@@ -94,6 +94,10 @@ const ManageEmployee = () => {
   const handleOpenEmployeeDetail = (employee) => {
     setSelectedEmployee(employee);
     setOpenEmployeeDetail(true);
+  };
+
+  const refreshData = () => {
+    getAllEmployees(token);
   };
 
   return (
@@ -303,8 +307,12 @@ const ManageEmployee = () => {
               <TableCell sx={{ fontWeight: "bold" }}>Số thứ tự</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Mã</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Họ tên</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Giới tính</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Số điện thoại</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>
+                Thời gian làm việc
+              </TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Hành động</TableCell>
             </TableRow>
           </TableHead>
@@ -319,8 +327,18 @@ const ManageEmployee = () => {
                   <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
                   <TableCell>{employee.employeeID}</TableCell>
                   <TableCell>{employee.employeeName}</TableCell>
+                  <TableCell>
+                    {employee.gender === "male" ? "Nam" : "Nữ"}
+                  </TableCell>
                   <TableCell>{employee.employeePhone}</TableCell>
                   <TableCell>{employee.employeeEmail}</TableCell>
+                  <TableCell>
+                    {employee.workingTime?.map((time, i) => (
+                      <Typography key={i}>
+                        {daysOfWeek[time.day]}: {time.timeSlots.join(", ")}
+                      </Typography>
+                    ))}
+                  </TableCell>
                   <TableCell>
                     {userLoggedIn?.user.role === "admin" && (
                       <Tooltip title="Chi tiết và chỉnh sửa">
@@ -352,11 +370,12 @@ const ManageEmployee = () => {
         open={openCreateEmployee}
         onClose={handleCloseCreateEmployee}
       />
-      {/* <EmployeeDetail
+      <EmployeeDetail
         open={openEmployeeDetail}
         onClose={() => setOpenEmployeeDetail(false)}
         employee={selectedEmployee}
-      /> */}
+        onSuccess={refreshData}
+      />
     </Box>
   );
 };

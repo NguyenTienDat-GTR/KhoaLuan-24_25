@@ -1,13 +1,5 @@
 import React, { Suspense, useState, useEffect } from "react";
-import {
-  Box,
-  CircularProgress,
-  Typography,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import {
@@ -43,9 +35,15 @@ const ManageDoctor = React.lazy(() =>
 const ManageEmployee = React.lazy(() =>
   import("./pages/ManageHuman/ManageEmployee")
 );
-const MangeService = React.lazy(() =>
-  import("./pages/ManageService")
+const MangeService = React.lazy(() => import("./pages/ManageService"));
+const ManageAppointment = React.lazy(() =>
+  import("./pages/ManageAppointment/ManageAppointment")
 );
+const AppointmentRequest = React.lazy(() =>
+  import("./pages/ManageAppointment/AppointmentRequest")
+);
+
+const ManagePatient = React.lazy(() => import("./pages/ManagePatient"));
 
 const LazyComponent = ({ Component }) => {
   const [isInView, setIsInView] = useState(false);
@@ -144,9 +142,19 @@ function App() {
       path: "dashboard/tong-quan",
     },
     {
-      text: "Lịch hẹn",
+      text: "Quản lí lịch hẹn",
       icon: <EventNoteTwoTone sx={{ color: "rgba(21,182,210)" }} />,
-      path: "dashboard/lich-hen",
+      path: "dashboard/quan-li-lich-hen",
+      subItems: [
+        {
+          text: "Yêu cầu đặt lịch",
+          path: "yeu-cau",
+        },
+        {
+          text: "Lịch hẹn",
+          path: "lich-hen",
+        },
+      ],
     },
     {
       text: "Quản lý dịch vụ",
@@ -291,6 +299,36 @@ function App() {
                     <LazyComponent
                       Component={() => (
                         <MangeService isSidebarOpen={sidebarOpen} />
+                      )}
+                    />
+                  }
+                />
+                <Route
+                  path="/dashboard/quan-li-lich-hen/yeu-cau"
+                  element={
+                    <LazyComponent
+                      Component={() => (
+                        <AppointmentRequest isSidebarOpen={sidebarOpen} />
+                      )}
+                    />
+                  }
+                />
+                <Route
+                  path="dashboard/quan-li-lich-hen/lich-hen"
+                  element={
+                    <LazyComponent
+                      Component={() => (
+                        <ManageAppointment isSidebarOpen={sidebarOpen} />
+                      )}
+                    />
+                  }
+                />
+                <Route
+                  path="/dashboard/quan-ly-benh-nhan"
+                  element={
+                    <LazyComponent
+                      Component={() => (
+                        <ManagePatient isSidebarOpen={sidebarOpen} />
                       )}
                     />
                   }

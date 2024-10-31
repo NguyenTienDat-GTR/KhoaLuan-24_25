@@ -27,6 +27,14 @@ import useUserStore from "../hooks/auth/useUserStore";
 import CreateServiceType from "../components/ManageService/createServiceType";
 import CreateService from "../components/ManageService/createService";
 
+const units = {
+  tooth: "Răng",
+  jaw: "Hàm",
+  treatment: "Liệu trình",
+  set: "Bộ",
+  session: "Lần",
+};
+
 const ServiceManagement = () => {
   const [searchOption, setSearchOption] = useState("category");
   const [searchTerm, setSearchTerm] = useState("");
@@ -48,7 +56,7 @@ const ServiceManagement = () => {
 
   useEffect(() => {
     if (token) {
-      getAllService(token);
+      getAllService();
     }
   }, [token, services]);
 
@@ -85,7 +93,7 @@ const ServiceManagement = () => {
 
   const handleRefreshServices = () => {
     if (token) {
-      getAllService(token);
+      getAllService();
     }
   };
   return (
@@ -184,11 +192,13 @@ const ServiceManagement = () => {
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f0f0f0" }}>
               {[
-                "Số thứ tự",
+                "STT",
                 "Loại dịch vụ",
                 "Dịch vụ",
                 "Mô tả",
+                "Khoảng giá",
                 "Giá",
+                "Đơn vị tính",
                 "Giảm giá (%)",
                 "Hành động",
               ].map((head) => (
@@ -237,10 +247,17 @@ const ServiceManagement = () => {
                       <TableCell sx={{ maxWidth: "200px", overflow: "auto" }}>
                         {service.description}
                       </TableCell>
+                      <TableCell>{service.priceRange} VND</TableCell>
                       <TableCell>
                         {service.price.toLocaleString("vi-VN")} VND
                       </TableCell>
-                      <TableCell>{service.discount}</TableCell>
+                      <TableCell sx={{ maxWidth: "50px" }}>
+                        {units[service.unit] || service.unit}{" "}
+                        {/* Chuyển đổi sang tiếng Việt */}
+                      </TableCell>
+                      <TableCell sx={{ maxWidth: "50px" }}>
+                        {service.discount}
+                      </TableCell>
                       <TableCell>
                         <Tooltip title="Xem chi tiết và chỉnh sửa">
                           <IconButton sx={{ color: "#1976d2" }}>
