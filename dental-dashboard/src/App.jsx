@@ -40,6 +40,9 @@ const ModalAuthorization = React.lazy(() =>
 const ManageDoctor = React.lazy(() =>
   import("./pages/ManageHuman/ManageDoctor")
 );
+const ManagePatient = React.lazy(() =>
+  import("./pages/ManagePatient")
+);
 const ManageEmployee = React.lazy(() =>
   import("./pages/ManageHuman/ManageEmployee")
 );
@@ -261,6 +264,16 @@ function App() {
                     <LazyComponent
                       Component={() => (
                         <ManageAccount isSidebarOpen={sidebarOpen} />
+                      )}
+                    />
+                  }
+                />
+                 <Route
+                  path="/dashboard/quan-ly-benh-nhan"
+                  element={
+                    <LazyComponent
+                      Component={() => (
+                        <ManagePatient isSidebarOpen={sidebarOpen} />
                       )}
                     />
                   }
