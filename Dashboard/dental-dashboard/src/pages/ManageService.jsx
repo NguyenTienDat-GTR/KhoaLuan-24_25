@@ -19,7 +19,7 @@ import {
   Typography,
   TablePagination,
 } from "@mui/material";
-import { Visibility, Delete, Edit, Add } from "@mui/icons-material";
+import { Visibility, Delete, Edit, Add, EditNote } from "@mui/icons-material";
 import Cookies from "js-cookie";
 import useGetAllService from "../hooks/service/useGetAllService";
 import { jwtDecode } from "jwt-decode";
@@ -96,6 +96,19 @@ const ServiceManagement = () => {
       getAllService();
     }
   };
+  const handleDeleteService = async () => {
+    if (selectedService) {
+      try {
+        // Gọi API xóa loại dịch vụ, ví dụ như:
+        const response = await axios.delete(`/service/getById/${serviceId}`);
+        console.log("Xóa loại dịch vụ thành công:", response.data);
+        // Thực hiện cập nhật lại UI hoặc dữ liệu sau khi xóa thành công
+      } catch (error) {
+        console.error("Lỗi khi xóa loại dịch vụ:", error);
+      }
+    }
+  };
+
   return (
     <Box sx={{ paddingY: 6, paddingX: 0.5 }}>
       <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
@@ -195,6 +208,7 @@ const ServiceManagement = () => {
                 "STT",
                 "Loại dịch vụ",
                 "Dịch vụ",
+                "Hình ảnh",
                 "Mô tả",
                 "Khoảng giá",
                 "Giá",
@@ -210,7 +224,6 @@ const ServiceManagement = () => {
           </TableHead>
           <TableBody>
             {displayedData?.map((category, categoryIndex) => {
-              // Kiểm tra nếu serviceList có dịch vụ
               if (category.serviceList.length === 0) {
                 return (
                   <TableRow key={category._id}>
@@ -218,7 +231,7 @@ const ServiceManagement = () => {
                       {categoryIndex + 1 + page * rowsPerPage}
                     </TableCell>
                     <TableCell>{category.typeName}</TableCell>
-                    <TableCell colSpan={5} sx={{ textAlign: "center" }}>
+                    <TableCell colSpan={6} sx={{ textAlign: "center" }}>
                       Không có dịch vụ
                     </TableCell>
                   </TableRow>
@@ -244,6 +257,15 @@ const ServiceManagement = () => {
                         </>
                       )}
                       <TableCell>{service.name}</TableCell>
+                      <TableCell>
+                        {service.imageUrls?.length > 0 && (
+                          <img
+                            src={service.imageUrls[0]}
+                            alt={service.name}
+                            style={{ width: "50px", height: "50px" }}
+                          />
+                        )}
+                      </TableCell>
                       <TableCell sx={{ maxWidth: "200px", overflow: "auto" }}>
                         {service.description}
                       </TableCell>
@@ -252,24 +274,39 @@ const ServiceManagement = () => {
                         {service.price.toLocaleString("vi-VN")} VND
                       </TableCell>
                       <TableCell sx={{ maxWidth: "50px" }}>
-                        {units[service.unit] || service.unit}{" "}
-                        {/* Chuyển đổi sang tiếng Việt */}
+                        {units[service.unit] || service.unit}
                       </TableCell>
                       <TableCell sx={{ maxWidth: "50px" }}>
                         {service.discount}
                       </TableCell>
                       <TableCell>
-                        <Tooltip title="Xem chi tiết và chỉnh sửa">
+                        <Tooltip title="Xem chi tiết">
                           <IconButton sx={{ color: "#1976d2" }}>
                             <Visibility />
                           </IconButton>
                         </Tooltip>
+
                         {userLoggedIn?.user.role === "admin" && (
-                          <Tooltip title="Xóa">
-                            <IconButton sx={{ color: "#d32f2f" }}>
-                              <Delete />
-                            </IconButton>
-                          </Tooltip>
+                          <>
+                            <Tooltip title="Chỉnh sửa dịch vụ">
+                              <IconButton sx={{ color: "#4caf50" }}>
+                                <Edit />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Xóa dịch vụ">
+                              <IconButton
+                                sx={{ color: "#f44336" }}
+                                onClick={handleDeleteService}
+                              >
+                                <Delete />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Chỉnh sửa bài viết dịch vụ">
+                              <IconButton sx={{ color: "#ff9800" }}>
+                                <EditNote />
+                              </IconButton>
+                            </Tooltip>
+                          </>
                         )}
                       </TableCell>
                     </TableRow>
@@ -279,26 +316,26 @@ const ServiceManagement = () => {
             })}
           </TableBody>
         </Table>
-        <TablePagination
-          rowsPerPageOptions={[5]}
-          component="div"
-          count={filteredServices?.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-        />
       </TableContainer>
+
+      <TablePagination
+        rowsPerPageOptions={[5]}
+        component="div"
+        count={filteredServices?.length || 0}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+      />
 
       <CreateServiceType
         open={openCreateServiceType}
         onClose={handleCloseCreateServiceType}
-        onSuccess={handleRefreshServices}
+        onRefresh={handleRefreshServices}
       />
-
       <CreateService
         open={openCreateService}
         onClose={handleCloseCreateService}
-        onSuccess={handleRefreshServices}
+        onRefresh={handleRefreshServices}
       />
     </Box>
   );
