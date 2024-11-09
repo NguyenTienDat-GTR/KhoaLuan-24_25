@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -23,7 +23,7 @@ import {
   Add,
 } from "@mui/icons-material";
 import { toast } from "react-toastify";
-import useGetAllService from "../../hooks/service/useGetAllService";
+import useGetAllService from "../../hooks/service/useGetAllServiceType";
 import axios from "../../config/axiosConfig";
 import "../../css/loadingEffect.css";
 import useUserStore from "../../hooks/auth/useUserStore";
@@ -265,6 +265,7 @@ const CreateService = ({ open, onClose, onSuccess }) => {
   };
 
   const handleAddArticle = async () => {
+    console.log("Add article");
     if (title && mainHeadings.length > 0) {
       const formData = new FormData();
       formData.append("title", title);
@@ -295,9 +296,11 @@ const CreateService = ({ open, onClose, onSuccess }) => {
           },
         });
         if (response.status === 201) {
-          setArticleId(response.data.article._id);
+          const articleId = response.data.article._id;
+          setArticleId(articleId);
           setAddArticle(true);
           toast.success("Bài viết được tạo thành công!", { autoClose: 3000 });
+          return articleId; // Trả về articleId ngay khi bài viết được tạo thành công
         }
       } catch (error) {
         toast.error(error.response?.data?.message || "Đã xảy ra lỗi.", {
@@ -307,9 +310,11 @@ const CreateService = ({ open, onClose, onSuccess }) => {
         setLoading(false);
       }
     }
+    return null;
   };
 
-  const handleAddService = async () => {
+  const handleAddService = async (articleId) => {
+    console.log("Add service");
     // Chuyển đổi giá trị từ string sang number để so sánh
     const minPriceNum = parseInt(minPrice);
     const maxPriceNum = parseInt(maxPrice);
@@ -344,7 +349,6 @@ const CreateService = ({ open, onClose, onSuccess }) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response);
 
         if (response.status === 200) {
           setLoading(false);
@@ -359,7 +363,7 @@ const CreateService = ({ open, onClose, onSuccess }) => {
           setAddArticle(false);
         }
       } catch (error) {
-        toast.error(error.response?.data?.message || "Đã xảy ra lỗi.", {
+        toast.error(error.response?.data?.message, {
           autoClose: 3000,
           hideProgressBar: false,
         });
@@ -379,10 +383,11 @@ const CreateService = ({ open, onClose, onSuccess }) => {
 
   const addServiceAndArticle = async () => {
     setLoading(true);
-    await handleAddArticle();
-    if (addArticle) {
-      await handleAddService();
+    const articleId = await handleAddArticle();
+    if (articleId) {
+      await handleAddService(articleId); // Truyền articleId vào hàm handleAddService
     }
+    setLoading(false);
   };
 
   return (

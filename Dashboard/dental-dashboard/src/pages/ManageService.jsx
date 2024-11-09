@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import { Visibility, Delete, Edit, Add, EditNote } from "@mui/icons-material";
 import Cookies from "js-cookie";
-import useGetAllService from "../hooks/service/useGetAllService";
+import useGetAllService from "../hooks/service/useGetAllServiceType";
 import { jwtDecode } from "jwt-decode";
 import useUserStore from "../hooks/auth/useUserStore";
 import CreateServiceType from "../components/ManageService/createServiceType";

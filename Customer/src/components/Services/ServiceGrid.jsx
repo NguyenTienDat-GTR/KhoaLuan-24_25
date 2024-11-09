@@ -20,6 +20,7 @@ const ServiceGrid = () => {
   const [filteredCategories, setFilteredCategories] = useState(category);
   const [open, setOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
+  const [hoveredServiceId, setHoveredServiceId] = useState(null);
 
   const handleOpen = (service) => {
     setSelectedService(service);
@@ -47,7 +48,11 @@ const ServiceGrid = () => {
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
   };
-
+  const handleViewMore = (serviceId) => {
+    navigate(`/service/${serviceId}`);
+    console.log(serviceId);
+  };
+  
   return (
     <Box sx={{ padding: "20px", maxWidth: "100vw" }}>
       <TextField
@@ -80,68 +85,98 @@ const ServiceGrid = () => {
             }}
           >
             {cat.serviceList.map((service) => (
-              <Card
+              <Box
                 key={service._id}
                 sx={{
-                  width: "23%", // Chiều rộng chiếm khoảng 1/4 để thành 4 cột
-                  minWidth: "13rem",
-                  maxWidth: "15rem",
-                  display: "flex",
-                  flexDirection: "column",
-                  backgroundColor: "#76B0EA",
-                  padding: "10px",
-                  margin: "10px",
+                  position: "relative", // Thêm position relative ở đây để box bên cạnh định vị theo card
                 }}
+                onMouseEnter={() => setHoveredServiceId(service._id)}
+                onMouseLeave={() => setHoveredServiceId(null)}
               >
-                <CardMedia
-                  component="img"
-                  sx={{ height: "150px", objectFit: "cover" }}
-                  image={service.imageUrls?.[0] || "fallback-image-url"}
-                  alt={service.name || "Service Image"}
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h6">
-                    {service.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Giá:{" "}
-                    {service.priceRange.toLocaleString("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    })}
-                  </Typography>
+                <Card
+                  sx={{
+                    width: "23%", // Chiều rộng chiếm khoảng 1/4 để thành 4 cột
+                    minWidth: "13rem",
+                    maxWidth: "15rem",
+                    display: "flex",
+                    flexDirection: "column",
+                    backgroundColor: "#76B0EA",
+                    padding: "10px",
+                    margin: "10px",
+                  }}
+                >
+                  <CardMedia
+                    component="img"
+                    sx={{ height: "150px", objectFit: "cover" }}
+                    image={service.imageUrls?.[0] || "fallback-image-url"}
+                    alt={service.name || "Service Image"}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h6">
+                      {service.name}
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-around",
+                        mt: 2,
+                      }}
+                    >
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleViewMore(service._id)}
+                        size="small"
+                      >
+                        Xem thêm
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={() => handleOpen(service)}
+                      >
+                        Đặt lịch
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
+
+                {hoveredServiceId === service._id && (
                   <Box
+                    className="hoverBox"
                     sx={{
-                      display: "flex",
-                      justifyContent: "space-around",
-                      mt: 2,
+                      position: "absolute",
+                      top: 0,
+                      left: 0, // Đặt box nằm cạnh bên phải card
+                      width: "200px",
+                      backgroundColor: "rgba(0, 0, 0, 0.7)",
+                      color: "white",
+                      padding: 2,
+                      borderRadius: 1,
+                      zIndex: 1,
                     }}
                   >
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={() => navigate(`/service/${service._id}`)}
-                      size="small"
-                    >
-                      Xem thêm
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      size="small"
-                      onClick={() => handleOpen(service)}
-                    >
-                      Đặt lịch
-                    </Button>
+                    <Typography variant="h6" >{service.name}</Typography>
+                    {/* <Typography>Loại dịch vụ: {cat.typeName}</Typography> */}
+                    <Typography variant="h6"  >Thời gian: {service.duration} phút</Typography>
+                    <Typography variant="h6" >Giảm giá: {service.discount}</Typography>
+                    <Typography  >
+                      Giá:{" "}
+                      {service.priceRange.toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      })}
+                    </Typography>
                   </Box>
-                </CardContent>
-              </Card>
+                )}
+              </Box>
             ))}
           </Box>
         </Box>
       ))}
       <CreateAppointmentRequest
-        open={open} // Chuyển từ handleOpen thành open
+        open={open}
         handleClose={handleClose}
         selectedService={selectedService}
       />

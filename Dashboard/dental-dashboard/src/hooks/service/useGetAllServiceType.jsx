@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import axios from "../../config/axiosConfig";
 
-const useGetService = create((set) => ({
+const useGetAllService = create((set) => ({
   loading: false,
   error: null,
   services: [],
@@ -9,10 +9,8 @@ const useGetService = create((set) => ({
   getAllService: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get("/service/getAll");
-      if (response.status === 200) {
-        set({ services: response.data.services, loading: false });
-      }
+      const response = await axios.get("/service-type/all");
+      set({ services: response.data, loading: false });
     } catch (error) {
       set({
         error:
@@ -24,4 +22,4 @@ const useGetService = create((set) => ({
   },
 }));
 
-export default useGetService;
+export default useGetAllService;

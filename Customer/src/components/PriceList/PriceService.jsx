@@ -1,7 +1,8 @@
+import React, { useState } from "react";
 import { Box, Typography, Grid } from "@mui/material";
 import { Divider } from "@mui/material";
+import CreateAppointmentRequest from "../Services/createAppointmentRequest";
 
-import React from "react";
 import caoVoi from "..//images/pricelist/cao-voi-rang.png"; // Chỉnh lại đường dẫn cho đúng
 import cercon from "..//images/pricelist/cercon.png";
 import serrconHT from "..//images/pricelist/cercon-ht.jpg";
@@ -39,25 +40,25 @@ const PriceService = () => {
       categoryName: "Nha khoa thẩm mỹ",
       services: [
         {
-          serviceId: 1,
+          serviceId: 2,
           name: "Cạo vôi răng",
           price: "99.000 VNĐ/hàm",
           img: caoVoi,
         },
         {
-          serviceId: 1,
+          serviceId: 3,
           name: "Tẩy trắng răng",
           price: "99.000 VNĐ/hàm",
           img: tayRang,
         },
         {
-          serviceId: 1,
+          serviceId: 4,
           name: "Dán sứ Veener",
           price: "6.000.000 VNĐ/răng",
           img: danSu,
         },
         {
-          serviceId: 1,
+          serviceId: 5,
           name: "Trám răng",
           price: "99.000 VNĐ/răng",
           img: tramRang,
@@ -66,61 +67,61 @@ const PriceService = () => {
 
     },
     {
-      categoryId: 2,
+      categoryId: 6,
       categoryName: "ĐIỀU TRỊ LỢI – NHA CHU",
 
       services: [
         {
-          serviceId: 2,
+          serviceId: 7,
           name: "Điều trị sâu răng  ",
           price: "500.000 - 1.000.000 VNĐ/răng",
           img: sauRang,
         },
         {
-          serviceId: 2,
+          serviceId: 8,
           name: "Điều trị viêm nha chu ",
           price: "500.000 - 1.000.000 VNĐ/răng",
           img: nhaChu,
         },
         {
-          serviceId: 2,
+          serviceId: 9,
           name: "Điều trị nướu",
           price: "500.000 - 1.000.000 VNĐ/răng",
-          img:nuou ,
+          img: nuou,
         },
         {
-          serviceId: 2,
+          serviceId: 10,
           name: "Điều trị tủy",
           price: "500.000 - 1.000.000 VNĐ/răng",
           img: tuy,
         },
         {
-          serviceId: 2,
+          serviceId: 11,
           name: "Nha khoa trẻ em",
           price: "500.000 - 1.000.000 VNĐ/răng",
           img: nhaKhoaTreEm,
         },
-        
+
       ],
     },
     {
-      categoryId: 3,
+      categoryId: 12,
       categoryName: "niềng răng cố định - chỉnh nha",
       services: [
         {
-          serviceId: 3,
+          serviceId: 13,
           name: "Niềng răng mắc cài",
           price: "30.000.000 - 50.000.000 VNĐ/liệu trình",
           img: rangMacCai,
         },
         {
-          serviceId: 3,
+          serviceId: 14,
           name: "Niềng răng tháo lắp",
           price: "5.000.000 - 8.000.000 VNĐ/hàm",
           img: thaoLap,
         },
         {
-          serviceId: 3,
+          serviceId: 15,
           name: "Niềng răng trong suốt",
           price: "32.000.000 - 70.000.000 VNĐ/hàm",
           img: trongSuot,
@@ -128,99 +129,99 @@ const PriceService = () => {
       ],
     },
     {
-      categoryId: 4,
+      categoryId: 16,
       categoryName: "phục hình răng đã mất",
       services: [
         {
-          serviceId: 4,
+          serviceId: 17,
           name: "Hàm giả tháo lắp",
           price: "800.000 - 1.000.000 VNĐ/răng",
-          img : rangThaoLap,
+          img: rangThaoLap,
         },
         {
-          serviceId: 4,
+          serviceId: 18,
           name: "Cấy ghép Implant",
           price: "3.000.000 - 13.000.000 VNĐ/răng",
           img: Implant,
         },
-        
+
       ],
     },
     {
-      categoryId: 5,
+      categoryId: 19,
       categoryName: "răng sứ",
       services: [
         {
-          serviceId: 5,
+          serviceId: 20,
           name: "Sứ kim loại Titan",
           price: "1.500.000 VNĐ/răng",
-          img:suTitan ,
+          img: suTitan,
         },
         {
-          serviceId: 5,
+          serviceId: 21,
           name: "Sứ kim loại Mỹ",
           price: "800.000  VNĐ/răng",
           img: suMy,
         },
         {
-          serviceId: 5,
+          serviceId: 22,
           name: "Sứ kim loại Đức",
           price: "1.000.000  VNĐ/răng",
-          img:suDuc ,
+          img: suDuc,
         },
         {
-          serviceId: 5,
+          serviceId: 23,
           name: "Sứ Zirconia ",
           price: "2.200.000  VNĐ/răng",
           img: Zirconia,
         },
         {
-          serviceId: 5,
+          serviceId: 24,
           name: "Sứ Cercon",
           price: "3.000.000  VNĐ/răng",
           img: cercon,
         },
         {
-          serviceId: 5,
+          serviceId: 25,
           name: "Sứ Cercon HT",
           price: "3.900.000  VNĐ/răng",
-          img: serrconHT ,
+          img: serrconHT,
         },
         {
-          serviceId: 5,
+          serviceId: 26,
           name: "Sứ DDBIO ",
           price: "3.500.000 VNĐ/răng",
           img: ddbio,
         },
         {
-          serviceId: 5,
+          serviceId: 27,
           name: "Sứ Emax ",
           price: "4.900.000  VNĐ/răng",
           img: rangSuEmax,
         },
         {
-          serviceId: 5,
+          serviceId: 28,
           name: "Sứ Lava Plus",
           price: "6.000.000  VNĐ/răng",
-          img: lavaPlus ,
+          img: lavaPlus,
         },
         {
-          serviceId: 5,
+          serviceId: 29,
           name: "Sứ Orodent Bleach",
           price: "12.000.000  VNĐ/răng",
-          img: orodentBleach ,
+          img: orodentBleach,
         },
         {
-          serviceId: 5,
+          serviceId: 30,
           name: "Sứ Orodnet White",
           price: "7.000.000  VNĐ/răng",
           img: spWhite,
         },
         {
-          serviceId: 5,
+          serviceId: 31,
           name: "Sứ Orodent Gold",
           price: "8.000.000  VNĐ/răng",
-          img: spGold ,
+          img: spGold,
         },
         // {
         //   serviceId: 5,
@@ -230,9 +231,20 @@ const PriceService = () => {
         // },
       ],
     },
-    
-  ];
 
+  ];
+  const [selectedService, setSelectedService] = useState(null);
+  // const handleMouseEnter = (service) => {
+  //   console.log('Selected Service:', service);
+  //   setSelectedService(service);
+  // };
+
+  // const handleMouseLeave = () => {
+  //   setSelectedService(null);
+  // };
+  const handleClick = (service) => {
+    setSelectedService(service);
+  };
   return (
     <Box
       sx={{
@@ -245,7 +257,6 @@ const PriceService = () => {
         padding: { xs: "1rem 0.5rem", sm: "1rem 0.5rem", md: "1rem 0.5rem" },
       }}
     >
-
       {services.map((service) => (
         <Box
           key={service.categoryId}
@@ -269,7 +280,7 @@ const PriceService = () => {
 
           <Grid container spacing={2} sx={{ padding: "0.5rem" }}>
             {service.services.map((item) => (
-              <React.Fragment key={item.serviceId}>
+              <React.Fragment key={`${service.categoryId}-${item.serviceId}`}>
                 <Grid
                   item
                   xs={7}
@@ -290,16 +301,12 @@ const PriceService = () => {
                       sx={{
                         width: { xs: "8rem", sm: "15rem", md: "20rem" },
                         height: { xs: "4rem", sm: "10rem", md: "10rem" },
-
-                        margin: {
-                          xs: "-3rem 10rem 1rem",
-                          md: "-6rem 28rem 1rem"
-                        }, // Canh giữa hình ảnh
+                        margin: { xs: "-3rem 10rem 1rem", md: "-6rem 28rem 1rem" },
                       }}
+                      onClick={() => handleClick(item)}
                     />
                   )}
                 </Grid>
-
 
                 <Grid
                   item
@@ -312,8 +319,9 @@ const PriceService = () => {
                     marginTop: { md: "4rem", sm: "3rem", xs: "1rem" },
                     fontSize: { xs: "1rem", sm: "1.5rem", md: "1.5rem" },
                   }}
+                  onClick={() => handleClick(item)}
                 >
-                  {item.price} 
+                  {item.price}
                 </Grid>
                 <Box
                   sx={{
@@ -333,10 +341,16 @@ const PriceService = () => {
                 </Box>
               </React.Fragment>
             ))}
-
           </Grid>
         </Box>
       ))}
+      {selectedService && (
+        <CreateAppointmentRequest
+          open={!!selectedService}
+          handleClose={() => setSelectedService(null)}
+          selectedService={selectedService}
+        />
+      )}
     </Box>
   );
 };

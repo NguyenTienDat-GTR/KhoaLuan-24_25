@@ -49,7 +49,7 @@ const PriceList = () => {
           paddingTop:{md: "8rem",xs:"6rem", sm:"9rem"}
         }}
       >
-        BẢNG GIÁ NHA KHOA HOÀNG KIM
+        BẢNG GIÁ NHA KHOA HBT
       </Typography>
       <Box
         sx={{
