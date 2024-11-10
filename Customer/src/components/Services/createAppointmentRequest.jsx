@@ -222,7 +222,7 @@ const CreateAppointmentRequest = ({ open, handleClose, selectedService }) => {
 
         <TextField
           label="Dịch vụ"
-          value={selectedService?.name}
+          value={selectedService?.name || ""}
           fullWidth
           disabled
           sx={{ mb: 2 }}
@@ -230,7 +230,7 @@ const CreateAppointmentRequest = ({ open, handleClose, selectedService }) => {
 
         <TextField
           label="Giá"
-          value={selectedService?.priceRange}
+          value={selectedService?.priceRange || ""}
           fullWidth
           disabled
           sx={{ mb: 2 }}

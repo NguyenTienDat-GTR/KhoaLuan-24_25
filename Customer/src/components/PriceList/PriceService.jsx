@@ -42,25 +42,25 @@ const PriceService = () => {
         {
           serviceId: 2,
           name: "Cạo vôi răng",
-          price: "99.000 VNĐ/hàm",
+          priceRange: "99.000 VNĐ/hàm",
           img: caoVoi,
         },
         {
           serviceId: 3,
           name: "Tẩy trắng răng",
-          price: "99.000 VNĐ/hàm",
+          priceRange: "99.000 VNĐ/hàm",
           img: tayRang,
         },
         {
           serviceId: 4,
           name: "Dán sứ Veener",
-          price: "6.000.000 VNĐ/răng",
+          priceRange: "6.000.000 VNĐ/răng",
           img: danSu,
         },
         {
           serviceId: 5,
           name: "Trám răng",
-          price: "99.000 VNĐ/răng",
+          priceRange: "99.000 VNĐ/răng",
           img: tramRang,
         },
       ],
@@ -74,31 +74,31 @@ const PriceService = () => {
         {
           serviceId: 7,
           name: "Điều trị sâu răng  ",
-          price: "500.000 - 1.000.000 VNĐ/răng",
+          priceRange: "500.000 - 1.000.000 VNĐ/răng",
           img: sauRang,
         },
         {
           serviceId: 8,
           name: "Điều trị viêm nha chu ",
-          price: "500.000 - 1.000.000 VNĐ/răng",
+          priceRange: "500.000 - 1.000.000 VNĐ/răng",
           img: nhaChu,
         },
         {
           serviceId: 9,
           name: "Điều trị nướu",
-          price: "500.000 - 1.000.000 VNĐ/răng",
+          priceRange: "500.000 - 1.000.000 VNĐ/răng",
           img: nuou,
         },
         {
           serviceId: 10,
           name: "Điều trị tủy",
-          price: "500.000 - 1.000.000 VNĐ/răng",
+          priceRange: "500.000 - 1.000.000 VNĐ/răng",
           img: tuy,
         },
         {
           serviceId: 11,
           name: "Nha khoa trẻ em",
-          price: "500.000 - 1.000.000 VNĐ/răng",
+          priceRange: "500.000 - 1.000.000 VNĐ/răng",
           img: nhaKhoaTreEm,
         },
 
@@ -111,19 +111,19 @@ const PriceService = () => {
         {
           serviceId: 13,
           name: "Niềng răng mắc cài",
-          price: "30.000.000 - 50.000.000 VNĐ/liệu trình",
+          priceRange: "30.000.000 - 50.000.000 VNĐ/liệu trình",
           img: rangMacCai,
         },
         {
           serviceId: 14,
           name: "Niềng răng tháo lắp",
-          price: "5.000.000 - 8.000.000 VNĐ/hàm",
+          priceRange: "5.000.000 - 8.000.000 VNĐ/hàm",
           img: thaoLap,
         },
         {
           serviceId: 15,
           name: "Niềng răng trong suốt",
-          price: "32.000.000 - 70.000.000 VNĐ/hàm",
+          priceRange: "32.000.000 - 70.000.000 VNĐ/hàm",
           img: trongSuot,
         },
       ],
@@ -135,13 +135,13 @@ const PriceService = () => {
         {
           serviceId: 17,
           name: "Hàm giả tháo lắp",
-          price: "800.000 - 1.000.000 VNĐ/răng",
+          priceRange: "800.000 - 1.000.000 VNĐ/răng",
           img: rangThaoLap,
         },
         {
           serviceId: 18,
           name: "Cấy ghép Implant",
-          price: "3.000.000 - 13.000.000 VNĐ/răng",
+          priceRange: "3.000.000 - 13.000.000 VNĐ/răng",
           img: Implant,
         },
 
@@ -154,79 +154,79 @@ const PriceService = () => {
         {
           serviceId: 20,
           name: "Sứ kim loại Titan",
-          price: "1.500.000 VNĐ/răng",
+          priceRange: "1.500.000 VNĐ/răng",
           img: suTitan,
         },
         {
           serviceId: 21,
           name: "Sứ kim loại Mỹ",
-          price: "800.000  VNĐ/răng",
+          priceRange: "800.000  VNĐ/răng",
           img: suMy,
         },
         {
           serviceId: 22,
           name: "Sứ kim loại Đức",
-          price: "1.000.000  VNĐ/răng",
+          priceRange: "1.000.000  VNĐ/răng",
           img: suDuc,
         },
         {
           serviceId: 23,
           name: "Sứ Zirconia ",
-          price: "2.200.000  VNĐ/răng",
+          priceRange: "2.200.000  VNĐ/răng",
           img: Zirconia,
         },
         {
           serviceId: 24,
           name: "Sứ Cercon",
-          price: "3.000.000  VNĐ/răng",
+          priceRange: "3.000.000  VNĐ/răng",
           img: cercon,
         },
         {
           serviceId: 25,
           name: "Sứ Cercon HT",
-          price: "3.900.000  VNĐ/răng",
+          priceRange: "3.900.000  VNĐ/răng",
           img: serrconHT,
         },
         {
           serviceId: 26,
           name: "Sứ DDBIO ",
-          price: "3.500.000 VNĐ/răng",
+          priceRange: "3.500.000 VNĐ/răng",
           img: ddbio,
         },
         {
           serviceId: 27,
           name: "Sứ Emax ",
-          price: "4.900.000  VNĐ/răng",
+          priceRange: "4.900.000  VNĐ/răng",
           img: rangSuEmax,
         },
         {
           serviceId: 28,
           name: "Sứ Lava Plus",
-          price: "6.000.000  VNĐ/răng",
+          priceRange: "6.000.000  VNĐ/răng",
           img: lavaPlus,
         },
         {
           serviceId: 29,
           name: "Sứ Orodent Bleach",
-          price: "12.000.000  VNĐ/răng",
+          priceRange: "12.000.000  VNĐ/răng",
           img: orodentBleach,
         },
         {
           serviceId: 30,
           name: "Sứ Orodnet White",
-          price: "7.000.000  VNĐ/răng",
+          priceRange: "7.000.000  VNĐ/răng",
           img: spWhite,
         },
         {
           serviceId: 31,
           name: "Sứ Orodent Gold",
-          price: "8.000.000  VNĐ/răng",
+          priceRange: "8.000.000  VNĐ/răng",
           img: spGold,
         },
         // {
         //   serviceId: 5,
         //   name: "Sứ kim loại Titan",
-        //   price: "1.000.000",
+        //   priceRange: "1.000.000",
         //   img: ,
         // },
       ],
@@ -319,10 +319,10 @@ const PriceService = () => {
                     marginTop: { md: "4rem", sm: "3rem", xs: "1rem" },
                     fontSize: { xs: "1rem", sm: "1.5rem", md: "1.5rem" },
                   }}
-                  onClick={() => handleClick(item)}
+                  
                 >
-                  {item.price}
-                  <Typography color="gray">Nhấn vào để đặt lịch</Typography>
+                  {item.priceRange}
+                  <Typography color="gray" onClick={() => handleClick(item)} >Nhấn vào để đặt lịch</Typography>
                 </Grid>
                 <Box
                   sx={{

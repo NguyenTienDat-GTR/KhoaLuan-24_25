@@ -254,7 +254,7 @@ const Header = () => {
                 Bảng giá
               </Typography>
             </RouterLink>
-            <RouterLink to="/nieng-rang-mac-cai" style={{ textDecoration: "none" }}>
+            <RouterLink to="/service/672117b386ec2d40ac45af3d" style={{ textDecoration: "none" }}>
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{

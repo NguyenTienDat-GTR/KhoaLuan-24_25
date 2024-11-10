@@ -23,7 +23,8 @@ import {
 
 const Header = React.lazy(() => import("../Header"));
 const Footer = React.lazy(() => import("../Footer"));
-import CreateAppointmentRequest from "./CreateAppointmentRequest";
+import CreateAppointmentRequest from "./createAppointmentRequest";
+//import { PriceChange } from "@mui/icons-material";
 
 
 const ArticleDetail = () => {
@@ -47,13 +48,25 @@ const ArticleDetail = () => {
     const fetchArticle = async () => {
       try {
         const response = await axios.get(`/service/getById/${serviceId}`);
+        const serviceData = response.data.service;
 
-        // Kiểm tra và lấy blog từ response
-        if (response.data && response.data.service && response.data.service.blog) {
-          console.log("Blog data:", response.data.service.blog);  // In ra blog data
-          setArticle(response.data.service.blog);  // Cập nhật state article
+        // // Kiểm tra và lấy blog từ response
+        // if (response.data && response.data.service && response.data.service.blog) {
+        //   console.log("Blog data:", response.data.service.blog);  // In ra blog data
+        //   setArticle(response.data.service.blog);  // Cập nhật state article
+        // } else {
+        //   console.error("Không có blog trong dữ liệu trả về.");
+        //   setArticle(null);
+        // }
+        if (serviceData) {
+          setSelectedService({
+            id: serviceData._id,
+            name: serviceData.name, // Lấy tên dịch vụ
+            priceRange: serviceData.priceRange, // Lấy giá dịch vụ
+          });
+          setArticle(serviceData.blog); // Lấy bài viết từ dịch vụ
         } else {
-          console.error("Không có blog trong dữ liệu trả về.");
+          console.error("Không có dịch vụ với ID này.");
           setArticle(null);
         }
       } catch (error) {
@@ -67,6 +80,7 @@ const ArticleDetail = () => {
 
   if (!article) return <Typography>Đang tải...</Typography>;
   const handleOpenBookingForm = () => {
+   // setSelectedService({ id: serviceId, name: article?.serviceId, priceRange: article?.priceRange })
     setOpenBookingForm(true);
   };
 
@@ -79,8 +93,8 @@ const ArticleDetail = () => {
       <Suspense fallback={<CircularProgress />}>
         <Header />
       </Suspense>
-      <Box sx={{  marginTop: 15 }}>
-        <Typography variant="h4" sx={{ color: 'red', textAlign: 'center' , }}>{article.title}</Typography>
+      <Box sx={{ marginTop: 15 }}>
+        <Typography variant="h4" sx={{ color: 'red', textAlign: 'center', }}>{article.title}</Typography>
         {article.imageUrls && article.imageUrls.length > 0 && (
           <Box sx={{ marginTop: 1, marginLeft: { md: 30 } }}>
             {article.imageUrls.map((imageUrl, imgIndex) => (
@@ -89,7 +103,7 @@ const ArticleDetail = () => {
           </Box>
         )}
         {article.mainHeadings.map((mainHeading, index) => (
-          <Box key={index} sx={{ marginTop: 2, padding:5 }}>
+          <Box key={index} sx={{ marginTop: 2, padding: 5 }}>
             <Typography variant="h5">{`${romanize(index + 1)}. ${mainHeading.title}`}</Typography>
 
             {/* Hiển thị hình ảnh nếu có */}
@@ -135,24 +149,24 @@ const ArticleDetail = () => {
         ))}
       </Box>
       <Box sx={{ marginTop: 15 }}>
-       
+
         <Button vvariant="contained"
-  color="error"
-  onClick={handleOpenBookingForm}
-  sx={{
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    width: "60px",
-    height: "60px",
-    borderRadius: "50%",
-    zIndex: 1000,
-    backgroundColor: "red",
-    color: "white",
-    "&:hover": {
-      backgroundColor: "#cc0000",
-    },
-  }}>
+          color="error"
+          onClick={handleOpenBookingForm}
+          sx={{
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            width: "60px",
+            height: "60px",
+            borderRadius: "50%",
+            zIndex: 1000,
+            backgroundColor: "red",
+            color: "white",
+            "&:hover": {
+              backgroundColor: "#cc0000",
+            },
+          }}>
           Đặt lịch
         </Button>
 
