@@ -272,17 +272,21 @@ const CreateService = ({ open, onClose, onSuccess }) => {
       formData.append("mainHeadings", JSON.stringify(mainHeadings));
       formData.append("createBy", userLoggedIn?.user.details.employeeName);
 
-      mainHeadings.forEach((main) => {
+      // Thêm ảnh cho mainHeadings, subheadings và subSubheadings với đúng tên trường
+      mainHeadings.forEach((main, mainIndex) => {
         if (main.image) {
-          formData.append("articleImage", main.image); // Thêm ảnh chính
+          formData.append(`main_${mainIndex}`, main.image); // Thêm ảnh chính cho mục lớn
         }
-        main.subheadings.forEach((sub) => {
+        main.subheadings.forEach((sub, subIndex) => {
           if (sub.image) {
-            formData.append("articleImage", sub.image); // Thêm ảnh phụ
+            formData.append(`sub_${mainIndex}_${subIndex}`, sub.image); // Thêm ảnh cho tiểu mục
           }
-          sub.subSubheadings.forEach((subSub) => {
+          sub.subSubheadings.forEach((subSub, subSubIndex) => {
             if (subSub.image) {
-              formData.append("articleImage", subSub.image); // Thêm ảnh phụ chi tiết
+              formData.append(
+                `subSub_${mainIndex}_${subIndex}_${subSubIndex}`,
+                subSub.image
+              ); // Thêm ảnh cho tiểu mục cấp ba
             }
           });
         });

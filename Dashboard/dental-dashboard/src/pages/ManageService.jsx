@@ -19,6 +19,7 @@ import {
   Typography,
   TablePagination,
 } from "@mui/material";
+import axios from "axios";
 import { Visibility, Delete, Edit, Add, EditNote } from "@mui/icons-material";
 import Cookies from "js-cookie";
 import useGetAllService from "../hooks/service/useGetAllServiceType";
@@ -96,17 +97,24 @@ const ServiceManagement = () => {
       getAllService();
     }
   };
-  const handleDeleteService = async () => {
-    if (selectedService) {
+  const handleDeleteService = async (serviceId) => {
+    
       try {
         // Gọi API xóa loại dịch vụ, ví dụ như:
-        const response = await axios.delete(`/service/getById/${serviceId}`);
-        console.log("Xóa loại dịch vụ thành công:", response.data);
+        //const response = await axios.delete(`/service/${serviceId}`);
+        //console.log("Xóa loại dịch vụ thành công:", response.data);
         // Thực hiện cập nhật lại UI hoặc dữ liệu sau khi xóa thành công
+        //handleRefreshServices();
+        const res = await axios.delete (`${serviceId}`)
+        console.log(res);
+        
+        //const res = await axios.delete(`/service/:id`)
+        console.log("Xóa dịch vụ thành công", res.data);
+        
       } catch (error) {
         console.error("Lỗi khi xóa loại dịch vụ:", error);
       }
-    }
+    
   };
 
   return (
@@ -296,7 +304,7 @@ const ServiceManagement = () => {
                             <Tooltip title="Xóa dịch vụ">
                               <IconButton
                                 sx={{ color: "#f44336" }}
-                                onClick={handleDeleteService}
+                                onClick={()=> handleDeleteService(service._id)}
                               >
                                 <Delete />
                               </IconButton>

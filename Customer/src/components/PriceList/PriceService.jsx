@@ -303,7 +303,7 @@ const PriceService = () => {
                         height: { xs: "4rem", sm: "10rem", md: "10rem" },
                         margin: { xs: "-3rem 10rem 1rem", md: "-6rem 28rem 1rem" },
                       }}
-                      onClick={() => handleClick(item)}
+                     
                     />
                   )}
                 </Grid>
@@ -322,6 +322,7 @@ const PriceService = () => {
                   onClick={() => handleClick(item)}
                 >
                   {item.price}
+                  <Typography color="gray">Nhấn vào để đặt lịch</Typography>
                 </Grid>
                 <Box
                   sx={{
