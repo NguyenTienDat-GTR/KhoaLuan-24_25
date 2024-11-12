@@ -1,38 +1,38 @@
 import { create } from "zustand";
 import axios from "../../config/axiosConfig";
 
-const useAppointmentRequestStore = create((set) => ({
-  appointmentRequests: [],
+const useTicketStore = create((set) => ({
+  tickets: [],
   loading: false,
   error: null,
-  requestByid: null,
+  ticketById: null,
 
-  getAllRequestAppointment: async (token) => {
+  getAllTickets: async (token) => {
     set({ loading: true });
     try {
-      const response = await axios.get("/appointment-request/all", {
+      const response = await axios.get("/ticket/all", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       if (response.status === 200) {
-        set({ appointmentRequests: response.data.request, loading: false });
+        set({ tickets: response.data.appointmentTickets, loading: false });
       }
     } catch (error) {
       set({ error: error?.response?.data.message, loading: false });
     }
   },
 
-  getRequestById: async (id, token) => {
+  getTicketById: async (token, ticketId) => {
     set({ loading: true });
     try {
-      const response = await axios.get(`/appointment-request/getById/${id}`, {
+      const response = await axios.get(`/ticket/getById/${ticketId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       if (response.status === 200) {
-        set({ requestByid: response.data.request, loading: false });
+        set({ ticketById: response.data.ticket, loading: false });
       }
     } catch (error) {
       set({ error: error?.response?.data.message, loading: false });
@@ -40,4 +40,4 @@ const useAppointmentRequestStore = create((set) => ({
   },
 }));
 
-export default useAppointmentRequestStore;
+export default useTicketStore;

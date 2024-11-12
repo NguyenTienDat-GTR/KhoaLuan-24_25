@@ -139,7 +139,7 @@ const CreateAppointmentRequest = ({ open, handleClose, selectedService }) => {
       customerEmail: formData.email,
       appointmentDate: `${day}/${month}/${year}`,
       appointmentTime: formData.time,
-      service: selectedService?._id, // Assuming selectedService has _id
+      service: selectedService?.name, 
       genderDoctor: formData.doctorGender === "Nam" ? "male" : "female",
       note: formData.notes,
       concern: "", // Assuming you want to keep it empty or manage it later

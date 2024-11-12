@@ -70,6 +70,10 @@ const AppointmentRequest = () => {
       setAppointments((prev) => [...prev, newRequest]); // Cập nhật danh sách yêu cầu
     });
 
+    socket.on("response", () => {
+      getAllRequestAppointment(token);
+    });
+
     return () => {
       socket.off("newAppointmentRequest");
     };
@@ -88,8 +92,9 @@ const AppointmentRequest = () => {
     setOpenDialogResponse(false);
   };
 
-  const refreshAppointments = () => {
+  const refreshAppointments = (updatedRequest) => {
     getAllRequestAppointment(token);
+    setSelectedRequest(updatedRequest);
   };
 
   return (
@@ -281,7 +286,9 @@ const AppointmentRequest = () => {
                       <TableCell>{appointment.customerEmail}</TableCell>
                       <TableCell>{appointment.appointmentDate}</TableCell>
                       <TableCell>{appointment.appointmentTime}</TableCell>
-                      <TableCell>{appointment.service.name}</TableCell>
+                      <TableCell>
+                        {appointment.service || "Dịch vụ không tồn tại"}
+                      </TableCell>
                       <TableCell>
                         <Typography
                           sx={{

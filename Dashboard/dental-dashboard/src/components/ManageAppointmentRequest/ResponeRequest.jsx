@@ -31,34 +31,72 @@ import axios from "../../config/axiosConfig";
 import { toast } from "react-toastify";
 import useGetService from "../../hooks/service/useGetAllService";
 import moment from "moment";
+import useAppointmentRequestStore from "../../hooks/appointmentRequest/useAppointmentRequestStore";
 
 const ResponeRequest = ({ open, onClose, onSuccess, selectedRequest }) => {
+  const [requestData, setRequestData] = useState(selectedRequest);
   const [isEditing, setIsEditing] = useState(false);
   const [appointmentDate, setAppointmentDate] = useState(
-    selectedRequest?.appointmentDate || ""
+    requestData?.appointmentDate || ""
   );
   const [appointmentTime, setAppointmentTime] = useState(
-    selectedRequest?.appointmentTime || ""
+    requestData?.appointmentTime || ""
   );
   const [doctorGender, setDoctorGender] = useState(
-    selectedRequest?.genderDoctor || "all"
+    requestData?.genderDoctor || "all"
   ); // Chuyển sang chuỗi
   const [selectedService, setSelectedService] = useState(
-    selectedRequest?.service || null
+    requestData?.service || ""
   );
-  const [note, setNote] = useState(selectedRequest?.note || "");
+  const [note, setNote] = useState(requestData?.note || "");
   const { token, userLoggedIn } = useUserStore();
   const [doctors, setDoctors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const { services, getAllService } = useGetService();
+  const [isChange, setIsChange] = useState(false);
+  const { request, getRequestById } = useAppointmentRequestStore();
+  const [openReject, setOpenReject] = useState(false);
+  const [reasonReject, setReasonReject] = useState("");
+  const [isLoadingEdit, setIsLoadingEdit] = useState(false);
+  const [isLoadingResponse, setIsLoadingResponse] = useState(false);
+
+  useEffect(() => {
+    if (selectedRequest) {
+      setRequestData(selectedRequest);
+    }
+  }, [selectedRequest]);
+
+  useEffect(() => {
+    if (requestData) {
+      const formattedDate = moment(
+        requestData.appointmentDate,
+        "DD/MM/YYYY"
+      ).format("YYYY-MM-DD");
+      setAppointmentDate(formattedDate);
+      setAppointmentTime(requestData.appointmentTime || "");
+      setDoctorGender(requestData.genderDoctor || "all");
+      setSelectedService(requestData.service || "");
+      setNote(requestData.note || "");
+      setSelectedDoctor(null); // Reset doctor selection after update
+    }
+  }, [requestData]); // Re-run when requestData changes
+
+  useEffect(() => {
+    if (requestData && services) {
+      const matchingService = services.find(
+        (service) => service.name === requestData.service
+      );
+      setSelectedService(matchingService || null); // Set null if no match is found
+    }
+  }, [requestData, services]);
 
   const getListDoctor = async () => {
+    if (!selectedRequest._id) return;
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        "/appointment-request/doctor-availability",
-        { appointmentRequest: selectedRequest },
+      const response = await axios.get(
+        `/appointment-request/doctor-availability/${selectedRequest._id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -84,7 +122,10 @@ const ResponeRequest = ({ open, onClose, onSuccess, selectedRequest }) => {
     if (selectedRequest && token) {
       getListDoctor();
     }
-  }, [selectedRequest]);
+    if (isChange) {
+      getListDoctor().then(() => setIsChange(false));
+    }
+  }, [selectedRequest, token, isChange]);
 
   useEffect(() => {
     if (token) {
@@ -92,38 +133,29 @@ const ResponeRequest = ({ open, onClose, onSuccess, selectedRequest }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (selectedRequest && selectedRequest.appointmentDate) {
-      const formattedDate = moment(
-        selectedRequest.appointmentDate,
-        "DD/MM/YYYY"
-      ).format("YYYY-MM-DD");
-      setAppointmentDate(formattedDate);
-    }
-  }, [selectedRequest?.appointmentDate]); // Đảm bảo rằng effect chỉ chạy khi appointmentDate thay đổi
-
   const handleDateChange = (e) => {
     const selectedDate = e.target.value;
-    const formattedDate = moment(selectedDate, "YYYY-MM-DD").format(
-      "DD/MM/YYYY"
-    );
-    setAppointmentDate(formattedDate);
+    setAppointmentDate(moment(selectedDate).format("YYYY-MM-DD"));
   };
 
+  // Định dạng ngày để sử dụng trong trường ngày
   const formattedAppointmentDate = moment(
     appointmentDate,
     "DD/MM/YYYY"
   ).isValid()
     ? moment(appointmentDate, "DD/MM/YYYY").format("YYYY-MM-DD")
-    : "";
+    : appointmentDate;
 
   const handleReset = () => {
-    setSelectedService(null);
-    setNote(selectedRequest?.note || "");
-    setDoctorGender(selectedRequest?.genderDoctor || "all");
-    setAppointmentDate(selectedRequest?.appointmentDate || "");
-    setAppointmentTime(selectedRequest?.appointmentTime || "");
-    setSelectedService(selectedRequest?.service.name || "");
+    // Đặt lại tất cả các giá trị về ban đầu từ selectedRequest
+    setSelectedService(
+      services.find((service) => service.name === requestData?.service) || ""
+    );
+    setNote(requestData?.note || "");
+    setDoctorGender(requestData?.genderDoctor || "all");
+    setAppointmentDate(requestData?.appointmentDate || "");
+    setAppointmentTime(requestData?.appointmentTime || "");
+    setSelectedDoctor(null); // Đặt lại bác sĩ
   };
 
   const handleClose = () => {
@@ -137,19 +169,142 @@ const ResponeRequest = ({ open, onClose, onSuccess, selectedRequest }) => {
     setIsEditing(true);
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-    onSuccess();
+  const isFormValid = () => {
+    return (
+      appointmentDate && appointmentTime && selectedService && doctorGender
+    );
   };
+
+  const handleSave = async () => {
+    if (!selectedRequest._id) return;
+    setIsLoadingEdit(true);
+    if (!isFormValid()) {
+      toast.error("Vui lòng điền đầy đủ thông tin", { autoClose: 3000 });
+      return;
+    }
+    const editByObject = [
+      {
+        by: userLoggedIn?.user.details.employeeName,
+        at: new Date().toLocaleString("en-US", {
+          timeZone: "Asia/Ho_Chi_Minh", // Đảm bảo múi giờ là Việt Nam
+        }),
+      },
+    ];
+    const requestEdit = {
+      appointmentDate: appointmentDate,
+      appointmentTime: appointmentTime,
+      service:
+        typeof selectedService === "string"
+          ? selectedService
+          : selectedService.name,
+      genderDoctor: doctorGender,
+      note: note,
+      editBy: JSON.stringify(editByObject),
+    };
+    console.log("Request edit:", requestEdit);
+    try {
+      // Gửi yêu cầu cập nhật thông tin yêu cầu
+      const response = await axios.put(
+        `/appointment-request/change/${selectedRequest._id}`,
+        requestEdit,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        const updatedRequest = response.data.updatedRequest;
+
+        // Cập nhật requestData với dữ liệu mới ngay lập tức
+        setRequestData(updatedRequest); // Không cần setTimeout
+
+        // Gọi lại getRequestById để làm mới thông tin
+        getRequestById(response.data.updatedRequest._id, token);
+        // console.log("Updated Request:", response.data.updatedRequest);
+        onSuccess(response.data.updatedRequest);
+        toast.success("Cập nhật yêu cầu thành công", { autoClose: 3000 });
+        setIsEditing(false);
+        setIsChange(true);
+        handleReset();
+        setIsLoadingEdit(false);
+      }
+    } catch (error) {
+      console.error("Lỗi khi cập nhật yêu cầu:", error);
+      toast.error("Cập nhật yêu cầu không thành công", { autoClose: 3000 });
+      setIsChange(false);
+      setIsLoadingEdit(false);
+    }
+  };
+  useEffect(() => {
+    if (request) {
+      // Gán dữ liệu mới cho requestData
+      setRequestData(request);
+    }
+  }, [request]);
 
   const handleCancelEdit = () => {
     handleReset();
     setIsEditing(false);
   };
 
-  const handleAccept = () => {};
+  const handleResponse = async (status) => {
+    if (!selectedRequest._id) return;
+    setIsLoadingResponse(true);
+    if (status === "rejected" && !reasonReject) {
+      toast.error("Vui lòng nhập lý do từ chối", { autoClose: 3000 });
+      setIsLoadingResponse(false);
+      return;
+    }
+    if (status === "accepted") {
+      if (!selectedDoctor) {
+        toast.error("Vui lòng chọn bác sĩ", { autoClose: 3000 });
+        setIsLoadingResponse(false);
+        return;
+      }
+    }
 
-  const handleReject = () => {};
+    try {
+      const response = await axios.put(
+        `/appointment-request/response/${selectedRequest._id}`,
+        {
+          status: status,
+          reasonReject: reasonReject,
+          acceptBy: userLoggedIn?.user.details.employeeName,
+          rejectBy: userLoggedIn?.user.details.employeeName,
+          doctorID: selectedDoctor?.doctor.employeeID || "",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        // console.log("Response Data:", response.data);
+        onSuccess();
+        setIsLoadingResponse(false);
+        toast.success("Phản hồi yêu cầu thành công", { autoClose: 3000 });
+        if (status === "rejected") {
+          setOpenReject(false);
+          setReasonReject("");
+        }
+        handleClose();
+      }
+    } catch (error) {
+      console.error("Lỗi khi phản hồi yêu cầu:", error);
+      toast.error("Phản hồi yêu cầu không thành công", { autoClose: 3000 });
+      setIsLoadingResponse(false);
+    }
+  };
+
+  const handleOpenReject = () => {
+    setOpenReject(true);
+  };
+  const handleCloseReject = () => {
+    setOpenReject(false);
+    setReasonReject("");
+  };
 
   const handleGenderChange = (event) => {
     setDoctorGender(event.target.value);
@@ -201,42 +356,40 @@ const ResponeRequest = ({ open, onClose, onSuccess, selectedRequest }) => {
               <Box sx={{ border: "1px solid #ccc", p: 2, height: "100%" }}>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                   <Typography>
-                    Tên khách hàng:{" "}
-                    <strong>{selectedRequest?.customerName}</strong>
+                    Tên khách hàng: <strong>{requestData?.customerName}</strong>
                   </Typography>
                   <Typography>
-                    Số điện thoại:{" "}
-                    <strong>{selectedRequest?.customerPhone}</strong>
+                    Số điện thoại: <strong>{requestData?.customerPhone}</strong>
                   </Typography>
                   <Typography>
                     Email:{" "}
                     <strong>
-                      {selectedRequest?.customerEmail || "Chưa cung cấp"}
+                      {requestData?.customerEmail || "Chưa cung cấp"}
                     </strong>
                   </Typography>
                   <Typography>
                     Giới tính bác sĩ yêu cầu:{" "}
                     <strong>
-                      {selectedRequest?.genderDoctor === "male" ? "Nam" : "Nữ"}
+                      {requestData?.genderDoctor === "male"
+                        ? "Nam"
+                        : requestData?.genderDoctor === "all"
+                        ? "Tất cả"
+                        : "Nữ"}
                     </strong>
                   </Typography>
                   <Typography>
-                    Dịch vụ yêu cầu:{" "}
-                    <strong>{selectedRequest?.service.name}</strong>
+                    Dịch vụ yêu cầu: <strong>{requestData?.service}</strong>
                   </Typography>
                   <Typography>
                     Ngày yêu cầu:{" "}
-                    <strong>{selectedRequest?.appointmentDate}</strong>
+                    <strong>{requestData?.appointmentDate}</strong>
                   </Typography>
                   <Typography>
-                    Giờ yêu cầu:{" "}
-                    <strong>{selectedRequest?.appointmentTime}</strong>
+                    Giờ yêu cầu: <strong>{requestData?.appointmentTime}</strong>
                   </Typography>
                   <Typography>
                     Ghi chú:{" "}
-                    <strong>
-                      {selectedRequest?.note || "Không có ghi chú"}
-                    </strong>
+                    <strong>{requestData?.note || "Không có ghi chú"}</strong>
                   </Typography>
                   <Typography>
                     Bác sĩ:{" "}
@@ -327,6 +480,9 @@ const ResponeRequest = ({ open, onClose, onSuccess, selectedRequest }) => {
                     )}
                     disableClearable
                     disabled={!isEditing}
+                    isOptionEqualToValue={(option, value) =>
+                      option.name === value.name
+                    }
                   />
 
                   <Box
@@ -387,20 +543,27 @@ const ResponeRequest = ({ open, onClose, onSuccess, selectedRequest }) => {
                         color="primary"
                         startIcon={<Edit />}
                         variant="contained"
+                        disable={isLoadingResponse}
                       >
                         Thay đổi yêu cầu
                       </Button>
                     )}
-                    {isEditing && (
-                      <>
-                        <Button onClick={handleSave} color="success">
-                          Lưu
-                        </Button>
-                        <Button onClick={handleCancelEdit} color="error">
-                          Hủy thay đổi
-                        </Button>
-                      </>
-                    )}
+                    {isEditing &&
+                      (!isLoadingEdit ? (
+                        <>
+                          <Button onClick={handleSave} color="success">
+                            Lưu thay đổi
+                          </Button>
+
+                          <Button onClick={handleCancelEdit} color="error">
+                            Hủy thay đổi
+                          </Button>
+                        </>
+                      ) : (
+                        <Typography variant="body2">
+                          Đang lưu thay đổi...
+                        </Typography>
+                      ))}
                   </Box>
                 </Box>
               </Box>
@@ -498,16 +661,76 @@ const ResponeRequest = ({ open, onClose, onSuccess, selectedRequest }) => {
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleAccept} color="success" variant="contained">
-          Chấp nhận
-        </Button>
-        <Button onClick={handleReject} color="error" variant="contained">
-          Từ chối
-        </Button>
-        <Button onClick={handleClose} color="error" variant="outlined">
-          Đóng
-        </Button>
+        {!isLoadingResponse ? (
+          <>
+            <Button
+              onClick={() => handleResponse("accepted")}
+              color="success"
+              variant="contained"
+            >
+              Chấp nhận
+            </Button>
+            <Button
+              onClick={() => setOpenReject(true)}
+              color="error"
+              variant="contained"
+            >
+              Từ chối
+            </Button>
+            <Button onClick={handleClose} color="error" variant="outlined">
+              Đóng
+            </Button>
+          </>
+        ) : (
+          <Typography variant="body2">Đang xử lý...</Typography>
+        )}
       </DialogActions>
+
+      {/* Dialog từ chối yêu cầu */}
+      <Dialog
+        open={openReject}
+        onClose={handleCloseReject}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Xác nhận từ chối</DialogTitle>
+        <DialogContent>
+          <Typography variant="subtitle1">
+            Bạn có chắc chắn muốn từ chối yêu cầu này?
+          </Typography>
+          <TextField
+            sx={{ mt: 2 }}
+            label="Lý do từ chối"
+            multiline
+            rows={4}
+            fullWidth
+            required
+            onChange={(e) => setReasonReject(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          {!isLoadingResponse ? (
+            <>
+              <Button
+                onClick={handleCloseReject}
+                color="error"
+                variant="outlined"
+              >
+                Hủy
+              </Button>
+              <Button
+                onClick={() => handleResponse("rejected")}
+                color="success"
+                variant="contained"
+              >
+                Xác nhận
+              </Button>
+            </>
+          ) : (
+            <Typography variant="body2">Đang xử lý...</Typography>
+          )}
+        </DialogActions>
+      </Dialog>
     </Dialog>
   );
 };
