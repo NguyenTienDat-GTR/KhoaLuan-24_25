@@ -14,7 +14,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/auth/useAuth";
 import Cookies from "js-cookie";
 import useUserStore from "../hooks/auth/useUserStore";
-import { jwtDecode } from "jwt-decode";
 
 const FullScreenContainer = styled(Box)({
   display: "flex",

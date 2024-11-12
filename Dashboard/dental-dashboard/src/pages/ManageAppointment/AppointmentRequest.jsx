@@ -225,10 +225,6 @@ const AppointmentRequest = () => {
               inputFormat="DD/MM/YYYY"
               renderInput={(params) => <TextField {...params} fullWidth />}
             />
-
-            <Button variant="contained" color="primary" fullWidth>
-              Tạo yêu cầu mới
-            </Button>
           </Box>
         </Box>
 

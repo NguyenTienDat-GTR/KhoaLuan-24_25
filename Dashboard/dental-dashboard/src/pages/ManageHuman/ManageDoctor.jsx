@@ -23,9 +23,7 @@ import {
 import { Add, Visibility } from "@mui/icons-material";
 import CreateDoctor from "../../components/ManageDoctor/CreateDoctor";
 import DoctorDetail from "../../components/ManageDoctor/DoctorDetail";
-import Cookies from "js-cookie";
 import useDoctorStore from "../../hooks/doctor/useGetAllDoctor";
-import { jwtDecode } from "jwt-decode";
 import useUserStore from "../../hooks/auth/useUserStore";
 
 const daysOfWeek = {
