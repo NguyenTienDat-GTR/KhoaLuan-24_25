@@ -46,6 +46,7 @@ const CalendarComponent = memo(
             display: "flex",
             alignItems: "center",
             objectFit: "cover",
+            maxWidth:'100%'
           }}
         >
           {/* Tạo chấm tròn màu theo trạng thái */}
@@ -173,8 +174,7 @@ const EventDetails = memo(
             {ticketById?.confirmedBy || "Chưa xác nhận"}
           </Typography>
 
-          {/* Nút sửa, hủy */}
-           <Box
+          <Box
             sx={{
               mt: 2,
               mb: 1,
@@ -183,80 +183,79 @@ const EventDetails = memo(
               left: 0,
               width: "100%",
               display: "flex",
-              justifyContent: "center", // Canh giữa
-              gap: 2,
+              justifyContent: "center",
+              gap: 1,
+              flexWrap: "wrap",
             }}
           >
-            <Tooltip title="Sửa phiếu hẹn" arrow>
-              <Button
-                variant="contained"
-                color="warning"
-                sx={{
-                  maxWidth: "150px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                Sửa phiếu hẹn
-              </Button>
-            </Tooltip>
-            <Tooltip title="Hủy phiếu hẹn" arrow>
-              <Button
-                variant="contained"
-                color="error"
-                sx={{
-                  maxWidth: "150px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                Hủy phiếu hẹn
-              </Button>
-            </Tooltip>
-          </Box>
-
-          {/* Nút tạo khách hàng và xác nhận */}
-          <Box
-            sx={{
-              mt: 1,
-              display: "flex",
-              justifyContent: "center", // Canh giữa
-              width: "100%",
-              gap: 2,
-            }}
-          >
-            <Tooltip title="Tạo khách hàng" arrow>
-              <Button
-                variant="contained"
-                color="success"
-                sx={{
-                  maxWidth: "150px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                Tạo khách hàng
-              </Button>
-            </Tooltip>
-            {!ticketById.isCustomerArived && (
-              <Tooltip title="Xác nhận đã đến" arrow>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  sx={{
-                    maxWidth: "150px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  Xác nhận đã đến
-                </Button>
-              </Tooltip>
-            )}
+            {ticketById?.status === "waiting" &&
+              !ticketById?.isCustomerArived && (
+                <>
+                  <Tooltip title="Sửa phiếu hẹn" arrow>
+                    <Button
+                      variant="contained"
+                      color="warning"
+                      sx={{
+                        maxWidth: "150px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        fontSize: "0.8rem",
+                      }}
+                    >
+                      Sửa lịch hẹn
+                    </Button>
+                  </Tooltip>
+                  <Tooltip title="Hủy phiếu hẹn" arrow>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      sx={{
+                        maxWidth: "150px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        fontSize: "0.8rem",
+                      }}
+                    >
+                      Hủy lịch hẹn
+                    </Button>
+                  </Tooltip>
+                  <Tooltip title="Xác nhận đã đến" arrow>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      sx={{
+                        maxWidth: "150px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        fontSize: "0.8rem",
+                      }}
+                    >
+                      Xác nhận đã đến
+                    </Button>
+                  </Tooltip>
+                </>
+              )}
+            {ticketById?.status === "waiting" &&
+              ticketById?.isCustomerArived && (
+                <Tooltip title="Tạo khách hàng" arrow>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    sx={{
+                      maxWidth: "150px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      fontSize: "0.8rem",
+                    }}
+                  >
+                    Tạo khách hàng
+                  </Button>
+                </Tooltip>
+              )}
           </Box>
         </>
       ) : (
@@ -317,89 +316,125 @@ const ManageAppointment = () => {
   const socket = useSocket();
   const [ticketByDoctor, setTicketByDoctor] = useState([]);
   const intervalRef = useRef(null);
+  const [formattedEvents, setFormattedEvents] = useState([]);
 
-  // Handle events and tick every 30 seconds
-  const checkTime = useCallback(() => {
-    if (selectedEvent) {
-      const now = moment();
-      const requestedTime = moment(
-        `${selectedEvent.startDate} ${selectedEvent.startTime}`,
-        "DD/MM/YYYY HH:mm"
-      );
+  // Format tickets và cập nhật màu của dotColor
+  const formatTickets = (tickets) =>
+    tickets
+      .map((ticket) => {
+        const start = moment(
+          `${ticket.requestedDate} ${ticket.requestedTime}`,
+          "DD/MM/YYYY HH:mm"
+        );
+        const end = moment(
+          `${ticket.requestedDate} ${ticket.endTime}`,
+          "DD/MM/YYYY HH:mm"
+        );
+        const now = moment();
+        let dotColor = "#27F3F3"; // Màu mặc định cho chờ khám
 
-      // If the requested time is approaching or in the past, update status
-      if (requestedTime.diff(now, "minutes") <= 15) {
-        console.log("Event time is near or in the past!");
-        // Do something when it's near the requested time
-      }
-    }
-  }, [selectedEvent]);
+        if (ticket.status === "cancelled") {
+          dotColor = "#020202";
+        } else if (ticket.status === "done") {
+          dotColor = "#12D009";
+        } else if (ticket.status === "waiting") {
+          const diffMinutes = start.diff(now, "minutes");
+          if (ticket.isCustomerArived) {
+            dotColor = "#102AEF";
+          } else if (diffMinutes <= 15) {
+            dotColor = "#F70836";
+          } else if (diffMinutes <= 30) {
+            dotColor = "#E3C40D";
+          }
+        }
+
+        return start.isValid() && end.isValid()
+          ? {
+              id: ticket._id,
+              title: ticket.customerName,
+              start: start.toDate(),
+              end: end.toDate(),
+              dotColor: dotColor,
+            }
+          : null;
+      })
+      .filter(Boolean);
 
   const fetchTickets = async () => {
     if (token) {
       if (userLoggedIn?.user.role === "doctor") {
-        // Lấy các ticket của bác sĩ
         await getTicketByDoctor(token);
       } else {
-        // Lấy tất cả các ticket
         await getAllTickets(token);
       }
     }
   };
 
-  // Set interval to check every 30 seconds
+  // Hàm checkTime để cập nhật dotColor mỗi 30 giây
+  const checkTime = useCallback(() => {
+    setFormattedEvents((prevEvents) => {
+      return prevEvents.map((event) => {
+        const now = moment();
+        const start = moment(event.start);
+        let dotColor = event.dotColor;
+
+        const diffMinutes = start.diff(now, "minutes");
+
+        if (event.status === "cancelled") {
+          dotColor = "#020202";
+        } else if (event.status === "done") {
+          dotColor = "#12D009";
+        } else if (event.status === "waiting") {
+          if (event.isCustomerArived) {
+            dotColor = "#102AEF";
+          } else if (diffMinutes <= 15) {
+            dotColor = "#F70836";
+          } else if (diffMinutes <= 30) {
+            dotColor = "#E3C40D";
+          } else {
+            dotColor = "#27F3F3";
+          }
+        }
+
+        return {
+          ...event,
+          dotColor: dotColor,
+        };
+      });
+    });
+  }, []);
+
+  // Thiết lập interval để check mỗi 30 giây
   useEffect(() => {
     fetchTickets();
 
     if (socket) {
       socket.off("response");
       socket.on("response", fetchTickets);
-      socket.off("response");
-      socket.on("responseTicket", fetchTickets);
       socket.off("responseTicket");
+      socket.on("responseTicket", fetchTickets);
     }
 
     intervalRef.current = setInterval(() => {
       checkTime();
-    }, 30000); // 30 seconds
+    }, 30000);
 
     return () => {
-      // Clean up the interval when the component is unmounted
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [token, socket, userLoggedIn?.user.role, checkTime]);
-
-  const getTicketByDoctor = async (token) => {
-    try {
-      const response = await axios.get(
-        `/ticket/getByDoctor/${userLoggedIn?.user.details.employeeID}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (response.status === 200) {
-        setTicketByDoctor(response.data.tickets);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   useEffect(() => {
     if (selectedEvent) getTicketById(token, selectedEvent.id);
   }, [selectedEvent, token, getTicketById]);
 
-  const formattedEvents = useMemo(
-    () =>
+  useEffect(() => {
+    setFormattedEvents(
       userLoggedIn?.user.role === "doctor"
         ? formatTickets(ticketByDoctor)
-        : formatTickets(tickets),
-    [tickets, ticketByDoctor, userLoggedIn?.user.role]
-  );
+        : formatTickets(tickets)
+    );
+  }, [tickets, ticketByDoctor, userLoggedIn?.user.role]);
 
   const handleEventClick = useCallback(
     (info) => setSelectedEvent(info.event),
@@ -443,7 +478,6 @@ const ManageAppointment = () => {
         </Box>
         <EventDetails ticketById={ticketById} />
       </Box>
-
       {/* Chú thích màu sắc */}
       <Box
         sx={{
