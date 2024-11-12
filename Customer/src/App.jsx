@@ -22,6 +22,8 @@ const PriceList = React.lazy(() => import("./pages/PriceList"));
 const Braces = React.lazy(() => import("./pages/Braces"));
 
 const Services = React.lazy(() => import("./pages/Services"));
+import ArticleDetail from "./components/Services/ArrticleDetail";
+
 const Bracket = React.lazy(() => import("./components/Services/Bracket"));
 const ChildrentsDentistry = React.lazy(() =>
   import("./components/Services/ChildrentsDentistry")
@@ -115,6 +117,8 @@ const App = () => {
           path="/Contact"
           element={<LazyComponent Component={Contact} />}
         />
+        <Route path="/service/:serviceId" element={<ArticleDetail />} />
+
         <Route
           path="/Booking"
           element={<LazyComponent Component={Booking} />}

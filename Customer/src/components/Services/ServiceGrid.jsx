@@ -52,7 +52,7 @@ const ServiceGrid = () => {
     navigate(`/service/${serviceId}`);
     console.log(serviceId);
   };
-  
+
   return (
     <Box sx={{ padding: "20px", maxWidth: "100vw" }}>
       <TextField
@@ -118,7 +118,7 @@ const ServiceGrid = () => {
                     <Box
                       sx={{
                         display: "flex",
-                        justifyContent: "space-around",
+                        justifyContent: "center",
                         mt: 2,
                       }}
                     >
@@ -130,14 +130,14 @@ const ServiceGrid = () => {
                       >
                         Xem thêm
                       </Button>
-                      <Button
+                      {/* <Button
                         variant="contained"
                         color="primary"
                         size="small"
                         onClick={() => handleOpen(service)}
                       >
                         Đặt lịch
-                      </Button>
+                      </Button> */}
                     </Box>
                   </CardContent>
                 </Card>
@@ -157,11 +157,15 @@ const ServiceGrid = () => {
                       zIndex: 1,
                     }}
                   >
-                    <Typography variant="h6" >{service.name}</Typography>
+                    <Typography variant="h6">{service.name}</Typography>
                     {/* <Typography>Loại dịch vụ: {cat.typeName}</Typography> */}
-                    <Typography variant="h6"  >Thời gian: {service.duration} phút</Typography>
-                    <Typography variant="h6" >Giảm giá: {service.discount}</Typography>
-                    <Typography  >
+                    <Typography variant="h6">
+                      Thời gian: {service.duration} phút
+                    </Typography>
+                    <Typography variant="h6">
+                      Giảm giá: {service.discount}
+                    </Typography>
+                    <Typography>
                       Giá:{" "}
                       {service.priceRange.toLocaleString("vi-VN", {
                         style: "currency",

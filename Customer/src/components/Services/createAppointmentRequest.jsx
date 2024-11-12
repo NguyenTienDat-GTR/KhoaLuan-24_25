@@ -67,16 +67,16 @@ const CreateAppointmentRequest = ({ open, handleClose, selectedService }) => {
     }
 
     const dateString = `${formData.date} ${formData.time}`;
-  const appointmentTimestamp = Date.parse(dateString);
-  
-  if (isNaN(appointmentTimestamp)) {
-    setSnackbarMessage("Ngày hoặc giờ không hợp lệ.");
-    setSnackbarOpen(true);
-    return false;
-  }
+    const appointmentTimestamp = Date.parse(dateString);
 
-  const currentDateTime = new Date();
-  const appointmentDateTime = new Date(appointmentTimestamp);
+    if (isNaN(appointmentTimestamp)) {
+      setSnackbarMessage("Ngày hoặc giờ không hợp lệ.");
+      setSnackbarOpen(true);
+      return false;
+    }
+
+    const currentDateTime = new Date();
+    const appointmentDateTime = new Date(appointmentTimestamp);
 
     // Kiểm tra không được đặt thời gian nhỏ hơn thời gian hiện tại
     if (appointmentDateTime <= currentDateTime) {
@@ -111,7 +111,6 @@ const CreateAppointmentRequest = ({ open, handleClose, selectedService }) => {
     const newErrors = {};
     if (!formData.name) newErrors.name = "Họ tên không được để trống";
     if (!formData.phone) newErrors.phone = "Số điện thoại không được để trống";
-    if (!formData.email) newErrors.email = "Email không được để trống";
     if (!formData.date) newErrors.date = "Ngày không được để trống";
     if (!formData.time) newErrors.time = "Thời gian không được để trống";
     if (!formData.doctorGender)
@@ -139,8 +138,13 @@ const CreateAppointmentRequest = ({ open, handleClose, selectedService }) => {
       customerEmail: formData.email,
       appointmentDate: `${day}/${month}/${year}`,
       appointmentTime: formData.time,
-      service: selectedService?.name, 
-      genderDoctor: formData.doctorGender === "Nam" ? "male" : "female",
+      service: selectedService?.name,
+      genderDoctor:
+        formData.doctorGender === "Nam"
+          ? "male"
+          : formData.doctorGender === "Tất cả"
+          ? "all"
+          : "female",
       note: formData.notes,
       concern: "", // Assuming you want to keep it empty or manage it later
       createBy: formData.name, // Using the customer's name
@@ -162,6 +166,7 @@ const CreateAppointmentRequest = ({ open, handleClose, selectedService }) => {
           setSnackbarOpen(false);
         }, 3000);
         setLoading(false);
+        handleReset();
       }
     } catch (error) {
       console.error("Lỗi đặt lịch:", error);
@@ -214,15 +219,15 @@ const CreateAppointmentRequest = ({ open, handleClose, selectedService }) => {
           name="email"
           value={formData.email}
           onChange={handleChange}
-          error={!!errors.email}
-          helperText={errors.email}
+          // error={!!errors.email}
+          // helperText={errors.email}
           fullWidth
           sx={{ mb: 2 }}
         />
 
         <TextField
           label="Dịch vụ"
-          value={selectedService?.name}
+          value={selectedService?.name || ""}
           fullWidth
           disabled
           sx={{ mb: 2 }}
@@ -230,7 +235,7 @@ const CreateAppointmentRequest = ({ open, handleClose, selectedService }) => {
 
         <TextField
           label="Giá"
-          value={selectedService?.priceRange}
+          value={selectedService?.priceRange || ""}
           fullWidth
           disabled
           sx={{ mb: 2 }}
@@ -279,6 +284,7 @@ const CreateAppointmentRequest = ({ open, handleClose, selectedService }) => {
         >
           <MenuItem value="Nam">Nam</MenuItem>
           <MenuItem value="Nữ">Nữ</MenuItem>
+          <MenuItem value="Tất cả">Tất cả</MenuItem>
         </TextField>
 
         <TextField

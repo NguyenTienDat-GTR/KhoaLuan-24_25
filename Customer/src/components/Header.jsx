@@ -11,7 +11,7 @@ import {
 import PhoneIcon from "@mui/icons-material/Phone";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link as RouterLink } from "react-router-dom";
-import logo from "../components/images/phong-kham/logo.png"
+import logo from "../components/images/phong-kham/logo.png";
 const Header = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -56,7 +56,7 @@ const Header = () => {
               flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
               alignItems: "center",
-             
+
               padding: { xs: "0.5rem", sm: "1rem", md: "1.5rem" },
               boxSizing: "border-box",
               gap: { sm: "2", md: "0" },
@@ -141,7 +141,8 @@ const Header = () => {
                     fontSize: { sm: "0.7rem", md: "1.1rem" },
                   }}
                 >
-                  877 Tân Kỳ Tân Quý, Phường Bình Hưng Hoà A, Quận Bình Tân, Tp.Hồ Chí Minh
+                  877 Tân Kỳ Tân Quý, Phường Bình Hưng Hoà A, Quận Bình Tân,
+                  Tp.Hồ Chí Minh
                 </Typography>
               </Box>
               <Box
@@ -207,7 +208,6 @@ const Header = () => {
               padding: "0.5rem 0",
               boxSizing: "border-box",
               margin: "0",
-              
             }}
           >
             <RouterLink to="/" style={{ textDecoration: "none" }}>
@@ -254,7 +254,10 @@ const Header = () => {
                 Bảng giá
               </Typography>
             </RouterLink>
-            <RouterLink to="/nieng-rang-mac-cai" style={{ textDecoration: "none" }}>
+            <RouterLink
+              to="/service/672117b386ec2d40ac45af3d"
+              style={{ textDecoration: "none" }}
+            >
               <Typography
                 color="rgba(0,120,233,0.8)"
                 sx={{

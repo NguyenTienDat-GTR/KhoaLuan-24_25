@@ -46,7 +46,7 @@ const PriceList = () => {
           fontSize: { xs: "2rem", sm: "2rem", md: "2rem" }, // Responsive font sizeF
           fontWeight: "bold",
           padding: { xs: "5px", sm: "10px", md: "15px" }, // Responsive padding
-          paddingTop:{md: "8rem",xs:"6rem", sm:"9rem"}
+          paddingTop: { md: "8rem", xs: "6rem", sm: "9rem" },
         }}
       >
         BẢNG GIÁ NHA KHOA HBT
