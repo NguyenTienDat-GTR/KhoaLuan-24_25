@@ -19,7 +19,7 @@ import {
   Typography,
   TablePagination,
 } from "@mui/material";
-import axios from "axios";
+import axios from "../config/axiosConfig";
 import { Visibility, Delete, Edit, Add, EditNote } from "@mui/icons-material";
 import Cookies from "js-cookie";
 import useGetAllService from "../hooks/service/useGetAllServiceType";
@@ -27,6 +27,7 @@ import { jwtDecode } from "jwt-decode";
 import useUserStore from "../hooks/auth/useUserStore";
 import CreateServiceType from "../components/ManageService/createServiceType";
 import CreateService from "../components/ManageService/createService";
+import UpdateService from "../components/ManageService/updateService";
 
 const units = {
   tooth: "Răng",
@@ -37,6 +38,7 @@ const units = {
 };
 
 const ServiceManagement = () => {
+
   const [searchOption, setSearchOption] = useState("category");
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
@@ -45,6 +47,8 @@ const ServiceManagement = () => {
   const { userLoggedIn, setUserLoggedIn, token } = useUserStore();
   const [openCreateServiceType, setOpenCreateServiceType] = useState(false);
   const [openCreateService, setOpenCreateService] = useState(false);
+const [openUpdateService, setOpenUpdateService]= useState(false);
+const [serviceToEdit, setServiceToEdit] = useState(null);
 
   const handleSearchChange = (event) => setSearchTerm(event.target.value);
   const handleChangePage = (event, newPage) => setPage(newPage);
@@ -98,25 +102,35 @@ const ServiceManagement = () => {
     }
   };
   const handleDeleteService = async (serviceId) => {
-    
-      try {
-        // Gọi API xóa loại dịch vụ, ví dụ như:
-        //const response = await axios.delete(`/service/${serviceId}`);
-        //console.log("Xóa loại dịch vụ thành công:", response.data);
-        // Thực hiện cập nhật lại UI hoặc dữ liệu sau khi xóa thành công
-        //handleRefreshServices();
-        const res = await axios.delete (`${serviceId}`)
-        console.log(res);
-        
-        //const res = await axios.delete(`/service/:id`)
-        console.log("Xóa dịch vụ thành công", res.data);
-        
-      } catch (error) {
-        console.error("Lỗi khi xóa loại dịch vụ:", error);
-      }
-    
-  };
 
+    try {
+      // Gọi API xóa loại dịch vụ, ví dụ như:
+      const response = await axios.delete(`/service/delete/${serviceId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      console.log("Xóa loại dịch vụ thành công:", response.data);
+
+
+    } catch (error) {
+      console.error("Lỗi khi xóa loại dịch vụ:", error);
+    }
+
+  };
+// cập nhật dữ liệu cho service 
+const handleOpenUpdateService = (service) => {
+  setServiceToEdit(service);
+  setOpenUpdateService(true);
+};
+
+const handleCloseUpdateService = () => {
+  setOpenUpdateService(false);
+  setServiceToEdit(null);
+};
   return (
     <Box sx={{ paddingY: 6, paddingX: 0.5 }}>
       <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
@@ -297,17 +311,21 @@ const ServiceManagement = () => {
                         {userLoggedIn?.user.role === "admin" && (
                           <>
                             <Tooltip title="Chỉnh sửa dịch vụ">
-                              <IconButton sx={{ color: "#4caf50" }}>
+                              <IconButton sx={{ color: "#4caf50" }}
+                              onClick={() => handleOpenUpdateService(service)}
+                              >
                                 <Edit />
                               </IconButton>
                             </Tooltip>
+
                             <Tooltip title="Xóa dịch vụ">
                               <IconButton
                                 sx={{ color: "#f44336" }}
-                                onClick={()=> handleDeleteService(service._id)}
+                                onClick={() => handleDeleteService(service._id)}
                               >
                                 <Delete />
                               </IconButton>
+
                             </Tooltip>
                             <Tooltip title="Chỉnh sửa bài viết dịch vụ">
                               <IconButton sx={{ color: "#ff9800" }}>
@@ -345,6 +363,14 @@ const ServiceManagement = () => {
         onClose={handleCloseCreateService}
         onRefresh={handleRefreshServices}
       />
+     {openUpdateService && serviceToEdit && (
+      <UpdateService
+        open={openUpdateService}
+        onClose={handleCloseUpdateService}
+        service={serviceToEdit} // Truyền dữ liệu dịch vụ vào form
+        onRefresh={handleRefreshServices}
+      />
+    )}
     </Box>
   );
 };
