@@ -137,18 +137,18 @@ const ArticleDetail = () => {
 
             {/* Hiển thị hình ảnh nếu có */}
             {mainHeading.imageUrls && mainHeading.imageUrls.length > 0 && (
-              <Box sx={{ marginTop: 1 }}>
+              <Box sx={{ marginTop: 1, width:'100%', display:'flex', justifyContent:'center' }}>
                 {mainHeading.imageUrls.map((imageUrl, imgIndex) => (
                   <img
                     key={imgIndex}
                     src={imageUrl}
                     alt={`Main heading ${index}-${imgIndex}`}
-                    width="100%"
+                    width="50%"
                   />
                 ))}
               </Box>
             )}
-            <Typography>{mainHeading.content}</Typography>
+            <Typography sx={{mt:2}}>{mainHeading.content}</Typography>
 
             {mainHeading.subheadings &&
               mainHeading.subheadings.map((subHeading, subIndex) => (
@@ -158,18 +158,18 @@ const ArticleDetail = () => {
                   }`}</Typography>
                   {/* Hiển thị hình ảnh nếu có */}
                   {subHeading.imageUrls && subHeading.imageUrls.length > 0 && (
-                    <Box sx={{ marginTop: 1 }}>
+                    <Box sx={{ marginTop: 1, width:'100%', display:'flex', justifyContent:'center' }}>
                       {subHeading.imageUrls.map((imageUrl, imgIndex) => (
                         <img
                           key={imgIndex}
                           src={imageUrl}
                           alt={`Subheading ${subIndex}-${imgIndex}`}
-                          width="100%"
+                          width="50%"
                         />
                       ))}
                     </Box>
                   )}
-                  <Typography>{subHeading.content}</Typography>
+                  <Typography sx={{mt:2}}>{subHeading.content}</Typography>
 
                   {subHeading.subSubheadings &&
                     subHeading.subSubheadings.map(
@@ -222,7 +222,7 @@ const ArticleDetail = () => {
             backgroundColor: "red",
             color: "white",
             "&:hover": {
-              backgroundColor: "#cc0000",
+              scale: 1.1,
             },
           }}
         >
@@ -232,7 +232,7 @@ const ArticleDetail = () => {
         {/* Booking Form Dialog */}
         <CreateAppointmentRequest
           open={openBookingForm}
-          handleClose={handleCloseBookingForm}
+          onClose={handleCloseBookingForm}
           selectedService={selectedService} // Truyền dịch vụ được chọn
         />
       </Box>

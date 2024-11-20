@@ -1,346 +1,384 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
-  Box,
-  Typography,
-  Dialog,
-  DialogContent,
-  DialogActions,
-  TextField,
-  MenuItem,
-  Button,
-  Snackbar,
-  IconButton,
+    Box,
+    Typography,
+    Dialog,
+    DialogContent,
+    DialogActions,
+    TextField,
+    MenuItem,
+    Button,
+    Avatar,
+    FormControl,
+    InputLabel,
+    Select,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close"; // Import CloseIcon
 import axios from "../../config/axiosConfig";
 import useSocket from "../../hooks/useSocket";
+import toast from "react-hot-toast";
+import useDoctorAvailable from "../../hooks/useDoctorAvailable";
+import moment from "moment";
 
-const CreateAppointmentRequest = ({ open, handleClose, selectedService }) => {
-  const socket = useSocket();
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    time: "",
-    date: "",
-    doctorGender: "",
-    notes: "",
-  });
-
-  const [errors, setErrors] = useState({});
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
+const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
+    const socket = useSocket();
+    const [formData, setFormData] = useState({
+        name: "",
+        phone: "",
+        email: "",
+        time: "",
+        date: "",
+        doctorId: "",
+        notes: "",
     });
-  };
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-  const handleCloseDialog = () => {
-    handleReset();
-    handleClose();
-  };
-  const handleReset = () => {
-    setFormData({
-      name: "",
-      phone: "",
-      email: "",
-      time: "",
-      date: "",
-      doctorGender: "",
-      notes: "",
-    });
-  };
 
-  const validateDateTime = () => {
-    if (!formData.date || !formData.time) {
-      setSnackbarMessage("Vui lòng chọn cả ngày và giờ.");
-      setSnackbarOpen(true);
-      return false;
-    }
+    const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
+    const {doctorAvailable, getDoctorAvailable} = useDoctorAvailable();
+    const [selectedDoctor, setSelectedDoctor] = useState(null);
+    const [availableTimes, setAvailableTimes] = useState([]);
+    const [selectedTime, setSelectedTime] = useState(null);
 
-    const dateString = `${formData.date} ${formData.time}`;
-    const appointmentTimestamp = Date.parse(dateString);
+    useEffect(() => {
+        getDoctorAvailable();
+    }, []);
 
-    if (isNaN(appointmentTimestamp)) {
-      setSnackbarMessage("Ngày hoặc giờ không hợp lệ.");
-      setSnackbarOpen(true);
-      return false;
-    }
+    useEffect(() => {
+        if (!socket) return;
+        socket.on("newAppointment", () => {
+            getDoctorAvailable();
+        });
 
-    const currentDateTime = new Date();
-    const appointmentDateTime = new Date(appointmentTimestamp);
+        // Cleanup socket event listener when component unmounts
+        return () => {
+            if (socket) {
+                socket.off("newAppointment");
+            }
+        };
+    }, [socket]);
 
-    // Kiểm tra không được đặt thời gian nhỏ hơn thời gian hiện tại
-    if (appointmentDateTime <= currentDateTime) {
-      setSnackbarMessage("Thời gian đặt lịch phải lớn hơn thời gian hiện tại.");
-      setSnackbarOpen(true);
-      return false;
-    }
 
-    // Kiểm tra thời gian đặt lịch không nhỏ hơn 2 giờ từ thời điểm hiện tại
-    const twoHoursLater = new Date(
-      currentDateTime.getTime() + 2 * 60 * 60 * 1000
-    );
-    if (appointmentDateTime < twoHoursLater) {
-      setSnackbarMessage("Thời gian đặt lịch phải lớn hơn 2 giờ từ bây giờ.");
-      setSnackbarOpen(true);
-      return false;
-    }
-
-    // Kiểm tra không được đặt ngày lớn hơn 1 tháng
-    const oneMonthLater = new Date(currentDateTime);
-    oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
-    if (appointmentDateTime > oneMonthLater) {
-      setSnackbarMessage("Thời gian đặt lịch không được lớn hơn 1 tháng.");
-      setSnackbarOpen(true);
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleBookingSubmit = async () => {
-    const newErrors = {};
-    if (!formData.name) newErrors.name = "Họ tên không được để trống";
-    if (!formData.phone) newErrors.phone = "Số điện thoại không được để trống";
-    if (!formData.date) newErrors.date = "Ngày không được để trống";
-    if (!formData.time) newErrors.time = "Thời gian không được để trống";
-    if (!formData.doctorGender)
-      newErrors.doctorGender = "Giới tính bác sĩ không được để trống";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    // Validate date and time
-    if (!validateDateTime()) {
-      return;
-    }
-
-    const formattedDate = new Date(formData.date);
-    const day = String(formattedDate.getDate()).padStart(2, "0"); // Thêm số 0 ở đầu nếu cần
-    const month = String(formattedDate.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
-    const year = formattedDate.getFullYear();
-
-    // Prepare data for the request
-    const appointmentData = {
-      customerName: formData.name,
-      customerPhone: formData.phone,
-      customerEmail: formData.email,
-      appointmentDate: `${day}/${month}/${year}`,
-      appointmentTime: formData.time,
-      service: selectedService?.name,
-      genderDoctor:
-        formData.doctorGender === "Nam"
-          ? "male"
-          : formData.doctorGender === "Tất cả"
-          ? "all"
-          : "female",
-      note: formData.notes,
-      concern: "", // Assuming you want to keep it empty or manage it later
-      createBy: formData.name, // Using the customer's name
-    };
-    console.log(appointmentData);
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        "/appointment-request/create",
-        appointmentData
-      );
-      socket.emit("newAppointmentRequest", response.data.newRequest); // Phát sự kiện mới đến server
-      if (response.status === 201) {
-        setSnackbarMessage(
-          "Yêu cầu đặt lịch thành công. Hãy kiểm tra tin nhắn hoặc email của bạn!"
-        );
-        setSnackbarOpen(true);
-        setTimeout(() => {
-          setSnackbarOpen(false);
-        }, 3000);
-        setLoading(false);
-        handleReset();
-      }
-    } catch (error) {
-      console.error("Lỗi đặt lịch:", error);
-      setSnackbarMessage(error?.response?.data.message);
-      setSnackbarOpen(true);
-      setTimeout(() => {
-        setSnackbarOpen(false);
-      }, 3000);
-      setLoading(false);
-    }
-  };
-
-  return (
-    <Dialog open={open} onClose={handleCloseDialog}>
-      <Box sx={{ position: "relative", padding: "1rem" }}>
-        <IconButton
-          onClick={handleCloseDialog}
-          sx={{ position: "absolute", right: 0, top: 0 }}
-        >
-          <CloseIcon />
-        </IconButton>
-        <Typography variant="h6" component="h2">
-          Đặt lịch cho dịch vụ: {selectedService?.name}
-        </Typography>
-      </Box>
-
-      <DialogContent>
-        <TextField
-          label="Họ tên"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          error={!!errors.name}
-          helperText={errors.name}
-          fullWidth
-          sx={{ mb: 2 }}
-        />
-        <TextField
-          label="Số điện thoại"
-          name="phone"
-          value={formData.phone}
-          onChange={handleChange}
-          error={!!errors.phone}
-          helperText={errors.phone}
-          fullWidth
-          sx={{ mb: 2 }}
-        />
-        <TextField
-          label="Email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          // error={!!errors.email}
-          // helperText={errors.email}
-          fullWidth
-          sx={{ mb: 2 }}
-        />
-
-        <TextField
-          label="Dịch vụ"
-          value={selectedService?.name || ""}
-          fullWidth
-          disabled
-          sx={{ mb: 2 }}
-        />
-
-        <TextField
-          label="Giá"
-          value={selectedService?.priceRange || ""}
-          fullWidth
-          disabled
-          sx={{ mb: 2 }}
-        />
-
-        <TextField
-          type="date"
-          name="date"
-          value={formData.date}
-          onChange={handleChange}
-          error={!!errors.date}
-          helperText={errors.date}
-          fullWidth
-          sx={{ mb: 2 }}
-        />
-
-        <TextField
-          label="Thời gian"
-          name="time"
-          select
-          value={formData.time}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 2 }}
-        >
-          {/* Excluding 12:00 from the selection */}
-          {[...Array(9).keys()]
-            .filter((h) => h !== 4) // Assuming 12:00 corresponds to index 4
-            .map((hour) => (
-              <MenuItem key={hour + 8} value={`${hour + 8}:00`}>
-                {hour + 8}:00
-              </MenuItem>
-            ))}
-        </TextField>
-
-        <TextField
-          label="Giới tính bác sĩ"
-          name="doctorGender"
-          select
-          value={formData.doctorGender}
-          onChange={handleChange}
-          error={!!errors.doctorGender}
-          helperText={errors.doctorGender}
-          fullWidth
-          sx={{ mb: 2 }}
-        >
-          <MenuItem value="Nam">Nam</MenuItem>
-          <MenuItem value="Nữ">Nữ</MenuItem>
-          <MenuItem value="Tất cả">Tất cả</MenuItem>
-        </TextField>
-
-        <TextField
-          label="Ghi chú"
-          name="notes"
-          value={formData.notes}
-          onChange={handleChange}
-          fullWidth
-          multiline
-          rows={4}
-          sx={{ mb: 2 }}
-        />
-      </DialogContent>
-      <DialogActions sx={{ display: "flex", justifyContent: "space-between" }}>
-        {!loading ? (
-          <>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ mt: 2, width: "60%" }}
-              onClick={handleBookingSubmit}
-            >
-              Xác nhận đặt lịch
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              sx={{ mt: 2, width: "60%" }}
-              onClick={handleReset}
-            >
-              Hủy
-            </Button>
-          </>
-        ) : (
-          <Typography>Đang gửi yêu cầu....</Typography>
-        )}
-      </DialogActions>
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        message={snackbarMessage}
-        action={
-          <IconButton
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={handleSnackbarClose}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
+    useEffect(() => {
+        if (selectedDoctor && formData.date) {
+            const times = selectedDoctor.availableTimes?.[formData.date] || [];
+            setAvailableTimes(times);
+        } else {
+            setAvailableTimes([]);
         }
-      />
-    </Dialog>
-  );
+    }, [selectedDoctor, formData.date]);
+
+
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    };
+
+    const handleDoctorChange = (e) => {
+        const selectedDocId = e.target.value;
+        const selectedDoc = doctorAvailable.find(doctor => doctor.doctorId === selectedDocId);
+
+        if (selectedDoc) {
+            setSelectedDoctor(selectedDoc);
+            setFormData({
+                ...formData,
+                doctorId: selectedDocId,
+            });
+            if (formData.date) {
+                setAvailableTimes(selectedDoc.availableTimes[formData.date] || []);
+            }
+
+        }
+    };
+
+
+    const handleTimeSelect = (time) => {
+        console.log(typeof time)
+        setSelectedTime(time ? time : null);
+        setFormData({
+            ...formData,
+            time: time ? time : null,
+        });
+    };
+
+    const validateDateTime = () => {
+        if (!formData.date || !formData.time) {
+            toast.error("Vui lòng chọn cả ngày và giờ.");
+            return false;
+        }
+
+        // Chuyển đổi ngày từ định dạng DD/MM/YYYY sang YYYY-MM-DD
+        const formattedDate = moment(formData.date, "DD/MM/YYYY").format("YYYY-MM-DD");
+        const dateString = `${formattedDate} ${formData.time}`;
+
+        const appointmentTimestamp = Date.parse(dateString);
+
+        if (isNaN(appointmentTimestamp)) {
+            toast.error("Ngày hoặc giờ không hợp lệ.");
+            return false;
+        }
+
+        const currentDateTime = new Date();
+        const appointmentDateTime = new Date(appointmentTimestamp);
+
+        if (appointmentDateTime <= currentDateTime) {
+            toast.error("Thời gian đặt lịch phải lớn hơn thời gian hiện tại.");
+            return false;
+        }
+
+        return true;
+    };
+
+    const handleBookingSubmit = async () => {
+        const newErrors = {};
+        if (!formData.name) newErrors.name = "Họ tên không được để trống";
+        if (!formData.phone) newErrors.phone = "Số điện thoại không được để trống";
+        if (!formData.date) newErrors.date = "Ngày không được để trống";
+        if (!formData.time) newErrors.time = "Thời gian không được để trống";
+        if (!formData.doctorId) newErrors.doctor = "Vui lòng chọn bác sĩ";
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        if (!validateDateTime()) return;
+
+        // Kiểm tra ngày hợp lệ
+        const formattedDate = moment(formData.date, "DD/MM/YYYY");
+        if (!formattedDate.isValid()) {
+            toast.error("Ngày không hợp lệ.");
+            return;
+        }
+
+        const day = String(formattedDate.date()).padStart(2, "0");
+        const month = String(formattedDate.month() + 1).padStart(2, "0"); // month() trả về tháng từ 0-11
+        const year = formattedDate.year();
+
+        const appointmentData = {
+            customerName: formData.name,
+            customerPhone: formData.phone,
+            customerEmail: formData.email,
+            requestedDate: `${day}/${month}/${year}`,
+            requestedTime: selectedTime,
+            service: selectedService?.name,
+            doctorId: formData.doctorId,
+            note: formData.notes,
+        };
+
+        setLoading(true);
+        try {
+            const response = await axios.post("/ticket/create", appointmentData);
+            if (response.status === 201) {
+                setLoading(false);
+                handleClose();
+                handleReset();
+                toast.success(response.data.message);
+            }
+            if (response.status === 409) {
+                setLoading(false);
+                toast.error(response.data.message);
+            }
+        } catch (error) {
+            toast.error(error?.response?.data.message);
+            setLoading(false);
+        }
+    };
+
+
+    const handleDateChange = (e) => {
+        const value = e.target.value; // Giá trị dạng "YYYY-MM-DD"
+        const formattedDate = moment(value, "YYYY-MM-DD").format("DD/MM/YYYY"); // Chuyển thành "DD/MM/YYYY"
+        setFormData({
+            ...formData,
+            date: formattedDate,
+        });
+    };
+
+    const handleReset = () => {
+        setFormData({
+            name: "",
+            phone: "",
+            email: "",
+            time: "",
+            date: "",
+            doctorId: "",
+            notes: "",
+        });
+        setErrors({});
+        setSelectedDoctor(null);
+        setAvailableTimes([]);
+        setSelectedTime(null);
+    }
+
+    const handleClose = () => {
+        onClose();
+        handleReset();
+    }
+
+    return (
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
+            <Box sx={{position: "relative", padding: "1rem"}}>
+                <Typography variant="h6" component="h2">
+                    Đặt lịch cho dịch vụ: {selectedService?.name}
+                </Typography>
+            </Box>
+
+            <DialogContent sx={{display: "flex", gap: 4, flexWrap: "wrap", justifyContent:"center"}}>
+                {/* Cột bên trái */}
+                <Box sx={{flex: 1, minWidth: "300px", display: "flex", flexDirection: "column"}}>
+                    <TextField
+                        label="Họ tên"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        error={!!errors.name}
+                        helperText={errors.name}
+                        fullWidth
+                        sx={{mb: 2}}
+                    />
+                    <TextField
+                        label="Số điện thoại"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        error={!!errors.phone}
+                        helperText={errors.phone}
+                        fullWidth
+                        sx={{mb: 2}}
+                    />
+                    <TextField
+                        label="Email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        fullWidth
+                        sx={{mb: 2}}
+                    />
+                    <TextField
+                        label="Ghi chú"
+                        name="notes"
+                        value={formData.notes}
+                        onChange={handleChange}
+                        multiline
+                        rows={3}
+                        fullWidth
+                        sx={{mb: 2}}
+                    />
+                </Box>
+
+                {/* Cột giữa */}
+                <Box sx={{flex: 1, minWidth: "300px", display: "flex", flexDirection: "column"}}>
+                    <TextField
+                        label="Dịch vụ"
+                        value={selectedService?.name || ""}
+                        fullWidth
+                        disabled
+                        sx={{mb: 2}}
+                    />
+
+                    <TextField
+                        type="date"
+                        name="date"
+                        value={moment(formData.date, "DD/MM/YYYY").format("YYYY-MM-DD")}
+                        onChange={handleDateChange}
+                        error={!!errors.date}
+                        helperText={errors.date}
+                        fullWidth
+                        sx={{ mb: 2 }}
+                        inputProps={{
+                            min: new Date().toISOString().split("T")[0],
+                            max: new Date(new Date().setDate(new Date().getDate() + 7))
+                                .toISOString()
+                                .split("T")[0],
+                        }}
+                    />
+
+
+                    <FormControl fullWidth sx={{mb: 2}}>
+                        <InputLabel>Bác sĩ</InputLabel>
+                        <Select
+                            value={formData.doctorId || ""}
+                            onChange={handleDoctorChange}
+                            label="Bác sĩ"
+                            name="doctor"
+                            error={!!errors.doctor}
+                            helperText={errors.doctor}
+                        >
+                            {Array.isArray(doctorAvailable) && doctorAvailable.length > 0 ? (
+                                doctorAvailable.map((doctor) => (
+                                    <MenuItem key={doctor.doctorId} value={doctor.doctorId}>
+                                        {doctor.doctorName}
+                                    </MenuItem>
+                                ))
+                            ) : (
+                                <MenuItem disabled>Không có bác sĩ nào</MenuItem>
+                            )}
+                        </Select>
+                    </FormControl>
+
+
+                </Box>
+                {/*Cột bên phải*/}
+                <Box sx={{flex: 1, minWidth: "300px", display: "flex", flexDirection: "column"}}>
+                    {selectedDoctor && (
+                        <Box sx={{display: "flex", alignItems: "center", mb: 2}}>
+                            <Avatar src={selectedDoctor.doctorAvatar} sx={{mr: 2, width:"10rem", height:'10rem', border: '1px solid grey'}}/>
+                            <Typography variant="body1" sx={{fontWeight:'bold'}}>Bác sĩ: {selectedDoctor.doctorName}</Typography>
+                        </Box>
+                    )}
+
+                    {availableTimes.length > 0 ? (
+                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 2 }}>
+                            {availableTimes.map((time) => (
+                                <Button
+                                    key={time}
+                                    onClick={() => handleTimeSelect(time)}
+                                    variant={selectedTime === time ? "contained" : "outlined"}
+                                    sx={{ flex: "0 1 48%" }}
+                                >
+                                    {time}
+                                </Button>
+                            ))}
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
+                            Không có giờ trống cho ngày đã chọn.
+                        </Typography>
+                    )}
+
+                    {/* Thêm helperText cho trường thời gian */}
+                    {errors.time && (
+                        <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                            {errors.time}
+                        </Typography>
+                    )}
+
+                </Box>
+            </DialogContent>
+
+            <DialogActions>
+                {!loading ? (
+                    <>
+                        <Button onClick={handleClose} color="primary">
+                            Hủy
+                        </Button>
+                        <Button
+                            onClick={handleBookingSubmit}
+                            color="success"
+                            variant="contained"
+                        >
+                            Đặt lịch
+                        </Button>
+                    </>
+                ) : (
+                    <Typography variant="subtitle1">Đang xử lí yêu cầu...</Typography>
+                )}
+            </DialogActions>
+        </Dialog>
+    );
 };
 
 export default CreateAppointmentRequest;
