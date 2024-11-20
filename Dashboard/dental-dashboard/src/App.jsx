@@ -145,16 +145,16 @@ function App() {
       text: "Quản lí lịch hẹn",
       icon: <EventNoteTwoTone sx={{ color: "rgba(21,182,210)" }} />,
       path: "dashboard/quan-li-lich-hen",
-      subItems: [
-        {
-          text: "Yêu cầu đặt lịch",
-          path: "yeu-cau",
-        },
-        {
-          text: "Lịch hẹn",
-          path: "lich-hen",
-        },
-      ],
+      // subItems: [
+      //   {
+      //     text: "Yêu cầu đặt lịch",
+      //     path: "yeu-cau",
+      //   },
+      //   {
+      //     text: "Lịch hẹn",
+      //     path: "lich-hen",
+      //   },
+      // ],
     },
     {
       text: "Quản lý dịch vụ",
@@ -314,7 +314,7 @@ function App() {
                   }
                 />
                 <Route
-                  path="dashboard/quan-li-lich-hen/lich-hen"
+                  path="dashboard/quan-li-lich-hen"
                   element={
                     <LazyComponent
                       Component={() => (
