@@ -7,6 +7,7 @@ import useServiceStore from "../../hooks/useServiceStore";
 
 const PriceService = () => {
   const { category, getAllService } = useServiceStore();
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     getAllService();
@@ -16,6 +17,7 @@ const PriceService = () => {
 
   const handleClick = (service) => {
     setSelectedService(service);
+    setOpen(true);
   };
   return (
     <Box
@@ -127,8 +129,8 @@ const PriceService = () => {
       ))}
       {selectedService && (
         <CreateAppointmentRequest
-          open={!!selectedService}
-          handleClose={() => setSelectedService(null)}
+          open={open}
+          onClose={() => setOpen(false)}
           selectedService={selectedService}
         />
       )}

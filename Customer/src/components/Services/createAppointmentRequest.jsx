@@ -11,7 +11,7 @@ import {
     Avatar,
     FormControl,
     InputLabel,
-    Select,
+    Select, RadioGroup, Radio, FormControlLabel,
 } from "@mui/material";
 import axios from "../../config/axiosConfig";
 import useSocket from "../../hooks/useSocket";
@@ -21,14 +21,25 @@ import moment from "moment";
 
 const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
     const socket = useSocket();
-    const [formData, setFormData] = useState({
-        name: "",
-        phone: "",
-        email: "",
-        time: "",
-        date: "",
-        doctorId: "",
-        notes: "",
+    const [formData, setFormData] = useState(() => {
+        const now = new Date();
+        const currentHour = now.getHours();
+
+        // Kiểm tra giờ hiện tại
+        const defaultDate = currentHour >=15
+            ? moment(now).add(1, "day").format("DD/MM/YYYY") // Ngày hôm sau
+            : moment(now).format("DD/MM/YYYY"); // Ngày hiện tại
+
+        return {
+            name: "",
+            phone: "",
+            email: "",
+            gender: "",
+            time: "",
+            date: defaultDate, // Gán ngày mặc định
+            doctorId: "",
+            notes: "",
+        };
     });
 
 
@@ -138,6 +149,7 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
         if (!formData.date) newErrors.date = "Ngày không được để trống";
         if (!formData.time) newErrors.time = "Thời gian không được để trống";
         if (!formData.doctorId) newErrors.doctor = "Vui lòng chọn bác sĩ";
+        if (!formData.gender) newErrors.gender = "Vui lòng chọn giới tính";
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
@@ -161,6 +173,7 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
             customerName: formData.name,
             customerPhone: formData.phone,
             customerEmail: formData.email,
+            gender: formData.gender,
             requestedDate: `${day}/${month}/${year}`,
             requestedTime: selectedTime,
             service: selectedService?.name,
@@ -202,6 +215,7 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
             name: "",
             phone: "",
             email: "",
+            gender: "male",
             time: "",
             date: "",
             doctorId: "",
@@ -226,9 +240,9 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
                 </Typography>
             </Box>
 
-            <DialogContent sx={{display: "flex", gap: 4, flexWrap: "wrap", justifyContent:"center"}}>
+            <DialogContent sx={{display: "flex", gap: 4, flexWrap: "wrap", justifyContent: "center"}}>
                 {/* Cột bên trái */}
-                <Box sx={{flex: 1, minWidth: "300px", display: "flex", flexDirection: "column"}}>
+                <Box sx={{flex: 0.8, width: "200px", display: "flex", flexDirection: "column"}}>
                     <TextField
                         label="Họ tên"
                         name="name"
@@ -257,6 +271,26 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
                         fullWidth
                         sx={{mb: 2}}
                     />
+                    <FormControl fullWidth sx={{
+                        mb: 2,
+                        justifyContent: "flex-start",
+                        flexDirection: 'row',
+                        gap: 2,
+                        alignItems: 'center'
+                    }}>
+                        <Typography>Giới tính</Typography>
+                        <RadioGroup
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleChange}
+                            error={!!errors.gender}
+                            helperText={errors.gender}
+                            sx={{display: "flex", flexDirection: "row", justifyContent: "center", alignItems: 'center'}}
+                        >
+                            <FormControlLabel value="male" control={<Radio/>} label="Nam"/>
+                            <FormControlLabel value="female" control={<Radio/>} label="Nữ"/>
+                        </RadioGroup>
+                    </FormControl>
                     <TextField
                         label="Ghi chú"
                         name="notes"
@@ -287,7 +321,7 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
                         error={!!errors.date}
                         helperText={errors.date}
                         fullWidth
-                        sx={{ mb: 2 }}
+                        sx={{mb: 2}}
                         inputProps={{
                             min: new Date().toISOString().split("T")[0],
                             max: new Date(new Date().setDate(new Date().getDate() + 7))
@@ -298,11 +332,11 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
 
 
                     <FormControl fullWidth sx={{mb: 2}}>
-                        <InputLabel>Bác sĩ</InputLabel>
+                        <InputLabel>Vui lòng chọn bác sĩ</InputLabel>
                         <Select
                             value={formData.doctorId || ""}
                             onChange={handleDoctorChange}
-                            label="Bác sĩ"
+                            label="Vui lòng chọn bác sĩ"
                             name="doctor"
                             error={!!errors.doctor}
                             helperText={errors.doctor}
@@ -325,33 +359,41 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
                 <Box sx={{flex: 1, minWidth: "300px", display: "flex", flexDirection: "column"}}>
                     {selectedDoctor && (
                         <Box sx={{display: "flex", alignItems: "center", mb: 2}}>
-                            <Avatar src={selectedDoctor.doctorAvatar} sx={{mr: 2, width:"10rem", height:'10rem', border: '1px solid grey'}}/>
-                            <Typography variant="body1" sx={{fontWeight:'bold'}}>Bác sĩ: {selectedDoctor.doctorName}</Typography>
+                            <Avatar src={selectedDoctor.doctorAvatar}
+                                    sx={{mr: 2, width: "10rem", height: '10rem', border: '1px solid grey'}}/>
+                            <Box sx={{display: 'flex', flexDirection: 'column'}}>
+                                <Typography variant="body1" sx={{
+                                    fontWeight: 'bold',
+                                    fontSize: {sm: '0.8rem'}
+                                }}> Bác sĩ: {selectedDoctor.doctorName}</Typography>
+                                <Typography variant="body1" sx={{fontWeight: 'bold', fontSize: {sm: '0.8rem'}}}>Giới
+                                    tính: {selectedDoctor.doctorGender === "male" ? "Nam" : "Nữ"}</Typography>
+                            </Box>
                         </Box>
                     )}
 
                     {availableTimes.length > 0 ? (
-                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 2 }}>
+                        <Box sx={{display: "flex", flexWrap: "wrap", gap: 1, mt: 2}}>
                             {availableTimes.map((time) => (
                                 <Button
                                     key={time}
                                     onClick={() => handleTimeSelect(time)}
                                     variant={selectedTime === time ? "contained" : "outlined"}
-                                    sx={{ flex: "0 1 48%" }}
+                                    sx={{flex: "0 1 48%"}}
                                 >
                                     {time}
                                 </Button>
                             ))}
                         </Box>
                     ) : (
-                        <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
+                        <Typography variant="body2" color="textSecondary" sx={{mt: 2}}>
                             Không có giờ trống cho ngày đã chọn.
                         </Typography>
                     )}
 
                     {/* Thêm helperText cho trường thời gian */}
                     {errors.time && (
-                        <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                        <Typography variant="body2" color="error" sx={{mt: 1}}>
                             {errors.time}
                         </Typography>
                     )}
@@ -362,7 +404,7 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
             <DialogActions>
                 {!loading ? (
                     <>
-                        <Button onClick={handleClose} color="primary">
+                        <Button onClick={handleClose} color="error">
                             Hủy
                         </Button>
                         <Button
