@@ -18,6 +18,9 @@ import useTicketStore from "../../hooks/appointmentTicket/useTicketStore";
 import useUserStore from "../../hooks/auth/useUserStore";
 import useSocket from "../../hooks/useSocket";
 import axios from "../../config/axiosConfig";
+import CancelAppointment from "../../components/ManageAppointmentRequest/CancelAppointment";
+import ConfirmCustomerArrived from "../../components/ManageAppointmentRequest/ConfirmCustomerArrived";
+import {Link} from "react-router-dom";
 
 // CalendarComponent
 const CalendarComponent = memo(
@@ -107,7 +110,7 @@ const areEqual = (prevProps, nextProps) => {
 };
 
 const EventDetails = memo(
-    ({ticketById}) => (
+    ({ticketById, handleCancel, user, handleConfirm}) => (
         <Box
             sx={{
                 flex: 3,
@@ -120,26 +123,52 @@ const EventDetails = memo(
         >
             {ticketById ? (
                 <>
-                    <Typography variant="h6" sx={{mb: 2}}>
-                        Chi tiết lịch hẹn
+                    <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection:'row'}}>
+                        <Typography variant="h6" sx={{mb: 2}}>
+                            Thông tin lịch hẹn
+                        </Typography>
+                        <Typography sx={{mb: 2,textDecoration: 'underline', cursor: 'pointer', color:'blue'}}>Xem chi tiết</Typography>
+                    </Box>
+                    <Typography variant="body1" sx={{
+                        backgroundColor: ticketById.status === "waiting"
+                            ? "#27F3F3"
+                            : ticketById?.status === "cancelled"
+                                ? "#020202"
+                                : "#12D009",
+                        color: ticketById.status === "waiting"
+                            ? "#020202"
+                            : ticketById?.status === "cancelled"
+                                ? "#fff"
+                                : "#020202",
+
+                    }}>
+                        <strong>Trạng thái:</strong>{" "}
+                        {ticketById?.status === "waiting"
+                            ? "Chờ khám"
+                            : ticketById?.status === "cancelled"
+                                ? "Đã hủy"
+                                : "Đã khám"}
                     </Typography>
                     <Typography variant="body1">
                         <strong>Tên khách hàng:</strong> {ticketById?.customerName}
-                    </Typography>
-                    <Typography variant="body1">
-                        <strong>Ngày:</strong> {ticketById?.requestedDate}
-                    </Typography>
-                    <Typography variant="body1">
-                        <strong>Bắt đầu:</strong> {ticketById?.requestedTime}
-                    </Typography>
-                    <Typography variant="body1">
-                        <strong>Kết thúc:</strong> {ticketById?.endTime}
                     </Typography>
                     <Typography variant="body1">
                         <strong>Điện thoại:</strong> {ticketById?.customerPhone}
                     </Typography>
                     <Typography variant="body1">
                         <strong>Email:</strong> {ticketById?.customerEmail}
+                    </Typography>
+                    <Typography variant="body1">
+                        <strong>Giới tính:</strong> {ticketById?.customerGender === "female" ? "Nữ" : "Nam"}
+                    </Typography>
+                    <Typography variant="body1">
+                        <strong>Ngày hẹn:</strong> {ticketById?.requestedDate}
+                    </Typography>
+                    <Typography variant="body1">
+                        <strong>Bắt đầu:</strong> {ticketById?.requestedTime}
+                    </Typography>
+                    <Typography variant="body1">
+                        <strong>Kết thúc:</strong> {ticketById?.endTime}
                     </Typography>
                     <Typography variant="body1">
                         <strong>Dịch vụ:</strong> {ticketById?.requestedService}
@@ -158,21 +187,50 @@ const EventDetails = memo(
                         {ticketById?.doctorEmail || "Chưa cập nhật"}
                     </Typography>
                     <Typography variant="body1">
-                        <strong>Trạng thái:</strong>{" "}
-                        {ticketById?.status === "waiting"
-                            ? "Chờ khám"
-                            : ticketById?.status === "cancelled"
-                                ? "Đã hủy"
-                                : "Đã khám"}
-                    </Typography>
-                    <Typography variant="body1">
                         <strong>Khách hàng đã đến:</strong>{" "}
-                        {ticketById?.isCustomerArived ? "Có" : "Không"}
+                        {ticketById?.isCustomerArrived ? "Có" : "Không"}
                     </Typography>
-                    <Typography variant="body1">
-                        <strong>Xác nhận bởi:</strong>{" "}
-                        {ticketById?.confirmedBy || "Chưa xác nhận"}
-                    </Typography>
+                    {ticketById?.status === "waiting" && ticketById?.isCustomerArrived && (
+                        <>
+                            <Typography variant="body1">
+                                <strong>Xác nhận bởi:</strong>{" "}
+                                {ticketById?.confirmedBy || "Chưa xác nhận"}
+                            </Typography>
+                            <Typography variant="body1">
+                                <strong>Đã đến lúc:</strong>{" "}
+                                {ticketById?.arrivedAt || "Không xác định"}
+                            </Typography>
+                        </>
+                    )}
+                    {ticketById?.status === "cancelled" && (
+                        <>
+                            <Typography variant="body1">
+                                <strong>Lý do hủy:</strong>{" "}
+                                {ticketById?.reasonCancelled || "Không xác định"}
+                            </Typography>
+                            <Typography variant="body1">
+                                <strong>Hủy bởi:</strong>{" "}
+                                {ticketById?.cancelledBy || "Không xác định"}
+                            </Typography>
+                            <Typography variant="body1">
+                                <strong>Hủy lúc:</strong>{" "}
+                                {ticketById?.cancelledAt || "Không xác định"}
+                            </Typography>
+                        </>
+                    )}
+                    {ticketById?.status === "done" && (
+                        <>
+                            <Typography variant="body1">
+                                <strong>Hoàn thành bởi:</strong>{" "}
+                                {ticketById?.doneBy || "Không xác định"}
+                            </Typography>
+                            <Typography variant="body1">
+                                <strong>Hoàn thành lúc lúc:</strong>{" "}
+                                {ticketById?.doneAt || "Không xác định"}
+                            </Typography>
+                        </>
+                    )}
+
 
                     <Box
                         sx={{
@@ -189,7 +247,7 @@ const EventDetails = memo(
                         }}
                     >
                         {ticketById?.status === "waiting" &&
-                            !ticketById?.isCustomerArived && (
+                            !ticketById?.isCustomerArrived && user.user.role !== "doctor" && (
                                 <>
                                     <Tooltip title="Sửa phiếu hẹn" arrow>
                                         <Button
@@ -217,6 +275,7 @@ const EventDetails = memo(
                                                 whiteSpace: "nowrap",
                                                 fontSize: "0.8rem",
                                             }}
+                                            onClick={handleCancel}
                                         >
                                             Hủy lịch hẹn
                                         </Button>
@@ -232,6 +291,7 @@ const EventDetails = memo(
                                                 whiteSpace: "nowrap",
                                                 fontSize: "0.8rem",
                                             }}
+                                            onClick={handleConfirm}
                                         >
                                             Xác nhận đã đến
                                         </Button>
@@ -239,7 +299,7 @@ const EventDetails = memo(
                                 </>
                             )}
                         {ticketById?.status === "waiting" &&
-                            ticketById?.isCustomerArived && (
+                            ticketById?.isCustomerArrived && user.user.role !== "employee" && (
                                 <Tooltip title="Tạo khách hàng" arrow>
                                     <Button
                                         variant="contained"
@@ -252,7 +312,7 @@ const EventDetails = memo(
                                             fontSize: "0.8rem",
                                         }}
                                     >
-                                        Tạo khách hàng
+                                        Bắt đầu khám
                                     </Button>
                                 </Tooltip>
                             )}
@@ -270,12 +330,21 @@ const ManageAppointment = () => {
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [weekendsVisible, setWeekendsVisible] = useState(true);
     const {token, userLoggedIn} = useUserStore();
-    const {tickets, getAllTickets, loading, ticketById, getTicketById} =
+    const {tickets, getAllTickets, loading, ticketById, getTicketById, getTicketByDoctor, ticketByDoctor} =
         useTicketStore();
     const socket = useSocket();
-    const [ticketByDoctor, setTicketByDoctor] = useState([]);
     const intervalRef = useRef(null);
     const [formattedEvents, setFormattedEvents] = useState([]);
+    const [openCancel, setOpenCancel] = useState(false);
+    const [openConfirm, setOpenConfirm] = useState(false);
+
+    const handleCancel = () => {
+        setOpenCancel(true);
+    };
+
+    const handleConfirm = () => {
+        setOpenConfirm(true);
+    }
 
     // Format tickets và cập nhật màu của dotColor
     const formatTickets = (tickets) =>
@@ -298,7 +367,7 @@ const ManageAppointment = () => {
                     dotColor = "#12D009";
                 } else if (ticket.status === "waiting") {
                     const diffMinutes = start.diff(now, "minutes");
-                    if (ticket.isCustomerArived) {
+                    if (ticket.isCustomerArrived) {
                         dotColor = "#102AEF";
                     } else if (diffMinutes <= 15) {
                         dotColor = "#F70836";
@@ -322,7 +391,7 @@ const ManageAppointment = () => {
     const fetchTickets = async () => {
         if (token) {
             if (userLoggedIn?.user.role === "doctor") {
-                await getTicketByDoctor(token);
+                await getTicketByDoctor(token, userLoggedIn?.user.details.employeeID);
             } else {
                 await getAllTickets(token);
             }
@@ -344,7 +413,7 @@ const ManageAppointment = () => {
                 } else if (event.status === "done") {
                     dotColor = "#12D009";
                 } else if (event.status === "waiting") {
-                    if (event.isCustomerArived) {
+                    if (event.isCustomerArrived) {
                         dotColor = "#102AEF";
                     } else if (diffMinutes <= 15) {
                         dotColor = "#F70836";
@@ -371,9 +440,12 @@ const ManageAppointment = () => {
             socket.off("newAppointment");
             socket.on("newAppointment", fetchTickets);
             socket.off("responseTicket");
-            socket.on("responseTicket", fetchTickets);
+            socket.on("responseTicket", () => {
+                fetchTickets();
+                if (selectedEvent) getTicketById(token, selectedEvent.id);
+            });
         }
-
+        // Thiết lập interval để kiểm tra thời gian định kỳ
         intervalRef.current = setInterval(() => {
             checkTime();
         }, 30000);
@@ -381,11 +453,11 @@ const ManageAppointment = () => {
         return () => {
             if (intervalRef.current) clearInterval(intervalRef.current);
         };
-    }, [token, socket, userLoggedIn?.user.role, checkTime]);
+    }, [token, socket, userLoggedIn?.user.role, checkTime, selectedEvent]);
 
     useEffect(() => {
         if (selectedEvent) getTicketById(token, selectedEvent.id);
-    }, [selectedEvent, token, getTicketById]);
+    }, [selectedEvent, token]);
 
     useEffect(() => {
         setFormattedEvents(
@@ -435,7 +507,8 @@ const ManageAppointment = () => {
                         weekendsVisible={weekendsVisible}
                     />
                 </Box>
-                <EventDetails ticketById={ticketById}/>
+                <EventDetails ticketById={ticketById} handleCancel={handleCancel} user={userLoggedIn}
+                              handleConfirm={handleConfirm}/>
             </Box>
             {/* Chú thích màu sắc */}
             <Box
@@ -514,6 +587,20 @@ const ManageAppointment = () => {
                     <Typography variant="body2">Khách đã đến</Typography>
                 </Box>
             </Box>
+
+            <CancelAppointment
+                open={openCancel}
+                onClose={() => setOpenCancel(false)}
+                ticketId={selectedEvent?.id}
+                refreshTicket={() => getTicketById(token, selectedEvent?.id)}
+            />
+
+            <ConfirmCustomerArrived
+                open={openConfirm}
+                onClose={() => setOpenConfirm(false)}
+                ticketId={selectedEvent?.id}
+                refreshTicket={() => getTicketById(token, selectedEvent?.id)}
+            />
         </Box>
     );
 };
