@@ -21,6 +21,7 @@ import Sidebar from "./components/Sidebar";
 import { AuthProvider, useAuth } from "./hooks/auth/useAuth";
 import "react-toastify/dist/ReactToastify.css"; // Import CSS cho toast
 import { ToastContainer } from "react-toastify";
+import ManageServiceType from "./components/ManageService/manageServiceType";
 
 // Lazy load components
 const Overview = React.lazy(() => import("./pages/Overview"));
@@ -299,6 +300,17 @@ function App() {
                     <LazyComponent
                       Component={() => (
                         <MangeService isSidebarOpen={sidebarOpen} />
+                      )}
+                    />
+                  }
+                />
+                
+                <Route
+                  path="/dashboard/quan-ly-loai-dich-vu"
+                  element={
+                    <LazyComponent
+                      Component={() => (
+                        <ManageServiceType isSidebarOpen={sidebarOpen} />
                       )}
                     />
                   }
