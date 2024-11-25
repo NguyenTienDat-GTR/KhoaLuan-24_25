@@ -22,6 +22,7 @@ import usePatientStore from "../hooks/patient/usePatientStore";
 import useTicketStore from "../hooks/appointmentTicket/useTicketStore";
 import TopServiceChart from "../components/Overview/TopServiceChart";
 import TopDoctorChart from "../components/Overview/TopDoctorChart";
+import AppointmentSumaryChart from "../components/Overview/AppointmentSumaryChart";
 
 const Overview = ({isSidebarOpen}) => {
     const cardWidth = isSidebarOpen ? "calc(25% - 16px)" : "calc(25% - 8px)";
@@ -267,6 +268,19 @@ const Overview = ({isSidebarOpen}) => {
                                 Biểu đồ bác sĩ có nhiều lịch hẹn nhất
                             </Typography>
                             <TopDoctorChart />
+                        </Box>
+
+                        {/* Biểu đồ 3 */}
+                        <Box
+                            sx={{
+                                flexBasis: "calc(50% - 1.5rem)", // Tương tự như trên
+                                marginTop: 4,
+                            }}
+                        >
+                            <Typography variant="h6" gutterBottom>
+                                Biểu đồ trạng thái lịch hẹn
+                            </Typography>
+                            <AppointmentSumaryChart />
                         </Box>
                     </>
                 )}
