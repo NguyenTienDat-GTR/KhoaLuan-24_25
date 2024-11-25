@@ -21,6 +21,14 @@ import moment from "moment";
 
 const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
     const socket = useSocket();
+    const now = new Date();
+    const currentHour = now.getHours();
+
+    // Kiểm tra giờ hiện tại
+    const defaultDate = currentHour >=15
+        ? moment(now).add(1, "day").format("DD/MM/YYYY") // Ngày hôm sau
+        : moment(now).format("DD/MM/YYYY"); // Ngày hiện tại
+
     const [formData, setFormData] = useState(() => {
         const now = new Date();
         const currentHour = now.getHours();
@@ -34,7 +42,7 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
             name: "",
             phone: "",
             email: "",
-            gender: "",
+            gender: "male",
             time: "",
             date: defaultDate, // Gán ngày mặc định
             doctorId: "",
@@ -211,15 +219,25 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
     };
 
     const handleReset = () => {
-        setFormData({
-            name: "",
-            phone: "",
-            email: "",
-            gender: "male",
-            time: "",
-            date: "",
-            doctorId: "",
-            notes: "",
+        setFormData(() => {
+            const now = new Date();
+            const currentHour = now.getHours();
+
+            // Kiểm tra giờ hiện tại
+            const defaultDate = currentHour >=15
+                ? moment(now).add(1, "day").format("DD/MM/YYYY") // Ngày hôm sau
+                : moment(now).format("DD/MM/YYYY"); // Ngày hiện tại
+
+            return {
+                name: "",
+                phone: "",
+                email: "",
+                gender: "male",
+                time: "",
+                date: defaultDate, // Gán ngày mặc định
+                doctorId: "",
+                notes: "",
+            };
         });
         setErrors({});
         setSelectedDoctor(null);

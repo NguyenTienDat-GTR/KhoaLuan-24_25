@@ -17,10 +17,8 @@ import "../../css/calendar.css";
 import useTicketStore from "../../hooks/appointmentTicket/useTicketStore";
 import useUserStore from "../../hooks/auth/useUserStore";
 import useSocket from "../../hooks/useSocket";
-import axios from "../../config/axiosConfig";
 import CancelAppointment from "../../components/ManageAppointmentRequest/CancelAppointment";
 import ConfirmCustomerArrived from "../../components/ManageAppointmentRequest/ConfirmCustomerArrived";
-import {Link} from "react-router-dom";
 
 // CalendarComponent
 const CalendarComponent = memo(
@@ -150,16 +148,16 @@ const EventDetails = memo(
                                 : "Đã khám"}
                     </Typography>
                     <Typography variant="body1">
-                        <strong>Tên khách hàng:</strong> {ticketById?.customerName}
+                        <strong>Tên khách hàng:</strong> {ticketById?.customer.name}
                     </Typography>
                     <Typography variant="body1">
-                        <strong>Điện thoại:</strong> {ticketById?.customerPhone}
+                        <strong>Điện thoại:</strong> {ticketById?.customer.phone}
                     </Typography>
                     <Typography variant="body1">
-                        <strong>Email:</strong> {ticketById?.customerEmail}
+                        <strong>Email:</strong> {ticketById?.customer.email}
                     </Typography>
                     <Typography variant="body1">
-                        <strong>Giới tính:</strong> {ticketById?.customerGender === "female" ? "Nữ" : "Nam"}
+                        <strong>Giới tính:</strong> {ticketById?.customer.gender === "female" ? "Nữ" : "Nam"}
                     </Typography>
                     <Typography variant="body1">
                         <strong>Ngày hẹn:</strong> {ticketById?.requestedDate}
@@ -379,7 +377,7 @@ const ManageAppointment = () => {
                 return start.isValid() && end.isValid()
                     ? {
                         id: ticket._id,
-                        title: ticket.customerName,
+                        title: ticket.customer.name,
                         start: start.toDate(),
                         end: end.toDate(),
                         dotColor: dotColor,
