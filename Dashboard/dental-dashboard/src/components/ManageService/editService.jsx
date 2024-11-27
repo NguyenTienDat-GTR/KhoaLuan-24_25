@@ -61,7 +61,7 @@ const EditService = ({ serviceId, onClose, open }) => {
   useEffect(() => {
     if (open && serviceId) {
       fetchDetails();
-      setService(null);
+      // setService(null);
       setError(null);
     }
   }, [open, serviceId]);
@@ -69,20 +69,24 @@ const EditService = ({ serviceId, onClose, open }) => {
   const handleSave = async () => {
     const updatedService = {
       ...service,
-      price: service.price,
-      description: service.description,
-      priceRange: service.priceRange,
-      unit: service.unit,
-      discount: service.discount,
-      duration: service.duration, // Thời gian thực hiện
-      serviceTypeName: service.serviceTypeName, // Loại dịch vụ
+      price: service.price|| "",
+      description: service.description|| "",
+      priceRange: service.priceRange|| "",
+      unit: service.unit|| "",
+      discount: service.discount|| "",
+      duration: service.duration|| "", // Thời gian thực hiện
+      //serviceTypeName: service.serviceTypeName|| "", // Loại dịch vụ
     };
+console.log(updatedService);
 
     try {
       const response = await axios.put(`/service/update/${serviceId}`, updatedService, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
       });
-
+      console.log(response)
       if (response.status === 200) {
         alert("Cập nhật dịch vụ thành công!");
         onClose();
@@ -91,8 +95,8 @@ const EditService = ({ serviceId, onClose, open }) => {
         alert("Không thể cập nhật dịch vụ. Vui lòng thử lại.");
       }
     } catch (error) {
-      console.error("Lỗi cập nhật dịch vụ:", error);
-      alert("Không thể cập nhật dịch vụ. Vui lòng thử lại.");
+      console.error("Lỗi cập nhật dịch vụ:", error.response?.data || error.message);
+      alert(`Lỗi: ${error.response?.data?.message || "Không thể cập nhật dịch vụ."}`);
     }
   };
 
@@ -166,14 +170,6 @@ const EditService = ({ serviceId, onClose, open }) => {
                 fullWidth
                 value={service?.duration || ""}
                 onChange={(e) => setService({ ...service, duration: e.target.value })}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                label="Loại dịch vụ"
-                variant="outlined"
-                fullWidth
-                value={service?.serviceTypeName || ""}
-                onChange={(e) => setService({ ...service, serviceTypeName: e.target.value })}
                 sx={{ mb: 2 }}
               />
               <TextField
