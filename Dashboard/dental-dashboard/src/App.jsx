@@ -21,6 +21,7 @@ import Sidebar from "./components/Sidebar";
 import { AuthProvider, useAuth } from "./hooks/auth/useAuth";
 import "react-toastify/dist/ReactToastify.css"; // Import CSS cho toast
 import { ToastContainer } from "react-toastify";
+import useUserStore from "./hooks/auth/useUserStore";
 
 // Lazy load components
 const Overview = React.lazy(() => import("./pages/Overview"));
@@ -44,6 +45,12 @@ const AppointmentRequest = React.lazy(() =>
 );
 
 const ManagePatient = React.lazy(() => import("./pages/ManagePatient"));
+
+const ManageMedicalRecord = React.lazy(() => import("./pages/ManageMedicalRecord"))
+
+const MedicalRecordWithCustomer = React.lazy(() => import("./pages/MedicalRecordWithCustomer"))
+//
+// const Page403 = React.lazy(() => import("./pages/page403"))
 
 const LazyComponent = ({ Component }) => {
   const [isInView, setIsInView] = useState(false);
@@ -133,7 +140,6 @@ function App() {
     }
   };
 
-  const isLoginPage = window.location.pathname === "/dashboard/login"; //kiểm tra có phải trang login hay không
 
   const menuItems = [
     {
@@ -145,31 +151,21 @@ function App() {
       text: "Quản lí lịch hẹn",
       icon: <EventNoteTwoTone sx={{ color: "rgba(21,182,210)" }} />,
       path: "dashboard/quan-li-lich-hen",
-      // subItems: [
-      //   {
-      //     text: "Yêu cầu đặt lịch",
-      //     path: "yeu-cau",
-      //   },
-      //   {
-      //     text: "Lịch hẹn",
-      //     path: "lich-hen",
-      //   },
-      // ],
+      subItems: [
+        {
+          text: "Yêu cầu đặt lịch",
+          path: "yeu-cau",
+        },
+        {
+          text: "Lịch hẹn",
+          path: "lich-hen",
+        },
+      ],
     },
     {
       text: "Quản lý dịch vụ",
       icon: <MedicalServices sx={{ color: "rgba(21,182,210)" }} />,
       path: "dashboard/quan-ly-dich-vu",
-      // subItems: [
-      //   {
-      //     text: "Loại dịch vụ",
-      //     path: "loai-dich-vu",
-      //   },
-      //   {
-      //     text: "Dịch vụ cung cấp",
-      //     path: "dich-vu-cung-cap",
-      //   },
-      // ],
     },
     {
       text: "Quản lý bệnh nhân",
@@ -314,7 +310,7 @@ function App() {
                   }
                 />
                 <Route
-                  path="dashboard/quan-li-lich-hen"
+                  path="dashboard/quan-li-lich-hen/lich-hen"
                   element={
                     <LazyComponent
                       Component={() => (
@@ -329,6 +325,26 @@ function App() {
                     <LazyComponent
                       Component={() => (
                         <ManagePatient isSidebarOpen={sidebarOpen} />
+                      )}
+                    />
+                  }
+                />
+                <Route
+                  path="/dashboard/ho-so-dieu-tri"
+                  element={
+                    <LazyComponent
+                      Component={() => (
+                        <ManageMedicalRecord isSidebarOpen={sidebarOpen} />
+                      )}
+                    />
+                  }
+                />
+                <Route
+                  path="/dashboard/kham-benh/:id"
+                  element={
+                    <LazyComponent
+                      Component={() => (
+                        <MedicalRecordWithCustomer isSidebarOpen={sidebarOpen} />
                       )}
                     />
                   }

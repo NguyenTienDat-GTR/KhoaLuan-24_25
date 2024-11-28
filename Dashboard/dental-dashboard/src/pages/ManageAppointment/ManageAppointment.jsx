@@ -19,6 +19,10 @@ import useUserStore from "../../hooks/auth/useUserStore";
 import useSocket from "../../hooks/useSocket";
 import CancelAppointment from "../../components/ManageAppointmentRequest/CancelAppointment";
 import ConfirmCustomerArrived from "../../components/ManageAppointmentRequest/ConfirmCustomerArrived";
+import {useNavigate} from "react-router-dom";
+import useCustomerIdStore from '../../hooks/patient/useCustomerIdStore';
+import useServiceAppointmentStore from "../../hooks/appointmentTicket/useServiceAppointmentStore";
+
 
 // CalendarComponent
 const CalendarComponent = memo(
@@ -107,8 +111,29 @@ const areEqual = (prevProps, nextProps) => {
     );
 };
 
-const EventDetails = memo(
-    ({ticketById, handleCancel, user, handleConfirm}) => (
+const EventDetails = memo(({ticketById, handleCancel, user, handleConfirm}) => {
+    const navigate = useNavigate();
+    const setCustomerId = useCustomerIdStore((state) => state.setCustomerId);
+    const setServiceAppointment = useServiceAppointmentStore((state) => state.setServiceName);
+    const setTicketId = useTicketStore((state) => state.setTicketId);
+
+    const handleStartExam = (customerId, serviceName, ticketId) => {
+        if (customerId) {
+            setCustomerId(customerId);  // Cập nhật customerId vào store
+            navigate(`/dashboard/kham-benh/${customerId}`);
+            console.log(customerId);
+        } else {
+            toast.error("Không tìm thấy thông tin khách hàng");
+        }
+        if (serviceName){
+            setServiceAppointment(serviceName);
+        }
+        if(ticketId){
+            setTicketId(ticketId);
+        }
+    };
+
+    return (
         <Box
             sx={{
                 flex: 3,
@@ -121,25 +146,48 @@ const EventDetails = memo(
         >
             {ticketById ? (
                 <>
-                    <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection:'row'}}>
+                    {/* Header */}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            flexDirection: "row",
+                        }}
+                    >
                         <Typography variant="h6" sx={{mb: 2}}>
                             Thông tin lịch hẹn
                         </Typography>
-                        <Typography sx={{mb: 2,textDecoration: 'underline', cursor: 'pointer', color:'blue'}}>Xem chi tiết</Typography>
+                        <Typography
+                            sx={{
+                                mb: 2,
+                                textDecoration: "underline",
+                                cursor: "pointer",
+                                color: "blue",
+                            }}
+                        >
+                            Xem chi tiết
+                        </Typography>
                     </Box>
-                    <Typography variant="body1" sx={{
-                        backgroundColor: ticketById.status === "waiting"
-                            ? "#27F3F3"
-                            : ticketById?.status === "cancelled"
-                                ? "#020202"
-                                : "#12D009",
-                        color: ticketById.status === "waiting"
-                            ? "#020202"
-                            : ticketById?.status === "cancelled"
-                                ? "#fff"
-                                : "#020202",
 
-                    }}>
+                    {/* Trạng thái */}
+                    <Typography
+                        variant="body1"
+                        sx={{
+                            backgroundColor:
+                                ticketById.status === "waiting"
+                                    ? "#27F3F3"
+                                    : ticketById?.status === "cancelled"
+                                        ? "#020202"
+                                        : "#12D009",
+                            color:
+                                ticketById.status === "waiting"
+                                    ? "#020202"
+                                    : ticketById?.status === "cancelled"
+                                        ? "#fff"
+                                        : "#020202",
+                        }}
+                    >
                         <strong>Trạng thái:</strong>{" "}
                         {ticketById?.status === "waiting"
                             ? "Chờ khám"
@@ -147,6 +195,8 @@ const EventDetails = memo(
                                 ? "Đã hủy"
                                 : "Đã khám"}
                     </Typography>
+
+                    {/* Thông tin khách hàng */}
                     <Typography variant="body1">
                         <strong>Tên khách hàng:</strong> {ticketById?.customer.name}
                     </Typography>
@@ -157,7 +207,8 @@ const EventDetails = memo(
                         <strong>Email:</strong> {ticketById?.customer.email}
                     </Typography>
                     <Typography variant="body1">
-                        <strong>Giới tính:</strong> {ticketById?.customer.gender === "female" ? "Nữ" : "Nam"}
+                        <strong>Giới tính:</strong>{" "}
+                        {ticketById?.customer.gender === "female" ? "Nữ" : "Nam"}
                     </Typography>
                     <Typography variant="body1">
                         <strong>Ngày hẹn:</strong> {ticketById?.requestedDate}
@@ -174,6 +225,8 @@ const EventDetails = memo(
                     <Typography variant="body1">
                         <strong>Ghi chú:</strong> {ticketById?.note}
                     </Typography>
+
+                    {/* Thông tin bác sĩ */}
                     <Typography variant="body1">
                         <strong>Tên bác sĩ:</strong> {ticketById?.doctorName}
                     </Typography>
@@ -188,6 +241,8 @@ const EventDetails = memo(
                         <strong>Khách hàng đã đến:</strong>{" "}
                         {ticketById?.isCustomerArrived ? "Có" : "Không"}
                     </Typography>
+
+                    {/* Các trường bổ sung theo trạng thái */}
                     {ticketById?.status === "waiting" && ticketById?.isCustomerArrived && (
                         <>
                             <Typography variant="body1">
@@ -223,13 +278,13 @@ const EventDetails = memo(
                                 {ticketById?.doneBy || "Không xác định"}
                             </Typography>
                             <Typography variant="body1">
-                                <strong>Hoàn thành lúc lúc:</strong>{" "}
+                                <strong>Hoàn thành lúc:</strong>{" "}
                                 {ticketById?.doneAt || "Không xác định"}
                             </Typography>
                         </>
                     )}
 
-
+                    {/* Action Buttons */}
                     <Box
                         sx={{
                             mt: 2,
@@ -245,7 +300,8 @@ const EventDetails = memo(
                         }}
                     >
                         {ticketById?.status === "waiting" &&
-                            !ticketById?.isCustomerArrived && user.user.role !== "doctor" && (
+                            !ticketById?.isCustomerArrived &&
+                            user.user.role !== "doctor" && (
                                 <>
                                     <Tooltip title="Sửa phiếu hẹn" arrow>
                                         <Button
@@ -297,7 +353,11 @@ const EventDetails = memo(
                                 </>
                             )}
                         {ticketById?.status === "waiting" &&
-                            ticketById?.isCustomerArrived && user.user.role !== "employee" && (
+                            ticketById?.isCustomerArrived &&
+                            user.user.role !== "employee" &&
+                            user?.user?.details.employeeID === ticketById?.doctorId
+                            &&
+                            (
                                 <Tooltip title="Tạo khách hàng" arrow>
                                     <Button
                                         variant="contained"
@@ -309,6 +369,7 @@ const EventDetails = memo(
                                             whiteSpace: "nowrap",
                                             fontSize: "0.8rem",
                                         }}
+                                        onClick={() => handleStartExam(ticketById?.customer?._id, ticketById.requestedService, ticketById?._id)}
                                     >
                                         Bắt đầu khám
                                     </Button>
@@ -320,9 +381,9 @@ const EventDetails = memo(
                 <Typography variant="body1">Chọn lịch hẹn để xem chi tiết</Typography>
             )}
         </Box>
-    ),
-    areEqual
-);
+    );
+    areEqual;
+});
 
 const ManageAppointment = () => {
     const [selectedEvent, setSelectedEvent] = useState(null);

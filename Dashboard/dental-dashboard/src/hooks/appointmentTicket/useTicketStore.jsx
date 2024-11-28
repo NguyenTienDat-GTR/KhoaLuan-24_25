@@ -7,6 +7,7 @@ const useTicketStore = create((set) => ({
     error: null,
     ticketById: null,
     ticketByDoctor: [],
+    ticketId: null,
 
     getAllTickets: async (token) => {
         set({loading: true});
@@ -55,6 +56,8 @@ const useTicketStore = create((set) => ({
             set({error: error?.response?.data.message, loading: false});
         }
     },
+
+    setTicketId: (id) => set({ticketId: id}),
 }));
 
 export default useTicketStore;

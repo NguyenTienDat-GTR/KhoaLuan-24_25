@@ -25,7 +25,7 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
     const currentHour = now.getHours();
 
     // Kiểm tra giờ hiện tại
-    const defaultDate = currentHour >=15
+    const defaultDate = currentHour >= 15
         ? moment(now).add(1, "day").format("DD/MM/YYYY") // Ngày hôm sau
         : moment(now).format("DD/MM/YYYY"); // Ngày hiện tại
 
@@ -34,7 +34,7 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
         const currentHour = now.getHours();
 
         // Kiểm tra giờ hiện tại
-        const defaultDate = currentHour >=15
+        const defaultDate = currentHour >= 15
             ? moment(now).add(1, "day").format("DD/MM/YYYY") // Ngày hôm sau
             : moment(now).format("DD/MM/YYYY"); // Ngày hiện tại
 
@@ -182,8 +182,8 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
             customerPhone: formData.phone,
             customerEmail: formData.email,
             gender: formData.gender,
-            requestedDate: `${day}/${month}/${year}`,
-            requestedTime: selectedTime,
+            appointmentDate: `${day}/${month}/${year}`,
+            appointmentTime: selectedTime,
             service: selectedService?.name,
             doctorId: formData.doctorId,
             note: formData.notes,
@@ -191,7 +191,7 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
 
         setLoading(true);
         try {
-            const response = await axios.post("/ticket/create", appointmentData);
+            const response = await axios.post("/appointment-request/create", appointmentData);
             if (response.status === 201) {
                 setLoading(false);
                 handleClose();
@@ -224,7 +224,7 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
             const currentHour = now.getHours();
 
             // Kiểm tra giờ hiện tại
-            const defaultDate = currentHour >=15
+            const defaultDate = currentHour >= 15
                 ? moment(now).add(1, "day").format("DD/MM/YYYY") // Ngày hôm sau
                 : moment(now).format("DD/MM/YYYY"); // Ngày hiện tại
 
@@ -330,9 +330,20 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
                         disabled
                         sx={{mb: 2}}
                     />
+                    <Typography
+
+                        sx={{
+                            fontWeight: 'bold',
+                            fontSize: {sm: '0.8rem', md: '1rem'},
+                            mb: 2
+                        }}
+                    >
+                        Khoảng giá: {selectedService?.priceRange} VND
+                    </Typography>
 
                     <TextField
                         type="date"
+                        lable="Chọn ngày hẹn"
                         name="date"
                         value={moment(formData.date, "DD/MM/YYYY").format("YYYY-MM-DD")}
                         onChange={handleDateChange}

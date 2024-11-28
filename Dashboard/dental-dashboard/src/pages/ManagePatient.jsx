@@ -47,7 +47,7 @@ const ManagePatient = () => {
         if (token) {
             getAllPatients(token);
         }
-    }, [token, patients]);
+    }, [token]);
 
     // Lọc danh sách bệnh nhân dựa trên các filter
     const filteredPatients = patients.filter((patient) => {
