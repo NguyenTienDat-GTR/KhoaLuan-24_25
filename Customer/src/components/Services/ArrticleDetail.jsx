@@ -4,21 +4,9 @@ import axios from "../../config/axiosConfig";
 import {
   Box,
   Button,
-  TextField,
   Typography,
   CircularProgress,
-  Tabs,
-  Tab,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-  Snackbar,
-  Alert, Grid
+  
 } from "@mui/material";
 
 const Header = React.lazy(() => import("../Header"));
@@ -93,7 +81,7 @@ const ArticleDetail = () => {
       <Suspense fallback={<CircularProgress />}>
         <Header />
       </Suspense>
-      <Box sx={{ marginTop: 15 }}>
+      <Box sx={{ marginTop: 18 }}>
         <Typography variant="h4" sx={{ color: 'red', textAlign: 'center', }}>{article.title}</Typography>
         {article.imageUrls && article.imageUrls.length > 0 && (
           <Box sx={{ marginTop: 1, marginLeft: { md: 30 } }}>
@@ -103,8 +91,8 @@ const ArticleDetail = () => {
           </Box>
         )}
         {article.mainHeadings.map((mainHeading, index) => (
-          <Box key={index} sx={{ marginTop: 2, padding: 5 }}>
-            <Typography variant="h5">{`${romanize(index + 1)}. ${mainHeading.title}`}</Typography>
+          <Box key={index} sx={{ padding: 5 }}>
+            <Typography variant="h5" sx={{ color: "blue", fontWeight: "bold", fontSize: "18px" }} >{`${romanize(index + 1)}. ${mainHeading.title}`}</Typography>
 
             {/* Hiển thị hình ảnh nếu có */}
             {mainHeading.imageUrls && mainHeading.imageUrls.length > 0 && (
@@ -114,11 +102,11 @@ const ArticleDetail = () => {
                 ))}
               </Box>
             )}
-            <Typography>{mainHeading.content}</Typography>
+            <Typography sx={{  textAlign: "justify", textIndent: "20px" ,marginLeft: "20px",lineHeight: 1.6}}>{mainHeading.content}</Typography>
 
             {mainHeading.subheadings && mainHeading.subheadings.map((subHeading, subIndex) => (
               <Box key={subIndex} sx={{ marginTop: 2, paddingLeft: 2 }}>
-                <Typography variant="h6">{`${subIndex + 1}. ${subHeading.title}`}</Typography>
+                <Typography  sx={{ color: "blue", fontSize: "16px" }}>{`${subIndex + 1}. ${subHeading.title}`}</Typography>
                 {/* Hiển thị hình ảnh nếu có */}
                 {subHeading.imageUrls && subHeading.imageUrls.length > 0 && (
                   <Box sx={{ marginTop: 1 }}>
@@ -127,7 +115,7 @@ const ArticleDetail = () => {
                     ))}
                   </Box>
                 )}
-                <Typography>{subHeading.content}</Typography>
+                <Typography sx={{  textAlign: "justify", textIndent: "20px" ,marginLeft: "20px",lineHeight: 1.6}}>{subHeading.content}</Typography>
 
                 {subHeading.subSubheadings && subHeading.subSubheadings.map((subSubheading, subSubIndex) => (
                   <Box key={subSubIndex} sx={{ marginTop: 1, paddingLeft: 2 }}>
@@ -140,7 +128,7 @@ const ArticleDetail = () => {
                         ))}
                       </Box>
                     )}
-                    <Typography>{subSubheading.content}</Typography>
+                    <Typography sx={{  textAlign: "justify", textIndent: "20px" ,marginLeft: "20px",lineHeight: 1.6}}>{subSubheading.content}</Typography>
                   </Box>
                 ))}
               </Box>

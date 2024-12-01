@@ -23,7 +23,7 @@ const Braces = React.lazy(() => import("./pages/Braces"));
 
 const Services = React.lazy(() => import("./pages/Services"));
 import ArticleDetail from "./components/Services/ArrticleDetail";
-
+import PolicyDetail from "./components/Policy/PolicyDetail";
 const Bracket = React.lazy(() => import("./components/Services/Bracket"));
 const ChildrentsDentistry = React.lazy(() =>
   import("./components/Services/ChildrentsDentistry")
@@ -118,7 +118,7 @@ const App = () => {
           element={<LazyComponent Component={Contact} />}
         />
         <Route path="/service/:serviceId" element={<ArticleDetail />} />
-
+        <Route path="/policy/:policyId" element={<PolicyDetail />} />
         <Route
           path="/Booking"
           element={<LazyComponent Component={Booking} />}

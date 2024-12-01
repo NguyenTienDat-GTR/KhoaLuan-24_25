@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Grid,
@@ -15,8 +15,44 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import logo from "../components/images/phong-kham/logo.png";
-
+import axios from "../config/axiosConfig";
+import { useNavigate } from "react-router-dom";
 const Footer = () => {
+  const [policies, setPolicies] = useState([]); // state để lưu trữ danh sách chính sách
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // Hook để điều hướng
+
+  // Định nghĩa hàm để điều hướng đến trang chi tiết chính sách
+  const handlePolicyClick = (policyId) => {
+
+    console.log(policyId);
+    if (policyId) {
+      navigate(`/policy/${policyId}`); // Điều hướng đến trang chi tiết chính sách
+    } else {
+      console.error("Invalid Policy ID"); // Log thông báo nếu ID không hợp lệ
+    }
+
+  };
+  useEffect(() => {
+    // Hàm gọi API
+    const fetchPolicies = async () => {
+      try {
+        const response = await axios.get("/policy/getAll");
+
+        setPolicies(response.data.policies); // Đặt state
+
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu chính sách:", error);
+      } finally {
+        setLoading(false); // Đặt loading thành false khi đã hoàn thành
+      }
+    };
+
+    fetchPolicies();
+  }, []); // Chỉ gọi API khi component được mount
+
+
+
   return (
     <Container
       maxWidth="lg"
@@ -239,25 +275,27 @@ const Footer = () => {
               CHÍNH SÁCH - HỖ TRỢ
             </Typography>
 
-            <List>
+            {policies.map((policy) => (
               <Typography
+                key={policy.id}
                 sx={{
-                  width: "100%",
+
+                  cursor: "pointer",
                   fontSize: {
-                    xs: "0.8rem",
+                    xs: "0.8rem", // Cùng kích thước với địa chỉ và giờ làm việc
                     sm: "1rem",
                     md: "1.2rem",
                   },
-                  textAlign: "justify",
+                  fontWeight: 500, // Đảm bảo trọng số chữ giống nhau
+                  textAlign: "justify", // Giống nhau về căn lề
+                  marginTop: "0.5rem", // Khoảng cách giữa các mục
+                  marginLeft:"1rem"
                 }}
+                onClick={() => handlePolicyClick(policy._id)} // Gọi hàm điều hướng khi nhấn vào chính sách
               >
-                <ListItem>Chính sách bảo mật thông tin khách hàng</ListItem>
-                <ListItem>Chính sách bảo hành các dịch vụ</ListItem>
-                <ListItem>Chính sách thanh toán</ListItem>
-                <ListItem>Giấy phép hoạt động</ListItem>
-                <ListItem>Hướng dẫn đặt lịch hẹn</ListItem>
+                {policy.title}
               </Typography>
-            </List>
+            ))}
           </Box>
         </Box>
 
