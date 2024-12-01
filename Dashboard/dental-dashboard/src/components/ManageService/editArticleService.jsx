@@ -230,7 +230,7 @@ const EditArticleService = ({ serviceId, onClose, open }) => {
                             variant="outlined"
                             fullWidth
                             multiline
-                            rows={2}
+                            rows={5}
                             value={main.content || ""}
                             onChange={(e) =>
                               handleInputChange(`blog.mainHeadings[${index}].content`, e.target.value)

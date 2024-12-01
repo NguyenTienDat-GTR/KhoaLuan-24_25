@@ -238,12 +238,6 @@ const ServiceManagement = () => {
               Chỉnh sửa loại dịch vụ
             </Button>
 
-            {/* <Button variant="contained" color="error" startIcon={<Delete />}
-              onClick={() => handleDeleteServiceType(category._id)}
-            >
-
-              Xóa loại dịch vụ
-            </Button> */}
           </Box>
           <Button
             variant="contained"

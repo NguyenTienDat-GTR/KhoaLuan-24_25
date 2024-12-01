@@ -15,7 +15,12 @@ import {
   ManageAccounts,
   EventNoteTwoTone,
   PeopleAltSharp,
+ 
+    
 } from "@mui/icons-material";
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import WaterIcon from '@mui/icons-material/Water';
+
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import { AuthProvider, useAuth } from "./hooks/auth/useAuth";
@@ -43,6 +48,7 @@ const ManageAppointment = React.lazy(() =>
 const AppointmentRequest = React.lazy(() =>
   import("./pages/ManageAppointment/AppointmentRequest")
 );
+const ManagePolicy = React.lazy(() => import("./pages/ManagePolicy"));
 
 const ManagePatient = React.lazy(() => import("./pages/ManagePatient"));
 
@@ -198,6 +204,16 @@ function App() {
       path: "dashboard/ho-so-dieu-tri",
     },
     {
+      text: "Chính sách",
+      icon: <WaterIcon  sx={{ color: "rgba(21,182,210)" }} />,
+      path: "dashboard/chinh-sach",
+    },
+    {
+      text: "Bài báo - Tin tức",
+      icon: <MenuBookIcon   sx={{ color: "rgba(21,182,210)" }} />,
+      path: "dashboard/ho-so-dieu-tri",
+    },
+    {
       text: "Thanh toán và hóa đơn",
       icon: <Payment sx={{ color: "rgba(21,182,210)" }} />,
       path: "dashboard/thanh-toan-hoa-don",
@@ -311,6 +327,16 @@ function App() {
                     <LazyComponent
                       Component={() => (
                         <ManageServiceType isSidebarOpen={sidebarOpen} />
+                      )}
+                    />
+                  }
+                />
+                <Route
+                  path="/dashboard/chinh-sach"
+                  element={
+                    <LazyComponent
+                      Component={() => (
+                        <ManagePolicy isSidebarOpen={sidebarOpen} />
                       )}
                     />
                   }
