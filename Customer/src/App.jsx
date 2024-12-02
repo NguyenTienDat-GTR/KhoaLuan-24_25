@@ -24,6 +24,8 @@ const Braces = React.lazy(() => import("./pages/Braces"));
 const Services = React.lazy(() => import("./pages/Services"));
 import ArticleDetail from "./components/Services/ArrticleDetail";
 import PolicyDetail from "./components/Policy/PolicyDetail";
+import KnowledgeDetail from "./components/Infors/KnowledgeDetail";
+
 const Bracket = React.lazy(() => import("./components/Services/Bracket"));
 const ChildrentsDentistry = React.lazy(() =>
   import("./components/Services/ChildrentsDentistry")
@@ -119,15 +121,13 @@ const App = () => {
         />
         <Route path="/service/:serviceId" element={<ArticleDetail />} />
         <Route path="/policy/:policyId" element={<PolicyDetail />} />
+        <Route path="/Knowledge/:knowledgeId" element={<KnowledgeDetail />} />
         <Route
           path="/Booking"
           element={<LazyComponent Component={Booking} />}
         />
-        <Route path="/Infor" element={<LazyComponent Component={Infor} />} />
-        <Route
-          path="/Cach-su-dung-baking-soda-lam-trang-rang-hieu-qua-tai-nha"
-          element={<LazyComponent Component={BakingSoda} />}
-        />
+        <Route path="/Knowledge" element={<LazyComponent Component={Infor} />} />
+      
         <Route
           path="/PriceList"
           element={<LazyComponent Component={PriceList} />}

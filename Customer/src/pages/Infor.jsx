@@ -91,7 +91,9 @@ const Infor = () => {
             </Box>
           }
         >
+
           <Acticles />
+        
         </Suspense>
         <br />
         <br />
