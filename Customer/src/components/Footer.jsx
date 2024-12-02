@@ -289,7 +289,7 @@ const Footer = () => {
                   fontWeight: 500, // Đảm bảo trọng số chữ giống nhau
                   textAlign: "justify", // Giống nhau về căn lề
                   marginTop: "0.5rem", // Khoảng cách giữa các mục
-                  marginLeft:"1rem"
+                  marginLeft: "1rem"
                 }}
                 onClick={() => handlePolicyClick(policy._id)} // Gọi hàm điều hướng khi nhấn vào chính sách
               >
@@ -344,33 +344,16 @@ const Footer = () => {
                 },
               }}
             >
-              <FacebookOutlinedIcon />
+              <a
+                href="https://www.facebook.com/profile.php?id=100063625658269"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'none', color: 'inherit' }} // Giữ phong cách gốc
+              >
+                <FacebookOutlinedIcon sx={{ fontSize: { xs: 24, sm: 32, md: 40 } }} />
+              </a>
             </Typography>
-            <Typography
-              sx={{
-                color: "#FFF",
-                fontSize: {
-                  xs: "1rem",
-                  sm: "1rem",
-                  md: "1.5rem",
-                },
-                fontWeight: "bold",
-              }}
-            >
-              ĐỐI TÁC THANH TOÁN
-            </Typography>
-            <Typography
-              sx={{
-                width: "100%",
-                fontSize: {
-                  xs: "0.8rem",
-                  sm: "1rem",
-                  md: "1.2rem",
-                },
-              }}
-            >
-              <FacebookOutlinedIcon />
-            </Typography>
+
           </Box>
         </Box>
       </Box>

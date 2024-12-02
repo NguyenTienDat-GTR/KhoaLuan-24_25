@@ -6,7 +6,7 @@ import {
   Button,
   Typography,
   CircularProgress,
-  
+
 } from "@mui/material";
 
 const Header = React.lazy(() => import("../Header"));
@@ -68,7 +68,7 @@ const ArticleDetail = () => {
 
   if (!article) return <Typography>Đang tải...</Typography>;
   const handleOpenBookingForm = () => {
-   // setSelectedService({ id: serviceId, name: article?.serviceId, priceRange: article?.priceRange })
+    // setSelectedService({ id: serviceId, name: article?.serviceId, priceRange: article?.priceRange })
     setOpenBookingForm(true);
   };
 
@@ -91,7 +91,7 @@ const ArticleDetail = () => {
           </Box>
         )}
         {article.mainHeadings.map((mainHeading, index) => (
-          <Box key={index} sx={{ padding: 5 }}>
+          <Box key={index} sx={{ paddingLeft:5, paddingTop:3 }}>
             <Typography variant="h5" sx={{ color: "blue", fontWeight: "bold", fontSize: "18px" }} >{`${romanize(index + 1)}. ${mainHeading.title}`}</Typography>
 
             {/* Hiển thị hình ảnh nếu có */}
@@ -102,11 +102,18 @@ const ArticleDetail = () => {
                 ))}
               </Box>
             )}
-            <Typography sx={{  textAlign: "justify", textIndent: "20px" ,marginLeft: "20px",lineHeight: 1.6}}>{mainHeading.content}</Typography>
+            <Typography sx={{ textAlign: "justify", textIndent: "20px", marginLeft: "20px", lineHeight: 1.6 }}>
+              {mainHeading.content.split('\n').map((line, idx) => (
+                <span key={idx}>
+                  {line}
+                  <br /> {/* Xuống dòng */}
+                </span>
+              )) || "Không có nội dung"}
+            </Typography>
 
             {mainHeading.subheadings && mainHeading.subheadings.map((subHeading, subIndex) => (
               <Box key={subIndex} sx={{ marginTop: 2, paddingLeft: 2 }}>
-                <Typography  sx={{ color: "blue", fontSize: "16px" }}>{`${subIndex + 1}. ${subHeading.title}`}</Typography>
+                <Typography sx={{ color: "blue", fontSize: "16px" }}>{`${subIndex + 1}. ${subHeading.title}`}</Typography>
                 {/* Hiển thị hình ảnh nếu có */}
                 {subHeading.imageUrls && subHeading.imageUrls.length > 0 && (
                   <Box sx={{ marginTop: 1 }}>
@@ -115,7 +122,7 @@ const ArticleDetail = () => {
                     ))}
                   </Box>
                 )}
-                <Typography sx={{  textAlign: "justify", textIndent: "20px" ,marginLeft: "20px",lineHeight: 1.6}}>{subHeading.content}</Typography>
+                <Typography sx={{ textAlign: "justify", textIndent: "20px", marginLeft: "20px", lineHeight: 1.6 }}>{subHeading.content}</Typography>
 
                 {subHeading.subSubheadings && subHeading.subSubheadings.map((subSubheading, subSubIndex) => (
                   <Box key={subSubIndex} sx={{ marginTop: 1, paddingLeft: 2 }}>
@@ -128,7 +135,7 @@ const ArticleDetail = () => {
                         ))}
                       </Box>
                     )}
-                    <Typography sx={{  textAlign: "justify", textIndent: "20px" ,marginLeft: "20px",lineHeight: 1.6}}>{subSubheading.content}</Typography>
+                    <Typography sx={{ textAlign: "justify", textIndent: "20px", marginLeft: "20px", lineHeight: 1.6 }}>{subSubheading.content}</Typography>
                   </Box>
                 ))}
               </Box>
