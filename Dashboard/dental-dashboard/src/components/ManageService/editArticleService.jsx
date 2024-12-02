@@ -16,6 +16,7 @@ const EditArticleService = ({ serviceId, onClose, open }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const { userLoggedIn, setUserLoggedIn, token } = useUserStore();
   const { services, getAllService } = useGetAllService();
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (token) {
@@ -62,6 +63,7 @@ const EditArticleService = ({ serviceId, onClose, open }) => {
       return () => clearTimeout(timer); // Dọn dẹp timer khi dialogOpen thay đổi
     }
   }, [dialogOpen]);
+
   const handleInputChange = (path, value) => {
     // Chia path thành các phần của object (ví dụ: "blog.title", "blog.mainHeadings[0].title")
     const keys = path.split('.');
@@ -131,21 +133,25 @@ const EditArticleService = ({ serviceId, onClose, open }) => {
 
   const handleSave = async () => {
     try {
+      setLoading(true);
+      setSaving(true);
       const updatedArticle = {
         ...service?.blog,
         title: service?.blog?.title,
         createBy: service?.blog?.createBy,
         content: service?.blog?.content,
+        mainHeadings: service?.blog?.mainHeadings,
       };
       console.log(updatedArticle);
 
-      const response = await axios.put(`/article/update/${serviceId}`, updatedArticle, {
+      const response = await axios.put(`/article/update/${serviceId}`,
+        updatedArticle, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("kết quả lưu là:",response)
+      console.log("kết quả lưu là:", response)
       if (response.status === 200) {
         alert("Cập nhật dịch vụ thành công!");
         onClose();
@@ -156,6 +162,9 @@ const EditArticleService = ({ serviceId, onClose, open }) => {
     } catch (error) {
       console.error("Lỗi cập nhật dịch vụ:", error.response?.data || error.message);
       alert(`Lỗi: ${error.response?.data?.message || "Không thể cập nhật dịch vụ."}`);
+    } finally {
+      setLoading(false); // Kết thúc trạng thái loading
+      setSaving(false);
     }
   };
 
@@ -168,7 +177,9 @@ const EditArticleService = ({ serviceId, onClose, open }) => {
         <DialogContent>
           <Box display="flex" justifyContent="center" alignItems="center" height="200px">
             <CircularProgress />
-            <Typography sx={{ ml: 2 }}>Đang tải bài viết dịch vụ...</Typography>
+            <Typography sx={{ ml: 2 }}>
+              {saving ? "Đang lưu bài viết..." : "Đang tải bài viết dịch vụ..."}
+            </Typography>
           </Box>
         </DialogContent>
       </Dialog>

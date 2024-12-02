@@ -49,6 +49,7 @@ const AppointmentRequest = React.lazy(() =>
   import("./pages/ManageAppointment/AppointmentRequest")
 );
 const ManagePolicy = React.lazy(() => import("./pages/ManagePolicy"));
+const ManageKnowledge = React.lazy(() => import("./pages/ManageKnowledge"));
 
 const ManagePatient = React.lazy(() => import("./pages/ManagePatient"));
 
@@ -209,9 +210,9 @@ function App() {
       path: "dashboard/chinh-sach",
     },
     {
-      text: "Bài báo - Tin tức",
+      text: "Kiến thức",
       icon: <MenuBookIcon   sx={{ color: "rgba(21,182,210)" }} />,
-      path: "dashboard/ho-so-dieu-tri",
+      path: "dashboard/kien-thuc",
     },
     {
       text: "Thanh toán và hóa đơn",
@@ -337,6 +338,16 @@ function App() {
                     <LazyComponent
                       Component={() => (
                         <ManagePolicy isSidebarOpen={sidebarOpen} />
+                      )}
+                    />
+                  }
+                />
+                 <Route
+                  path="/dashboard/kien-thuc"
+                  element={
+                    <LazyComponent
+                      Component={() => (
+                        <ManageKnowledge isSidebarOpen={sidebarOpen} />
                       )}
                     />
                   }
