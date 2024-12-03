@@ -20,13 +20,18 @@ import {
     TablePagination,
 } from "@mui/material";
 import { Visibility, Delete, Edit, Add, EditNote } from "@mui/icons-material";
+import { useNavigate } from 'react-router-dom';
+
 import Cookies from "js-cookie";
 import useGetAllService from "../hooks/service/useGetAllServiceType";
 import { jwtDecode } from "jwt-decode";
 import useUserStore from "../hooks/auth/useUserStore";
 import CreateServiceType from "../components/ManageService/createServiceType";
 import CreateService from "../components/ManageService/createService";
-
+import ServiceDetailModal from "../components/ManageService/ServiceDetail";
+import axios from "../config/axiosConfig";
+import EditService from "../components/ManageService/editService";
+import EditArticleService from "../components/ManageService/editArticleService";
 const units = {
     tooth: "Răng",
     jaw: "Hàm",
@@ -36,6 +41,11 @@ const units = {
 };
 
 const ServiceManagement = () => {
+    const navigate = useNavigate();
+    const [openModal, setOpenModal] = useState(false);
+    const [openEditService, setOpenEditService] = useState(false);
+    const [openEditArticle, setOpenEditArticle] = useState(false);
+    const [serviceId, setServiceId] = useState(null);
     const [searchOption, setSearchOption] = useState("category");
     const [searchTerm, setSearchTerm] = useState("");
     const [page, setPage] = useState(0);
@@ -44,6 +54,7 @@ const ServiceManagement = () => {
     const { userLoggedIn, setUserLoggedIn, token } = useUserStore();
     const [openCreateServiceType, setOpenCreateServiceType] = useState(false);
     const [openCreateService, setOpenCreateService] = useState(false);
+    const [selectedService, setSelectedService] = useState(null);
 
     const handleSearchChange = (event) => setSearchTerm(event.target.value);
     const handleChangePage = (event, newPage) => setPage(newPage);
@@ -58,7 +69,7 @@ const ServiceManagement = () => {
         if (token) {
             getAllService();
         }
-    }, [token]);
+    }, [token, services]);
 
     // Hàm lọc dịch vụ theo tiêu chí tìm kiếm
     const filteredServices = services?.filter((category) => {
@@ -96,19 +107,57 @@ const ServiceManagement = () => {
             getAllService();
         }
     };
-    const handleDeleteService = async () => {
-        if (selectedService) {
-            try {
-                // Gọi API xóa loại dịch vụ, ví dụ như:
-                const response = await axios.delete(`/service/getById/${serviceId}`);
-                console.log("Xóa loại dịch vụ thành công:", response.data);
-                // Thực hiện cập nhật lại UI hoặc dữ liệu sau khi xóa thành công
-            } catch (error) {
-                console.error("Lỗi khi xóa loại dịch vụ:", error);
-            }
+    const handleDeleteService = async (serviceId, typeId) => {
+        if (!serviceId || !typeId) {
+            console.error("Thiếu Id dịch vụ hoặc Id loại dịch vụ");
+            return;
+
         }
+        try {
+            // Gọi API xóa loại dịch vụ, ví dụ như:
+            const response = await axios.delete(`/service/delete/${serviceId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            console.log("Xóa loại dịch vụ thành công:", response.data.message);
+            // Thực hiện cập nhật lại UI hoặc dữ liệu sau khi xóa thành công
+            handleRefreshServices();
+        } catch (error) {
+            console.error("Lỗi khi xóa loại dịch vụ:", error.response?.data?.message || error.message);
+        }
+
     };
 
+    // Mở modal khi bấm vào icon "Xem chi tiết"
+    const handleOpenModal = (service) => {
+        setSelectedService(service);
+        setOpenModal(true);  // Mở modal
+    };
+
+    // Đóng modal
+    const handleCloseModal = () => {
+        setOpenModal(false);
+    };
+
+    const handleOpenEditService = (service) => {
+        setSelectedService(service);
+        setOpenEditService(true);  // Mở modal chỉnh sửa dịch vụ
+    };
+
+    const handleOpenEditArticle = (service) => {
+        setSelectedService(service);
+        setOpenEditArticle(true);  // Mở modal chỉnh sửa bài viết dịch vụ
+    };
+    const handleCloseEditService = () => {
+        setOpenEditService(false);  // Đóng modal chỉnh sửa dịch vụ
+    };
+
+    const handleCloseEditArticle = () => {
+        setOpenEditArticle(false);  // Đóng modal chỉnh sửa bài viết
+    };
     return (
         <Box sx={{ paddingY: 6, paddingX: 0.5 }}>
             <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
@@ -182,12 +231,12 @@ const ServiceManagement = () => {
                         >
                             Thêm mới loại dịch vụ
                         </Button>
-                        <Button variant="contained" color="primary" startIcon={<Edit />}>
+
+                        <Button variant="contained" color="primary" startIcon={<Edit />}
+                                onClick={() => navigate("/dashboard/quan-ly-loai-dich-vu")}>
                             Chỉnh sửa loại dịch vụ
                         </Button>
-                        <Button variant="contained" color="error" startIcon={<Delete />}>
-                            Xóa loại dịch vụ
-                        </Button>
+
                     </Box>
                     <Button
                         variant="contained"
@@ -281,7 +330,9 @@ const ServiceManagement = () => {
                                             </TableCell>
                                             <TableCell>
                                                 <Tooltip title="Xem chi tiết">
-                                                    <IconButton sx={{ color: "#1976d2" }}>
+                                                    <IconButton sx={{ color: "#1976d2" }}
+                                                                onClick={() => handleOpenModal(service)}
+                                                    >
                                                         <Visibility />
                                                     </IconButton>
                                                 </Tooltip>
@@ -289,20 +340,22 @@ const ServiceManagement = () => {
                                                 {userLoggedIn?.user.role === "admin" && (
                                                     <>
                                                         <Tooltip title="Chỉnh sửa dịch vụ">
-                                                            <IconButton sx={{ color: "#4caf50" }}>
+                                                            <IconButton sx={{ color: "#4caf50" }}
+                                                                        onClick={() => handleOpenEditService(service)}>
                                                                 <Edit />
                                                             </IconButton>
                                                         </Tooltip>
                                                         <Tooltip title="Xóa dịch vụ">
                                                             <IconButton
                                                                 sx={{ color: "#f44336" }}
-                                                                onClick={handleDeleteService}
+                                                                onClick={() => handleDeleteService(service._id, category._id)}
                                                             >
                                                                 <Delete />
                                                             </IconButton>
                                                         </Tooltip>
                                                         <Tooltip title="Chỉnh sửa bài viết dịch vụ">
-                                                            <IconButton sx={{ color: "#ff9800" }}>
+                                                            <IconButton sx={{ color: "#ff9800" }}
+                                                                        onClick={() => handleOpenEditArticle(service)}>
                                                                 <EditNote />
                                                             </IconButton>
                                                         </Tooltip>
@@ -337,6 +390,28 @@ const ServiceManagement = () => {
                 onClose={handleCloseCreateService}
                 onRefresh={handleRefreshServices}
             />
+            <ServiceDetailModal
+                selectedService={selectedService}  // Truyền ID dịch vụ vào modal
+                open={openModal}  // Điều khiển trạng thái mở của modal
+                onClose={handleCloseModal}  // Hàm đóng modal
+
+
+            />
+            {/* Modal chỉnh sửa dịch vụ */}
+            <EditService
+                selectedService={selectedService}
+                open={openEditService}
+                onClose={handleCloseEditService}
+                onRefresh={handleRefreshServices}
+            />
+
+            {/* Modal chỉnh sửa bài viết dịch vụ */}
+            <EditArticleService
+                selectedService={selectedService}
+                open={openEditArticle}
+                onClose={handleCloseEditArticle}
+            />
+
         </Box>
     );
 };

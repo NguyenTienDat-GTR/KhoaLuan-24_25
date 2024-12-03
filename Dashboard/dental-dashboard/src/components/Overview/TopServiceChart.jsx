@@ -4,16 +4,19 @@ import axios from "../../config/axiosConfig";
 import {Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 import {Box} from "@mui/material";
 
-const TopServiceChart = () => {
+const TopServiceChart = ({filters}) => {
     const [topServices, setTopServices] = useState([]);
     const {token, userLoggedIn} = useUserStore();
 
     const fetchTopServices = async () => {
         try {
+
+
             const res = await axios.get("/service/topServices", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
+                params: filters,
             });
             setTopServices(res.data.topServices);
         } catch (error) {
@@ -22,9 +25,10 @@ const TopServiceChart = () => {
     }
 
     useEffect(() => {
-        if (token)
-            fetchTopServices()
-    }, [])
+        if (token) {
+            fetchTopServices(); // Hàm sẽ được gọi lại mỗi khi filters thay đổi
+        }
+    }, [filters, token]);
     return (
         <Box height={300} sx={{border:'solid 1px #000000', width:'100%'}}>
         <ResponsiveContainer>

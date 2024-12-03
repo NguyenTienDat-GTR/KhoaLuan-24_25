@@ -11,7 +11,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import viLocale from "@fullcalendar/core/locales/vi";
-import {Box, Button, TextField, Typography, Tooltip} from "@mui/material";
+import {Box, Button, TextField, Typography, Tooltip, FormControl, MenuItem, InputLabel, Select} from "@mui/material";
 import moment from "moment";
 import "../../css/calendar.css";
 import useTicketStore from "../../hooks/appointmentTicket/useTicketStore";
@@ -22,6 +22,7 @@ import ConfirmCustomerArrived from "../../components/ManageAppointmentRequest/Co
 import {useNavigate} from "react-router-dom";
 import useCustomerIdStore from '../../hooks/patient/useCustomerIdStore';
 import useServiceAppointmentStore from "../../hooks/appointmentTicket/useServiceAppointmentStore";
+import useDoctorStore from "../../hooks/doctor/useGetAllDoctor.jsx";
 
 
 // CalendarComponent
@@ -125,10 +126,10 @@ const EventDetails = memo(({ticketById, handleCancel, user, handleConfirm}) => {
         } else {
             toast.error("Không tìm thấy thông tin khách hàng");
         }
-        if (serviceName){
+        if (serviceName) {
             setServiceAppointment(serviceName);
         }
-        if(ticketId){
+        if (ticketId) {
             setTicketId(ticketId);
         }
     };
@@ -396,6 +397,35 @@ const ManageAppointment = () => {
     const [formattedEvents, setFormattedEvents] = useState([]);
     const [openCancel, setOpenCancel] = useState(false);
     const [openConfirm, setOpenConfirm] = useState(false);
+    const {doctors, getAllDoctors} = useDoctorStore();
+    const [selectedDoctor, setSelectedDoctor] = useState(null);
+
+    useEffect(() => {
+        if (token) {
+            getAllDoctors(token);
+            fetchTickets();
+        }
+    }, [token]);
+
+    useEffect(() => {
+        const fetchFilteredTickets = async () => {
+            if (token) {
+                if (selectedDoctor) {
+                    // Lọc lịch hẹn theo bác sĩ
+                    const filters = {
+                        doctorId: selectedDoctor.employeeID,
+                    };
+                    await getAllTickets(token, {filters});
+                } else {
+                    // Lấy tất cả lịch hẹn nếu không chọn bác sĩ
+                    await getAllTickets(token, {});
+                }
+            }
+        };
+
+        fetchFilteredTickets();
+    }, [selectedDoctor, token]);
+
 
     const handleCancel = () => {
         setOpenCancel(true);
@@ -452,7 +482,7 @@ const ManageAppointment = () => {
             if (userLoggedIn?.user.role === "doctor") {
                 await getTicketByDoctor(token, userLoggedIn?.user.details.employeeID);
             } else {
-                await getAllTickets(token);
+                await getAllTickets(token, {});
             }
         }
     };
@@ -532,6 +562,12 @@ const ManageAppointment = () => {
     );
     const handleDateClick = useCallback(() => setSelectedEvent(null), []);
 
+    const handleSelectChange = (event) => {
+        const doctorId = event.target.value;
+        const selected = doctors.find((doc) => doc.employeeID === doctorId) || null;
+        setSelectedDoctor(selected); // Cập nhật bác sĩ đã chọn
+    };
+
     return (
         <Box sx={{paddingY: 6, paddingX: 2}}>
             <Typography variant="h6" sx={{fontWeight: "bold", marginBottom: 2}}>
@@ -547,11 +583,23 @@ const ManageAppointment = () => {
                     <Box
                         sx={{display: "flex", gap: 2, alignItems: "center", width: "40%"}}
                     >
+                        <FormControl sx={{minWidth: 200}}>
+                            <InputLabel>Bác sĩ</InputLabel>
+                            <Select
+                                value={selectedDoctor ? selectedDoctor.employeeID : ""}
+                                onChange={handleSelectChange}
+                                label="Bác sĩ"
+                            >
+                                <MenuItem value="">Tất cả</MenuItem>
+                                {doctors?.map((doctor) => (
+                                    <MenuItem key={doctor.employeeID} value={doctor.employeeID}>
+                                        {doctor.employeeName}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                         <Button variant="contained" color="primary">
                             Thêm lịch hẹn
-                        </Button>
-                        <Button variant="contained" color="secondary">
-                            Làm mới
                         </Button>
                     </Box>
                 </Box>

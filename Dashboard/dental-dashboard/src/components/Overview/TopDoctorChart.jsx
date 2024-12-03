@@ -4,7 +4,7 @@ import axios from "../../config/axiosConfig";
 import {Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 import {Box} from "@mui/material";
 
-const TopDoctorChart = () => {
+const TopDoctorChart = ({filters}) => {
     const [topDoctor, setTopDoctor] = useState([]);
     const {token, userLoggedIn} = useUserStore();
 
@@ -14,6 +14,7 @@ const TopDoctorChart = () => {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
+                params: filters,
             });
             setTopDoctor(res.data.topDoctors);
         } catch (error) {
@@ -24,9 +25,9 @@ const TopDoctorChart = () => {
     useEffect(() => {
         if (token)
             fetchTopDoctor()
-    }, [])
+    }, [filters, token])
     return (
-        <Box height={300} sx={{border: 'solid 1px #000000', width:'100%'}}>
+        <Box height={300} sx={{border: 'solid 1px #000000', width: '100%'}}>
             <ResponsiveContainer>
                 <BarChart data={topDoctor} margin={{top: 20, right: 30, left: 20, bottom: 5}}>
                     <CartesianGrid strokeDasharray="3 3"/>

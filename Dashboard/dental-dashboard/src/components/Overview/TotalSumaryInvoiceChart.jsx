@@ -4,43 +4,42 @@ import axios from "../../config/axiosConfig";
 import {PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer} from "recharts";
 import {Box, Typography} from "@mui/material";
 
-const COLORS = ["#0088FE", "#FF8042", "#00C49F", "#FFBB28"]; // Màu cho các trạng thái
+const COLORS = ["#0088FE", "#FF8042"]; // Màu cho các trạng thái thanh toán
 
-const AppointmentSumaryChart = ({filters}) => {
-    const [appointmentData, setAppointmentData] = useState([]);
+const TotalSumaryInvoiceChart = ({filters}) => {
+    const [invoiceData, setInvoiceData] = useState([]);
     const {token} = useUserStore();
 
-    const fetchAppointmentSummary = async () => {
+    const fetchInvoiceSummary = async () => {
         try {
-            const res = await axios.get("/ticket/appointmentSumary", {
+            const res = await axios.get("/invoice/total-amount-all", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
                 params: filters,
             });
-            // Chuyển đổi dữ liệu API thành định dạng phù hợp với PieChart
+
+            // Dữ liệu cho PieChart
             const data = [
-                {name: "Tổng số lịch hẹn", value: res.data.totalAppointments},
-                {name: "Đã hủy", value: res.data.cancelled},
-                {name: "Đang chờ", value: res.data.waiting},
-                {name: "Đã hoàn thành", value: res.data.done},
+                {name: "Chưa thanh toán", value: res.data.unpaidAmount},
+                {name: "Đã thanh toán", value: res.data.paidAmount},
             ];
-            setAppointmentData(data);
+            setInvoiceData(data);
         } catch (error) {
-            console.error("Error in fetchAppointmentSummary:", error);
+            console.error("Error in fetchInvoiceSummary:", error);
         }
     };
 
     useEffect(() => {
-        if (token) fetchAppointmentSummary();
+        if (token) fetchInvoiceSummary();
     }, [filters, token]);
 
     return (
         <Box height={300} sx={{border: 'solid 1px #000000', width: '100%'}}>
-            <ResponsiveContainer>
+            <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                     <Pie
-                        data={appointmentData}
+                        data={invoiceData}
                         dataKey="value"
                         nameKey="name"
                         cx="50%"
@@ -49,7 +48,7 @@ const AppointmentSumaryChart = ({filters}) => {
                         fill="#8884d8"
                         label
                     >
-                        {appointmentData.map((entry, index) => (
+                        {invoiceData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>
                         ))}
                     </Pie>
@@ -61,4 +60,4 @@ const AppointmentSumaryChart = ({filters}) => {
     );
 };
 
-export default AppointmentSumaryChart;
+export default TotalSumaryInvoiceChart;

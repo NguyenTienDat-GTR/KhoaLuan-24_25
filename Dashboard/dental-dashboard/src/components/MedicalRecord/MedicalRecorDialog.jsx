@@ -23,19 +23,21 @@ import useToothAndJawStore from "../../hooks/ToothandJaw/useToothJawStore";
 import useServiceAppointmentStore from "../../hooks/appointmentTicket/useServiceAppointmentStore";
 import useTicketStore from "../../hooks/appointmentTicket/useTicketStore";
 
-const MedicalRecordDialog = ({ open, onClose }) => {
+const MedicalRecordDialog = ({open, onClose}) => {
     const customerId = useCustomerIdStore((state) => state.customerId);
     const serviceAppointment = useServiceAppointmentStore((state) => state.serviceName);  // Lấy giá trị serviceAppointment
-   const ticketId = useTicketStore((state) => state.ticketId);
-    const { token, userLoggedIn } = useUserStore();
+    const ticketId = useTicketStore((state) => state.ticketId);
+    const {token, userLoggedIn} = useUserStore();
     const [medicalRecord, setMedicalRecord] = useState({
         diagnosis: '',
         result: '',
         note: '',
         usedService: [],
     });
-    const { services, getAllService } = useGetService();
-    const { tooth, jaw, getAllTooth, getAllJaw } = useToothAndJawStore();
+    const {services, getAllService} = useGetService();
+    const {tooth, jaw, getAllTooth, getAllJaw} = useToothAndJawStore();
+    const [loadingRecord, setLoadingRecord] = useState(false);
+    const [loadingInvoice, setLoadingInvoice] = useState(false);
 
     useEffect(() => {
         getAllService();
@@ -49,7 +51,7 @@ const MedicalRecordDialog = ({ open, onClose }) => {
             if (defaultService) {
                 setMedicalRecord(prevState => ({
                     ...prevState,
-                    usedService: [{ service: defaultService._id, for: '' }] // Sử dụng _id của dịch vụ
+                    usedService: [{service: defaultService._id, for: ''}] // Sử dụng _id của dịch vụ
                 }));
             }
         }
@@ -59,31 +61,59 @@ const MedicalRecordDialog = ({ open, onClose }) => {
         const updatedServices = [...medicalRecord.usedService];
         updatedServices[index].service = event.target.value;
         updatedServices[index].for = ''; // Reset trường 'for' khi thay đổi dịch vụ
-        setMedicalRecord({ ...medicalRecord, usedService: updatedServices });
+        setMedicalRecord({...medicalRecord, usedService: updatedServices});
     };
 
 
     const handleAddService = () => {
         setMedicalRecord({
             ...medicalRecord,
-            usedService: [...medicalRecord.usedService, { service: '', for: '' }],
+            usedService: [...medicalRecord.usedService, {service: '', for: ''}],
         });
     };
 
     const handleToothOrJawChange = (e, index) => {
         const updatedServices = [...medicalRecord.usedService];
         updatedServices[index].for = e.target.value;  // Cập nhật tên (name) thay vì ID
-        setMedicalRecord({ ...medicalRecord, usedService: updatedServices });
+        setMedicalRecord({...medicalRecord, usedService: updatedServices});
     };
 
 
     const handleRemoveService = (index) => {
         const updatedServices = [...medicalRecord.usedService];
         updatedServices.splice(index, 1); // Remove the service at the specified index
-        setMedicalRecord({ ...medicalRecord, usedService: updatedServices });
+        setMedicalRecord({...medicalRecord, usedService: updatedServices});
     };
 
+    const createInvoice = async (medicalRecordId, discount) => {
+        toast.warning("Đang tạo hóa đơn...");
+        setLoadingInvoice(true);
+        try {
+
+            const data = {
+                medicalRecordId: medicalRecordId,
+                createBy: userLoggedIn?.user?.details.employeeName,
+            }
+
+            const res = await axios.post('/invoice/create', data, {
+                headers: {Authorization: `Bearer ${token}`},
+            });
+
+            if (res.status === 201) {
+                toast.success("Tạo hóa đơn thành công", {autoClose: 3000});
+                onClose();  // Đóng dialog
+            }
+
+        } catch (e) {
+            toast.error("Không thể tạo hóa đơn", {autoClose: 3000});
+            console.error("Error creating invoice:", e);
+        } finally {
+            setLoadingInvoice(false);
+        }
+    }
+
     const handleSaveMedicalRecord = async () => {
+        setLoadingRecord(true);
         try {
             // Payload gửi đến API
             const payload = {
@@ -97,29 +127,30 @@ const MedicalRecordDialog = ({ open, onClose }) => {
                 appointmentID: ticketId,
             };
 
-            console.log(payload);
             // Gửi request tới API
             const response = await axios.post('/medical-record/create', payload, {
-                headers: { Authorization: `Bearer ${token}` },
+                headers: {Authorization: `Bearer ${token}`},
             });
 
             if (response.status === 201) {
-                toast.success("Thêm hồ sơ y tế thành công");
-                onClose();  // Đóng dialog
+                toast.success("Thêm hồ sơ y tế thành công", {autoClose: 3000});
+                await createInvoice(response.data.record._id);  // Tạo hóa đơn sau khi tạo hồ sơ y tế
+
             }
         } catch (error) {
             console.error("Error creating medical record:", error);
-            toast.error("Không thể thêm hồ sơ y tế");
+            toast.error("Không thể thêm hồ sơ y tế", {autoClose: 3000});
+        } finally {
+            setMedicalRecord(false)
         }
     };
-
 
 
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
             <DialogTitle>Thêm Hồ Sơ Y Tế</DialogTitle>
             <DialogContent>
-                <Box sx={{ width: '100%', mt: 3 }}>
+                <Box sx={{width: '100%', mt: 3}}>
                     <TextField
                         label="Chẩn đoán"
                         fullWidth
@@ -127,12 +158,12 @@ const MedicalRecordDialog = ({ open, onClose }) => {
                         required
                         rows={4}
                         value={medicalRecord.diagnosis}
-                        onChange={(e) => setMedicalRecord({ ...medicalRecord, diagnosis: e.target.value })}
+                        onChange={(e) => setMedicalRecord({...medicalRecord, diagnosis: e.target.value})}
                     />
-                    <Grid container spacing={2} sx={{ mt: 1 }}>
-                        {medicalRecord.usedService.map((service, index) => (
-                            <Grid item xs={12} key={index} sx={{ display: 'flex', alignItems: 'center' }}>
-                                <FormControl sx={{ width: '40%' }}>
+                    <Grid container spacing={2} sx={{mt: 1}}>
+                        {medicalRecord?.usedService?.map((service, index) => (
+                            <Grid item xs={12} key={index} sx={{display: 'flex', alignItems: 'center'}}>
+                                <FormControl sx={{width: '40%'}}>
                                     <InputLabel>Dịch vụ</InputLabel>
                                     <Select
                                         value={service.service}
@@ -148,15 +179,17 @@ const MedicalRecordDialog = ({ open, onClose }) => {
 
                                 {/* Hiển thị giá tiền và giảm giá của dịch vụ */}
                                 {service.service && services.find(s => s._id === service.service) && (
-                                    <Box sx={{ display: 'inline-block', ml: 2 }}>
-                                        <Typography variant="body1">Giá: {services.find(s => s._id === service.service)?.price}</Typography>
-                                        <Typography variant="body1">Giảm giá: {services.find(s => s._id === service.service)?.discount}%</Typography>
+                                    <Box sx={{display: 'inline-block', ml: 2}}>
+                                        <Typography
+                                            variant="body1">Giá: {services.find(s => s._id === service.service)?.price}</Typography>
+                                        <Typography variant="body1">Giảm
+                                            giá: {services.find(s => s._id === service.service)?.discount}%</Typography>
                                     </Box>
                                 )}
 
                                 {/* Hiển thị ComboBox Tooth nếu unit là 'tooth' */}
                                 {service.service && services.find(s => s._id === service.service)?.unit === 'tooth' && (
-                                    <FormControl sx={{ width: '20%', ml: 2 }}>
+                                    <FormControl sx={{width: '20%', ml: 2}}>
                                         <InputLabel>Chọn răng</InputLabel>
                                         <Select
                                             value={service.for || ''}
@@ -173,7 +206,7 @@ const MedicalRecordDialog = ({ open, onClose }) => {
 
                                 {/* Hiển thị ComboBox Jaw nếu unit là 'jaw' */}
                                 {service.service && services.find(s => s._id === service.service)?.unit === 'jaw' && (
-                                    <FormControl sx={{ width: '40%', ml: 2 }}>
+                                    <FormControl sx={{width: '40%', ml: 2}}>
                                         <InputLabel>Chọn hàm</InputLabel>
                                         <Select
                                             value={service.for || ''}
@@ -189,44 +222,56 @@ const MedicalRecordDialog = ({ open, onClose }) => {
                                 )}
 
                                 {/* Nút xóa dịch vụ */}
-                                <Button onClick={() => handleRemoveService(index)} variant="outlined" color="error" sx={{ ml: 2 }}>
+                                <Button onClick={() => handleRemoveService(index)} variant="outlined" color="error"
+                                        sx={{ml: 2}}>
                                     Xóa
                                 </Button>
                             </Grid>
                         ))}
                     </Grid>
-                    <Button onClick={handleAddService} variant="outlined" sx={{ mt: 1 }}>Thêm Dịch Vụ</Button>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
+                    <Button onClick={handleAddService} variant="outlined" sx={{mt: 1}}>Thêm Dịch Vụ</Button>
+                    <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2}}>
                         <TextField
                             label="Kết quả điều trị"
-                            sx={{ mt: 1 }}
+                            sx={{mt: 1}}
                             fullWidth
                             multiline
                             required
                             rows={4}
                             value={medicalRecord.result}
-                            onChange={(e) => setMedicalRecord({ ...medicalRecord, result: e.target.value })}
+                            onChange={(e) => setMedicalRecord({...medicalRecord, result: e.target.value})}
                         />
                         <TextField
                             label="Ghi chú"
-                            sx={{ mt: 1 }}
+                            sx={{mt: 1}}
                             fullWidth
                             multiline
                             rows={4}
                             value={medicalRecord.note}
-                            onChange={(e) => setMedicalRecord({ ...medicalRecord, note: e.target.value })}
+                            onChange={(e) => setMedicalRecord({...medicalRecord, note: e.target.value})}
                         />
                     </Box>
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} color="error">Hủy</Button>
-                <Button onClick={handleSaveMedicalRecord} color="success" variant="contained">Lưu</Button>
+                {!loadingRecord ? (
+                    <>
+                        <Button onClick={onClose} color="error">Hủy</Button>
+                        <Button onClick={handleSaveMedicalRecord} color="success"
+                                variant="contained">Lưu</Button>
+                    </>) : (
+
+                    loadingInvoice ? (
+                        <Typography>Đang tạo hóa đơn...</Typography>
+                    ) : (
+                        <Typography>Đang lưu hồ sơ...</Typography>
+                    )
+
+                )}
             </DialogActions>
         </Dialog>
     );
 };
-
 
 
 export default MedicalRecordDialog;

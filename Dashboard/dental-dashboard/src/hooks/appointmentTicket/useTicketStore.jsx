@@ -9,14 +9,26 @@ const useTicketStore = create((set) => ({
     ticketByDoctor: [],
     ticketId: null,
 
-    getAllTickets: async (token) => {
+    getAllTickets: async (token, {filters}) => {
         set({loading: true});
         try {
+            const params = {};
+
+            // Kiểm tra các filters và truyền vào params
+            if (filters?.year) params.year = filters.year;
+            if (filters?.quarter) params.quarter = filters.quarter;
+            if (filters?.month) params.month = filters.month;
+
+            // Nếu có doctorId, truyền vào
+            if (filters?.doctorId) params.doctorId = filters.doctorId;
+
             const response = await axios.get("/ticket/all", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
+                params: params,
             });
+
             if (response.status === 200) {
                 set({tickets: response.data.appointmentTickets, loading: false});
             }
@@ -24,6 +36,7 @@ const useTicketStore = create((set) => ({
             set({error: error?.response?.data.message, loading: false});
         }
     },
+
 
     getTicketById: async (token, ticketId) => {
         set({loading: true});
@@ -41,13 +54,24 @@ const useTicketStore = create((set) => ({
         }
     },
 
-    getTicketByDoctor: async (token, doctorId) => {
+    getTicketByDoctor: async (token, doctorId,{filters}) => {
         set({loading: true});
         try {
+            const params = {};
+
+            // Kiểm tra các filters và truyền vào params
+            if (filters?.year) params.year = filters.year;
+            if (filters?.quarter) params.quarter = filters.quarter;
+            if (filters?.month) params.month = filters.month;
+
+            // Nếu có doctorId, truyền vào
+            if (filters?.doctorId) params.doctorId = filters.doctorId;
+
             const response = await axios.get(`/ticket/getByDoctor/${doctorId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                }
+                },
+                params: params,
             });
             if (response.status === 200) {
                 set({ticketByDoctor: response.data.tickets, loading: false});

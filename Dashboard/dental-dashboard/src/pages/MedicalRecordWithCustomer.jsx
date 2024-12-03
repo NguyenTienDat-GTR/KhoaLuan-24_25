@@ -130,11 +130,21 @@ const MedicalRecordWithCustomer = () => {
             <Typography variant="h6" sx={{fontWeight: "bold", marginBottom: 2}}>
                 Hồ sơ đều trị của bệnh nhân
             </Typography>
-            <Box sx={{display:'flex', justifyContent:'space-between'}}>
-                <Typography variant="body1" onClick={handleBack} sx={{cursor: 'pointer', textDecoration: 'underline'}}>Quay
+            <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
+                <Typography variant="body1" onClick={handleBack}
+                            sx={{cursor: 'pointer', textDecoration: 'underline', color: 'blue'}}>Quay
                     lại</Typography>
-                <Button variant="contained" color="success" onClick={handleOpenDialog} s>Tạo hồ sơ mới</Button>
+                <Button variant="contained" color="success" onClick={handleOpenDialog}>Tạo hồ sơ mới</Button>
 
+            </Box>
+
+            <Box sx={{display: 'flex', justifyContent: 'flex-start', alignItems: "center", gap: 3, mt: 2}}>
+                <Typography><b>Tên bệnh nhân:</b> {customer?.name}</Typography>
+                <Typography><b>Điện thoại:</b> {customer?.phone}</Typography>
+                <Typography><b>Email:</b> {customer?.email || 'Không có'}</Typography>
+                <Typography><b>Giới
+                    tính:</b> {customer?.gender === "male" ? "Nam" : customer?.gender === "female" ? "Nữ" : ""}
+                </Typography>
             </Box>
 
 
@@ -150,13 +160,12 @@ const MedicalRecordWithCustomer = () => {
                                 mt: 3
                             }}>
                                 <Typography variant="h6" sx={{fontWeight: 'bold'}}>Ngày khám: {record.date}</Typography>
-                                <Typography variant="body1">Tên bệnh
-                                    nhân: {record.customerID?.name || 'N/A'}</Typography>
-                                <Typography variant="body1">Bác sĩ điều trị: {record.doctorName || 'N/A'}</Typography>
-                                <Typography variant="body1">Chẩn đoán: {record.diagnosis}</Typography>
-                                <Typography variant="body1">Kết quả: {record.result}</Typography>
-                                <Typography variant="body1">Dịch vụ đã dùng:
-                                    {record.usedService.map((service, idx) => (
+                                <Typography variant="body1"><b>Bác sĩ điều trị:</b> {record.doctorName || 'N/A'}
+                                </Typography>
+                                <Typography variant="body1"><b>Chẩn đoán:</b> {record.diagnosis}</Typography>
+                                <Typography variant="body1"><b>Kết quả:</b> {record.result}</Typography>
+                                <Typography variant="body1"><b>Dịch vụ đã dùng:</b>
+                                    {record?.usedService.map((service, idx) => (
                                         <span key={idx}>
                         {service.service?.name}
                                             {service.for && ` (Dùng cho: ${service.for})`}
@@ -164,7 +173,7 @@ const MedicalRecordWithCustomer = () => {
                     </span>
                                     ))}
                                 </Typography>
-                                <Typography variant="body1">Ghi chú: {record.note || 'Không có'}</Typography>
+                                <Typography variant="body1"><b>Ghi chú:</b> {record.note || 'Không có'}</Typography>
                             </Box>
                         </Grid>
                     ))}
