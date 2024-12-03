@@ -95,112 +95,117 @@ const ManageInvoice = () => {
         return (
 
             <Box sx={{paddingY: 6, paddingX: 2}}>
-                <Typography variant="h6" sx={{fontWeight: "bold", marginBottom: 2}}>
-                    Quản lý hóa đơn
-                </Typography>
+                {userLoggedIn?.user.role !== "doctor" && (
+                    <>
+                        <Typography variant="h6" sx={{fontWeight: "bold", marginBottom: 2}}>
+                            Quản lý hóa đơn
+                        </Typography>
 
-                {/* Search box */}
-                <Box sx={{display: "flex", alignItems: "center", gap: 2, marginBottom: 2}}>
-                    <FormControl sx={{width: "30%"}}>
-                        <InputLabel>Tìm kiếm theo</InputLabel>
-                        <Select
-                            value={searchType}
-                            onChange={(e) => setSearchType(e.target.value)}
-                            label="Tìm kiếm theo"
-                        >
-                            <MenuItem value="name">Tên khách hàng</MenuItem>
-                            <MenuItem value="phone">Số điện thoại</MenuItem>
-                            <MenuItem value="email">Email</MenuItem>
-                        </Select>
-                    </FormControl>
+                        {/* Search box */}
+                        <Box sx={{display: "flex", alignItems: "center", gap: 2, marginBottom: 2}}>
+                            <FormControl sx={{width: "30%"}}>
+                                <InputLabel>Tìm kiếm theo</InputLabel>
+                                <Select
+                                    value={searchType}
+                                    onChange={(e) => setSearchType(e.target.value)}
+                                    label="Tìm kiếm theo"
+                                >
+                                    <MenuItem value="name">Tên khách hàng</MenuItem>
+                                    <MenuItem value="phone">Số điện thoại</MenuItem>
+                                    <MenuItem value="email">Email</MenuItem>
+                                </Select>
+                            </FormControl>
 
-                    <TextField
-                        label="Tìm kiếm"
-                        variant="outlined"
-                        size="medium"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        sx={{bgcolor: "#f5f5f5", width: "50%"}}
-                    />
+                            <TextField
+                                label="Tìm kiếm"
+                                variant="outlined"
+                                size="medium"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                sx={{bgcolor: "#f5f5f5", width: "50%"}}
+                            />
 
-                    <FormControl sx={{width: "20%"}}>
-                        <InputLabel>Trạng thái</InputLabel>
-                        <Select
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            label="Trạng thái"
-                        >
-                            <MenuItem value="all">Tất cả</MenuItem>
-                            <MenuItem value="unpaid">Chưa thanh toán</MenuItem>
-                            <MenuItem value="paid">Đã thanh toán</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Box>
+                            <FormControl sx={{width: "20%"}}>
+                                <InputLabel>Trạng thái</InputLabel>
+                                <Select
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                    label="Trạng thái"
+                                >
+                                    <MenuItem value="all">Tất cả</MenuItem>
+                                    <MenuItem value="unpaid">Chưa thanh toán</MenuItem>
+                                    <MenuItem value="paid">Đã thanh toán</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
 
-                {/* Invoice table */}
-                <TableContainer sx={{boxShadow: 2, borderRadius: 1}}>
-                    <Table sx={{minWidth: 650}}>
-                        <TableHead sx={{backgroundColor: "#f0f0f0"}}>
-                            <TableRow>
-                                <TableCell sx={{fontWeight: "bold"}}>Số thứ tự</TableCell>
-                                <TableCell sx={{fontWeight: "bold"}}>Tên khách hàng</TableCell>
-                                <TableCell sx={{fontWeight: "bold"}}>Số điện thoại</TableCell>
-                                <TableCell sx={{fontWeight: "bold"}}>Email</TableCell>
-                                <TableCell sx={{fontWeight: "bold"}}>Ngày tạo</TableCell>
-                                <TableCell sx={{fontWeight: "bold"}}>Trạng thái</TableCell>
-                                <TableCell sx={{fontWeight: "bold"}}>Hành động</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {filteredInvoices
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map(({customer, invoice}, index) => (
-                                    <TableRow
-                                        key={invoice._id}
-                                        sx={{
-                                            "&:hover": {backgroundColor: "#e0f7fa"},
-                                        }}
-                                    >
-                                        <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
-                                        <TableCell>{customer.name}</TableCell>
-                                        <TableCell>{customer.phone}</TableCell>
-                                        <TableCell>{customer.email}</TableCell>
-                                        <TableCell>{invoice.createdAt}</TableCell>
-                                        <TableCell sx={{color: invoice.isPaid ? "green" : "red"}}>
-                                            {invoice.isPaid ? "Đã thanh toán" : "Chưa thanh toán"}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Tooltip title="Xem chi tiết và xác nhận thanh toán">
-                                                <IconButton color={invoice.isPaid ? "success" : "warning"}
-                                                            onClick={() => handleOpenConfirmPayment({customer, invoice})}>
-                                                    <CheckCircle/>
-                                                </IconButton>
-                                            </Tooltip>
-                                        </TableCell>
+                        {/* Invoice table */}
+                        <TableContainer sx={{boxShadow: 2, borderRadius: 1}}>
+                            <Table sx={{minWidth: 650}}>
+                                <TableHead sx={{backgroundColor: "#f0f0f0"}}>
+                                    <TableRow>
+                                        <TableCell sx={{fontWeight: "bold"}}>Số thứ tự</TableCell>
+                                        <TableCell sx={{fontWeight: "bold"}}>Tên khách hàng</TableCell>
+                                        <TableCell sx={{fontWeight: "bold"}}>Số điện thoại</TableCell>
+                                        <TableCell sx={{fontWeight: "bold"}}>Email</TableCell>
+                                        <TableCell sx={{fontWeight: "bold"}}>Ngày tạo</TableCell>
+                                        <TableCell sx={{fontWeight: "bold"}}>Trạng thái</TableCell>
+                                        <TableCell sx={{fontWeight: "bold"}}>Hành động</TableCell>
                                     </TableRow>
-                                ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                </TableHead>
+                                <TableBody>
+                                    {filteredInvoices
+                                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                        .map(({customer, invoice}, index) => (
+                                            <TableRow
+                                                key={invoice._id}
+                                                sx={{
+                                                    "&:hover": {backgroundColor: "#e0f7fa"},
+                                                }}
+                                            >
+                                                <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
+                                                <TableCell>{customer.name}</TableCell>
+                                                <TableCell>{customer.phone}</TableCell>
+                                                <TableCell>{customer.email}</TableCell>
+                                                <TableCell>{invoice.createdAt}</TableCell>
+                                                <TableCell sx={{color: invoice.isPaid ? "green" : "red"}}>
+                                                    {invoice.isPaid ? "Đã thanh toán" : "Chưa thanh toán"}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Tooltip title="Xem chi tiết và xác nhận thanh toán">
+                                                        <IconButton color={invoice.isPaid ? "success" : "warning"}
+                                                                    onClick={() => handleOpenConfirmPayment({
+                                                                        customer,
+                                                                        invoice
+                                                                    })}>
+                                                            <CheckCircle/>
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
 
-                <TablePagination
-                    component="div"
-                    count={filteredInvoices.length}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    rowsPerPage={rowsPerPage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
+                        <TablePagination
+                            component="div"
+                            count={filteredInvoices.length}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            rowsPerPage={rowsPerPage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
 
-                <ConfirmPayment
-                    open={openConfirmPayment}
-                    onClose={() => setOpenConfirmPayment(false)}
-                    selectedInvoice={selectedInvoice}
-                    onSuccessfulPayment={handleSuccessfulPayment}  // Cập nhật giao diện khi thanh toán thành công
-                />
+                        <ConfirmPayment
+                            open={openConfirmPayment}
+                            onClose={() => setOpenConfirmPayment(false)}
+                            selectedInvoice={selectedInvoice}
+                            onSuccessfulPayment={handleSuccessfulPayment}  // Cập nhật giao diện khi thanh toán thành công
+                        />
 
-
-            </Box>
+                    </>)}
+            < /Box>
 
         )
             ;
