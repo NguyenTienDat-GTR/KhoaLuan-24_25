@@ -98,79 +98,92 @@ const EditService = ({selectedService, onClose, open, onRefresh}) => {
                     <Typography color="error">{error}</Typography>
                 ) : (
                     <>
-                        <Box>
-                            <TextField
-                                label="Tên dịch vụ"
-                                variant="outlined"
-                                fullWidth
-                                value={service?.name || ""}
-                                onChange={(e) => setService({...service, name: e.target.value})}
-                                sx={{mb: 2}}
-                            />
-                            <TextField
-                                label="Giá"
-                                variant="outlined"
-                                fullWidth
-                                value={service?.price || ""}
-                                onChange={(e) => setService({...service, price: e.target.value})}
-                                sx={{mb: 2}}
-                            />
-                            <TextField
-                                label="Khoảng giá"
-                                variant="outlined"
-                                fullWidth
-                                value={service?.priceRange || ""}
-                                onChange={(e) => setService({...service, priceRange: e.target.value})}
-                                sx={{mb: 2}}
-                            />
-                            <TextField
-                                select
-                                label="Đơn vị tính"
-                                variant="outlined"
-                                fullWidth
-                                value={service?.unit || ""}
-                                onChange={(e) => setService({...service, unit: e.target.value})}
-                                sx={{mb: 2}}
-                            >
-                                {Object.entries(units).map(([key, label]) => (
-                                    <MenuItem key={key} value={key}>
-                                        {label}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                            <TextField
-                                select
-                                label="Thời gian thực hiện (phút)"
-                                variant="outlined"
-                                fullWidth
-                                value={service?.duration || ""}
-                                onChange={(e) => setService({...service, duration: e.target.value})}
-                                sx={{mb: 2}}
-                            >
-                                {duration.map((item) => (
-                                    <MenuItem key={item} value={item}>
-                                        {item}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                            <TextField
-                                label="Giảm giá (%)"
-                                variant="outlined"
-                                fullWidth
-                                value={service?.discount || ""}
-                                onChange={(e) => setService({...service, discount: e.target.value})}
-                                sx={{mb: 2}}
-                            />
-                            <TextField
-                                label="Mô tả"
-                                variant="outlined"
-                                fullWidth
-                                multiline
-                                rows={4}
-                                value={service?.description || ""}
-                                onChange={(e) => setService({...service, description: e.target.value})}
-                                sx={{mb: 2}}
-                            />
+                        <Box sx={{mt: 2, display: 'flex', gap: 2, width: '100%'}}>
+                            <Box sx={{
+                                flex: 1, // Chiếm 50% chiều rộng
+                                display: 'flex',
+                                flexDirection: 'column',
+
+                            }}>
+                                <TextField
+                                    label="Tên dịch vụ"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={service?.name || ""}
+                                    onChange={(e) => setService({...service, name: e.target.value})}
+                                    sx={{mb: 2}}
+                                />
+                                <TextField
+                                    label="Giá"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={service?.price || ""}
+                                    onChange={(e) => setService({...service, price: e.target.value})}
+                                    sx={{mb: 2}}
+                                />
+                                <TextField
+                                    label="Khoảng giá"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={service?.priceRange || ""}
+                                    onChange={(e) => setService({...service, priceRange: e.target.value})}
+                                    sx={{mb: 2}}
+                                />
+                                <TextField
+                                    select
+                                    label="Đơn vị tính"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={service?.unit || ""}
+                                    onChange={(e) => setService({...service, unit: e.target.value})}
+                                    sx={{mb: 2}}
+                                >
+                                    {Object.entries(units).map(([key, label]) => (
+                                        <MenuItem key={key} value={key}>
+                                            {label}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                            </Box>
+                            <Box sx={{
+                                flex: 1, // Chiếm 50% chiều rộng
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}>
+                                <TextField
+                                    select
+                                    label="Thời gian thực hiện (phút)"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={service?.duration || ""}
+                                    onChange={(e) => setService({...service, duration: e.target.value})}
+                                    sx={{mb: 2}}
+                                >
+                                    {duration.map((item) => (
+                                        <MenuItem key={item} value={item}>
+                                            {item}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                                <TextField
+                                    label="Giảm giá (%)"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={service?.discount || ""}
+                                    onChange={(e) => setService({...service, discount: e.target.value})}
+                                    sx={{mb: 2}}
+                                />
+                                <TextField
+                                    label="Mô tả"
+                                    variant="outlined"
+                                    fullWidth
+                                    multiline
+                                    rows={4}
+                                    value={service?.description || ""}
+                                    onChange={(e) => setService({...service, description: e.target.value})}
+                                    sx={{mb: 2}}
+                                />
+                            </Box>
                         </Box>
                     </>
                 )}

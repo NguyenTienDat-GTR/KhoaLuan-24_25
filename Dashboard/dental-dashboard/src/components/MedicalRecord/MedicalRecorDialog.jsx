@@ -45,7 +45,7 @@ const MedicalRecordDialog = ({open, onClose}) => {
         getAllTooth();
 
         // Cập nhật giá trị mặc định cho dịch vụ khi mở dialog
-        if (serviceAppointment && medicalRecord.usedService.length === 0) {
+        if (serviceAppointment && medicalRecord?.usedService?.length === 0) {
             // Tìm dịch vụ từ tên serviceAppointment
             const defaultService = services.find(service => service.name === serviceAppointment);
             if (defaultService) {

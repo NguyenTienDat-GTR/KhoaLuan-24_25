@@ -23,7 +23,8 @@ import {useNavigate} from "react-router-dom";
 import useCustomerIdStore from '../../hooks/patient/useCustomerIdStore';
 import useServiceAppointmentStore from "../../hooks/appointmentTicket/useServiceAppointmentStore";
 import useDoctorStore from "../../hooks/doctor/useGetAllDoctor.jsx";
-
+import TicketDetailDialog from "../../components/AppointmentTicket/TicketDetailDialog.jsx";
+import CreateAppointmentTicket from "../../components/AppointmentTicket/CreateAppointmentTicket.jsx";
 
 // CalendarComponent
 const CalendarComponent = memo(
@@ -118,6 +119,16 @@ const EventDetails = memo(({ticketById, handleCancel, user, handleConfirm}) => {
     const setServiceAppointment = useServiceAppointmentStore((state) => state.setServiceName);
     const setTicketId = useTicketStore((state) => state.setTicketId);
 
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    const handleOpenDialog = () => {
+        setIsDialogOpen(true);
+    };
+
+    const handleCloseDialog = () => {
+        setIsDialogOpen(false);
+    };
+
     const handleStartExam = (customerId, serviceName, ticketId) => {
         if (customerId) {
             setCustomerId(customerId);  // Cập nhật customerId vào store
@@ -166,6 +177,7 @@ const EventDetails = memo(({ticketById, handleCancel, user, handleConfirm}) => {
                                 cursor: "pointer",
                                 color: "blue",
                             }}
+                            onClick={handleOpenDialog}
                         >
                             Xem chi tiết
                         </Typography>
@@ -304,21 +316,6 @@ const EventDetails = memo(({ticketById, handleCancel, user, handleConfirm}) => {
                             !ticketById?.isCustomerArrived &&
                             user.user.role !== "doctor" && (
                                 <>
-                                    <Tooltip title="Sửa phiếu hẹn" arrow>
-                                        <Button
-                                            variant="contained"
-                                            color="warning"
-                                            sx={{
-                                                maxWidth: "150px",
-                                                overflow: "hidden",
-                                                textOverflow: "ellipsis",
-                                                whiteSpace: "nowrap",
-                                                fontSize: "0.8rem",
-                                            }}
-                                        >
-                                            Sửa lịch hẹn
-                                        </Button>
-                                    </Tooltip>
                                     <Tooltip title="Hủy phiếu hẹn" arrow>
                                         <Button
                                             variant="contained"
@@ -377,6 +374,12 @@ const EventDetails = memo(({ticketById, handleCancel, user, handleConfirm}) => {
                                 </Tooltip>
                             )}
                     </Box>
+
+                    <TicketDetailDialog
+                        open={isDialogOpen}
+                        ticket={ticketById}
+                        onClose={handleCloseDialog}
+                    />
                 </>
             ) : (
                 <Typography variant="body1">Chọn lịch hẹn để xem chi tiết</Typography>
@@ -399,6 +402,14 @@ const ManageAppointment = () => {
     const [openConfirm, setOpenConfirm] = useState(false);
     const {doctors, getAllDoctors} = useDoctorStore();
     const [selectedDoctor, setSelectedDoctor] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [openCreate, setOpenCreate] = useState(false)
+
+
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value.toLowerCase()); // Lưu giá trị tìm kiếm và chuyển về chữ thường
+    };
+
 
     useEffect(() => {
         if (token) {
@@ -478,14 +489,25 @@ const ManageAppointment = () => {
             .filter(Boolean);
 
     const fetchTickets = async () => {
-        if (token) {
+        if (!token || !userLoggedIn) return;
+
+        try {
             if (userLoggedIn?.user.role === "doctor") {
-                await getTicketByDoctor(token, userLoggedIn?.user.details.employeeID);
+                // Lấy lịch hẹn của bác sĩ đang đăng nhập
+                const doctorId = userLoggedIn?.user.details.employeeID;
+                await getTicketByDoctor(token, doctorId, {});
             } else {
-                await getAllTickets(token, {});
+                // Lấy tất cả lịch hẹn hoặc lọc theo bác sĩ được chọn
+                const filters = selectedDoctor
+                    ? {doctorId: selectedDoctor.employeeID}
+                    : {};
+                await getAllTickets(token, {filters});
             }
+        } catch (error) {
+            console.error("Lỗi khi lấy lịch hẹn:", error);
         }
     };
+
 
     // Hàm checkTime để cập nhật dotColor mỗi 30 giây
     const checkTime = useCallback(() => {
@@ -549,12 +571,31 @@ const ManageAppointment = () => {
     }, [selectedEvent, token]);
 
     useEffect(() => {
-        setFormattedEvents(
-            userLoggedIn?.user.role === "doctor"
-                ? formatTickets(ticketByDoctor)
-                : formatTickets(tickets)
-        );
-    }, [tickets, ticketByDoctor, userLoggedIn?.user.role]);
+        const processTickets = () => {
+            let filteredTickets = tickets;
+
+            if (userLoggedIn?.user.role === "doctor") {
+                // Chỉ hiển thị lịch hẹn của bác sĩ đang đăng nhập
+                filteredTickets = ticketByDoctor;
+            } else if (selectedDoctor) {
+                // Lọc theo bác sĩ được chọn (nếu có)
+                filteredTickets = tickets.filter(ticket => ticket.doctorId === selectedDoctor.employeeID);
+            }
+
+            // Áp dụng tìm kiếm theo tên khách hàng
+            if (searchQuery) {
+                filteredTickets = filteredTickets.filter(ticket =>
+                    ticket.customer?.name.toLowerCase().includes(searchQuery)
+                );
+            }
+
+            // Cập nhật các sự kiện đã định dạng
+            setFormattedEvents(formatTickets(filteredTickets));
+        };
+
+        processTickets();
+    }, [tickets, ticketByDoctor, selectedDoctor, searchQuery, userLoggedIn]);
+
 
     const handleEventClick = useCallback(
         (info) => setSelectedEvent(info.event),
@@ -568,6 +609,11 @@ const ManageAppointment = () => {
         setSelectedDoctor(selected); // Cập nhật bác sĩ đã chọn
     };
 
+    const filteredEvents = formattedEvents.filter((event) =>
+        event.title.toLowerCase().includes(searchQuery)
+    );
+
+
     return (
         <Box sx={{paddingY: 6, paddingX: 2}}>
             <Typography variant="h6" sx={{fontWeight: "bold", marginBottom: 2}}>
@@ -576,29 +622,32 @@ const ManageAppointment = () => {
             <Box sx={{mt: 2, width: "100%"}}>
                 <Box sx={{display: "flex", gap: 2, mb: 2}}>
                     <TextField
-                        label="Tìm kiếm lịch hẹn"
+                        label="Tìm kiếm lịch hẹn theo tên khách hàng"
                         variant="outlined"
                         sx={{width: "60%"}}
+                        value={searchQuery}
+                        onChange={handleSearchChange}
                     />
                     <Box
                         sx={{display: "flex", gap: 2, alignItems: "center", width: "40%"}}
                     >
-                        <FormControl sx={{minWidth: 200}}>
-                            <InputLabel>Bác sĩ</InputLabel>
-                            <Select
-                                value={selectedDoctor ? selectedDoctor.employeeID : ""}
-                                onChange={handleSelectChange}
-                                label="Bác sĩ"
-                            >
-                                <MenuItem value="">Tất cả</MenuItem>
-                                {doctors?.map((doctor) => (
-                                    <MenuItem key={doctor.employeeID} value={doctor.employeeID}>
-                                        {doctor.employeeName}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <Button variant="contained" color="primary">
+                        {userLoggedIn.user?.role !== "doctor" &&
+                            <FormControl sx={{minWidth: 200}}>
+                                <InputLabel>Bác sĩ</InputLabel>
+                                <Select
+                                    value={selectedDoctor ? selectedDoctor.employeeID : ""}
+                                    onChange={handleSelectChange}
+                                    label="Bác sĩ"
+                                >
+                                    <MenuItem value="">Tất cả</MenuItem>
+                                    {doctors?.map((doctor) => (
+                                        <MenuItem key={doctor.employeeID} value={doctor.employeeID}>
+                                            {doctor.employeeName}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>}
+                        <Button variant="contained" color="primary" onClick={() => setOpenCreate(true)}>
                             Thêm lịch hẹn
                         </Button>
                     </Box>
@@ -608,7 +657,7 @@ const ManageAppointment = () => {
             <Box sx={{display: "flex", height: "80vh"}}>
                 <Box sx={{flex: 7, mr: 2}}>
                     <CalendarComponent
-                        events={formattedEvents}
+                        events={filteredEvents}
                         onEventClick={handleEventClick}
                         onDateClick={handleDateClick}
                         weekendsVisible={weekendsVisible}
@@ -708,6 +757,13 @@ const ManageAppointment = () => {
                 ticketId={selectedEvent?.id}
                 refreshTicket={() => getTicketById(token, selectedEvent?.id)}
             />
+
+            <CreateAppointmentTicket
+                open={openCreate}
+                onClose={() => setOpenCreate(false)}
+                onSuccess={fetchTickets}
+            />
+
         </Box>
     );
 };

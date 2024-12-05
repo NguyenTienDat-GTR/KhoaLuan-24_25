@@ -116,34 +116,36 @@ const Overview = ({isSidebarOpen}) => {
         setSelectedMonth(option);
     };
 
-
     useEffect(() => {
         setFilters({
             year: selectedYear?.value !== "all" ? selectedYear?.value : null,
-            quarter: selectedQuarter ? selectedQuarter?.value : null,
-            month: selectedMonth ? selectedMonth?.value : null,
+            quarter: selectedQuarter?.value || null,
+            month: selectedMonth?.value || null,
+            doctorId: userLoggedIn.user?.role === "doctor"
+                ? userLoggedIn.user?.details.employeeID
+                : null,
         });
-        if (userLoggedIn.user?.role === "doctor") {
-            setFilters({...filters, doctorId: userLoggedIn.user?.details.employeeID});
+    }, [selectedYear, selectedQuarter, selectedMonth, userLoggedIn]);
+
+
+    const fetchData = async () => {
+        // Gọi API khi có thay đổi trong các bộ lọc
+        if (userLoggedIn?.user.role === "admin") {
+            await getAllPatients(token);
+            await getAllTickets(token, {filters});
+            await getAllRequestAppointment(token, {filters})
+            await getAllInvoices(token, {filters})
+            await getTotalAmount(token, {filters})
+
+        } else if (userLoggedIn?.user.role === "doctor") {
+            await getTicketByDoctor(token, userLoggedIn.user?.details.employeeID, {filters});
         }
-
-    }, [selectedYear, selectedQuarter, selectedMonth]);
-
+    }
 
     useEffect(() => {
         if (token && (selectedYear || selectedQuarter || selectedMonth)) {
+            fetchData();
 
-            // Gọi API khi có thay đổi trong các bộ lọc
-            if (userLoggedIn?.user.role === "admin") {
-                getAllPatients(token);
-                getAllTickets(token, {filters});
-                getAllRequestAppointment(token, {filters})
-                getAllInvoices(token, {filters})
-                getTotalAmount(token, {filters})
-
-            } else if (userLoggedIn?.user.role === "doctor") {
-                getTicketByDoctor(token, userLoggedIn.user?.details.employeeID, {filters});
-            }
         }
     }, [selectedYear, selectedQuarter, selectedMonth, token, filters]);
 
@@ -157,7 +159,7 @@ const Overview = ({isSidebarOpen}) => {
         } else if (userLoggedIn?.user.role === "doctor") {
             setCountTicket(ticketByDoctor.length);
         }
-    }, [patients, tickets, ticketByDoctor, filters, invoices, appointmentRequests]);
+    }, [patients, tickets, ticketByDoctor, filters, invoices, appointmentRequests, token]);
 
     return (
         <Box sx={{paddingY: 6, paddingX: 0.5}}>
@@ -232,7 +234,7 @@ const Overview = ({isSidebarOpen}) => {
                                     fontWeight: "bold",
                                 }}
                             >
-                                {userLoggedIn?.user.role !== "doctor" ? "Tổng số lịch hẹn" : "Số lịch hẹn yêu cầu"}
+                                {userLoggedIn?.user.role !== "doctor" ? "Tổng số lịch hẹn" : "Số lịch hẹn"}
                             </Typography>
                         </Box>
                         <Typography

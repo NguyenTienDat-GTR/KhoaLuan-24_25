@@ -307,6 +307,7 @@ const EmployeeDetail = ({ open, onClose, employee, onSuccess }) => {
         hideProgressBar: false,
       });
       console.error("Cập nhật thất bại:", error);
+      setLoading(false)
     }
   };
 

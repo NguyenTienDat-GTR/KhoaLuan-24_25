@@ -22,7 +22,7 @@ import {CheckCircle, Payments, Visibility} from "@mui/icons-material";
 import useUserStore from "../hooks/auth/useUserStore.jsx";
 import useInvoiceStore from "../hooks/Invoice/useInvoiceStore.jsx";
 import ConfirmPayment from "../components/Invoice/ConfirmPayment.jsx";
-// import page403 from "./page403.js";
+import Page403 from "./page403.jsx";
 
 const ManageInvoice = () => {
         const [searchTerm, setSearchTerm] = useState("");
@@ -37,7 +37,7 @@ const ManageInvoice = () => {
 
         useEffect(() => {
             if (token) {
-                getAllInvoices(token);
+                getAllInvoices(token, {});
             }
         }, [token]);
 
@@ -60,23 +60,11 @@ const ManageInvoice = () => {
             setPage(0);
         };
 
-        const handleRefresh = async () => {
-            if (token) {
-                await getAllInvoices(token);  // Làm mới danh sách hóa đơn
-                if (selectedInvoice) {
-                    // Cập nhật lại thông tin hóa đơn đã chọn
-                    const updatedInvoice = invoices.find(inv => inv.invoice._id === selectedInvoice.invoice._id);
-                    if (updatedInvoice) {
-                        setSelectedInvoice(updatedInvoice);  // Cập nhật lại selectedInvoice
-                    }
-                }
-            }
-        }
 
         const handleSuccessfulPayment = async (updatedInvoice) => {
             if (token) {
                 // Làm mới danh sách hóa đơn
-                await getAllInvoices(token);
+                await getAllInvoices(token, {});
             }
 
             // // Cập nhật selectedInvoice với trạng thái mới của hóa đơn
@@ -95,7 +83,7 @@ const ManageInvoice = () => {
         return (
 
             <Box sx={{paddingY: 6, paddingX: 2}}>
-                {userLoggedIn?.user.role !== "doctor" && (
+                {userLoggedIn?.user.role !== "doctor" ? (
                     <>
                         <Typography variant="h6" sx={{fontWeight: "bold", marginBottom: 2}}>
                             Quản lý hóa đơn
@@ -204,7 +192,9 @@ const ManageInvoice = () => {
                             onSuccessfulPayment={handleSuccessfulPayment}  // Cập nhật giao diện khi thanh toán thành công
                         />
 
-                    </>)}
+                    </>) : (
+                    <Page403/>
+                )}
             < /Box>
 
         )

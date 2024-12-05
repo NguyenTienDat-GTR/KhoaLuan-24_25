@@ -57,6 +57,10 @@ const ManagePolicy = React.lazy(() => import("./pages/ManagePolicy"));
 
 const ManageInvoice = React.lazy(() => import("./pages/ManageInvoice"));
 
+const Profile = React.lazy(() => import("./pages/Profile"));
+
+const AccountInfo = React.lazy(() => import("./pages/AccountInfo"));
+
 const LazyComponent = ({Component}) => {
     const [isInView, setIsInView] = useState(false);
     const {ref, inView} = useInView({
@@ -201,11 +205,6 @@ function App() {
             text: "Hóa đơn",
             icon: <Payment sx={{color: "rgba(21,182,210)"}}/>,
             path: "dashboard/quan-li-hoa-don",
-        },
-        {
-            text: "Báo cáo",
-            icon: <BarChart sx={{color: "rgba(21,182,210)"}}/>,
-            path: "dashboard/bao-cao",
         },
         {
             text: "Chính sách",
@@ -389,6 +388,35 @@ function App() {
                                         />
                                     }
                                 />
+                                <Route
+                                    path="/dashboard/ho-so-ca-nhan"
+                                    element={
+                                        <LazyComponent
+                                            Component={() => (
+                                                <Profile isSidebarOpen={sidebarOpen}/>
+                                            )}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path="/dashboard/ho-so-ca-nhan"
+                                    element={
+                                        <LazyComponent
+                                            Component={() => (
+                                                <Profile isSidebarOpen={sidebarOpen}/>
+                                            )}
+                                        />
+                                    }
+                                /><Route
+                                path="/dashboard/thong-tin-tai-khoan"
+                                element={
+                                    <LazyComponent
+                                        Component={() => (
+                                            <AccountInfo isSidebarOpen={sidebarOpen}/>
+                                        )}
+                                    />
+                                }
+                            />
                             </>
                         ) : (
                             <Route

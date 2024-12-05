@@ -8,6 +8,7 @@ import MedicalRecordDialog from '../components/MedicalRecord/MedicalRecorDialog'
 import {useNavigate} from "react-router-dom";
 import useServiceAppointmentStore from "../hooks/appointmentTicket/useServiceAppointmentStore.jsx";
 import useTicketStore from "../hooks/appointmentTicket/useTicketStore.jsx";
+import Page403 from "./page403.jsx"
 
 const MedicalRecordWithCustomer = () => {
     const customerId = useCustomerIdStore((state) => state.customerId);
@@ -96,27 +97,8 @@ const MedicalRecordWithCustomer = () => {
             fetchCustomer();
         }
         fetchServices();
-        console.log(customerId)
     }, [customerId, token]);
 
-    const handleAddMedicalRecord = () => {
-        // Thực hiện thêm MedicalRecord
-        // Thực hiện validation và API call để lưu MedicalRecord
-    };
-
-    const handleServiceChange = (event, serviceId) => {
-        const newUsedService = [...medicalRecord.usedService];
-        const serviceIndex = newUsedService.findIndex(s => s.service === serviceId);
-        if (serviceIndex !== -1) {
-            newUsedService.splice(serviceIndex, 1);
-        } else {
-            newUsedService.push({
-                service: serviceId,
-                for: '', // Có thể chọn tooth hoặc jaw sau
-            });
-        }
-        setMedicalRecord({...medicalRecord, usedService: newUsedService});
-    };
 
     const handleBack = () => {
         setCustomerId(null);
@@ -127,88 +109,93 @@ const MedicalRecordWithCustomer = () => {
 
     return (
         <Box sx={{paddingY: 6, paddingX: 2}}>
-            <Typography variant="h6" sx={{fontWeight: "bold", marginBottom: 2}}>
-                Hồ sơ đều trị của bệnh nhân
-            </Typography>
-            <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
-                <Typography variant="body1" onClick={handleBack}
-                            sx={{cursor: 'pointer', textDecoration: 'underline', color: 'blue'}}>Quay
-                    lại</Typography>
-                <Button variant="contained" color="success" onClick={handleOpenDialog}>Tạo hồ sơ mới</Button>
+            {userLoggedIn.user.role !== "employee" ?
+                <>
+                    <Typography variant="h6" sx={{fontWeight: "bold", marginBottom: 2}}>
+                        Hồ sơ đều trị của bệnh nhân
+                    </Typography>
+                    <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
+                        <Typography variant="body1" onClick={handleBack}
+                                    sx={{cursor: 'pointer', textDecoration: 'underline', color: 'blue'}}>Quay
+                            lại</Typography>
+                        <Button variant="contained" color="success" onClick={handleOpenDialog}>Tạo hồ sơ mới</Button>
 
-            </Box>
+                    </Box>
 
-            <Box sx={{display: 'flex', justifyContent: 'flex-start', alignItems: "center", gap: 3, mt: 2}}>
-                <Typography><b>Tên bệnh nhân:</b> {customer?.name}</Typography>
-                <Typography><b>Điện thoại:</b> {customer?.phone}</Typography>
-                <Typography><b>Email:</b> {customer?.email || 'Không có'}</Typography>
-                <Typography><b>Giới
-                    tính:</b> {customer?.gender === "male" ? "Nam" : customer?.gender === "female" ? "Nữ" : ""}
-                </Typography>
-            </Box>
+                    <Box sx={{display: 'flex', justifyContent: 'flex-start', alignItems: "center", gap: 3, mt: 2}}>
+                        <Typography><b>Tên bệnh nhân:</b> {customer?.name}</Typography>
+                        <Typography><b>Điện thoại:</b> {customer?.phone}</Typography>
+                        <Typography><b>Email:</b> {customer?.email || 'Không có'}</Typography>
+                        <Typography><b>Giới
+                            tính:</b> {customer?.gender === "male" ? "Nam" : customer?.gender === "female" ? "Nữ" : ""}
+                        </Typography>
+                    </Box>
 
 
-            {medicalRecords.length > 0 ? (
-                <Grid container spacing={2}>
-                    {medicalRecords.map((record, index) => (
-                        <Grid item xs={12} key={index}>
-                            <Box sx={{
-                                border: '1px solid #ccc',
-                                padding: 2,
-                                borderRadius: 1,
-                                backgroundColor: '#f9f9f9',
-                                mt: 3
-                            }}>
-                                <Typography variant="h6" sx={{fontWeight: 'bold'}}>Ngày khám: {record.date}</Typography>
-                                <Typography variant="body1"><b>Bác sĩ điều trị:</b> {record.doctorName || 'N/A'}
-                                </Typography>
-                                <Typography variant="body1"><b>Chẩn đoán:</b> {record.diagnosis}</Typography>
-                                <Typography variant="body1"><b>Kết quả:</b> {record.result}</Typography>
-                                <Typography variant="body1"><b>Dịch vụ đã dùng:</b>
-                                    {record?.usedService.map((service, idx) => (
-                                        <span key={idx}>
+                    {medicalRecords?.length > 0 ? (
+                        <Grid container spacing={2}>
+                            {medicalRecords?.map((record, index) => (
+                                <Grid item xs={12} key={index}>
+                                    <Box sx={{
+                                        border: '1px solid #ccc',
+                                        padding: 2,
+                                        borderRadius: 1,
+                                        backgroundColor: '#f9f9f9',
+                                        mt: 3
+                                    }}>
+                                        <Typography variant="h6" sx={{fontWeight: 'bold'}}>Ngày
+                                            khám: {record.date}</Typography>
+                                        <Typography variant="body1"><b>Bác sĩ điều trị:</b> {record.doctorName || 'N/A'}
+                                        </Typography>
+                                        <Typography variant="body1"><b>Chẩn đoán:</b> {record.diagnosis}</Typography>
+                                        <Typography variant="body1"><b>Kết quả:</b> {record.result}</Typography>
+                                        <Typography variant="body1"><b>Dịch vụ đã dùng:</b>
+                                            {record?.usedService.map((service, idx) => (
+                                                <span key={idx}>
                         {service.service?.name}
-                                            {service.for && ` (Dùng cho: ${service.for})`}
-                                            {idx < record.usedService.length - 1 && ', '}
+                                                    {service.for && ` (Dùng cho: ${service.for})`}
+                                                    {idx < record.usedService.length - 1 && ', '}
                     </span>
-                                    ))}
-                                </Typography>
-                                <Typography variant="body1"><b>Ghi chú:</b> {record.note || 'Không có'}</Typography>
-                            </Box>
+                                            ))}
+                                        </Typography>
+                                        <Typography variant="body1"><b>Ghi chú:</b> {record.note || 'Không có'}
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                            ))}
+
                         </Grid>
-                    ))}
+                    ) : (
+                        <Box sx={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                            <Typography>Không có hồ sơ bệnh án nào.</Typography>
+                        </Box>
+                    )}
 
-                </Grid>
-            ) : (
-                <Box sx={{display: 'flex', justifyContent: 'center', width: '100%'}}>
-                    <Typography>Không có hồ sơ bệnh án nào.</Typography>
-                </Box>
-            )}
-
-            {/* Pagination */
-            }
-            <Box sx={{display: 'flex', justifyContent: 'center', marginTop: 2}}>
-                <Button
-                    variant="outlined"
-                    disabled={currentPage <= 1}
-                    onClick={() => fetchMedicalRecords(currentPage - 1)}
-                >
-                    Trang trước
-                </Button>
-                <Typography sx={{marginX: 2, alignSelf: 'center'}}>
-                    Trang {currentPage} / {totalPages}
-                </Typography>
-                <Button
-                    variant="outlined"
-                    disabled={currentPage >= totalPages}
-                    onClick={() => fetchMedicalRecords(currentPage + 1)}
-                >
-                    Trang sau
-                </Button>
-            </Box>
-            {/* MedicalRecord Dialog */
-            }
-            <MedicalRecordDialog open={openDialog} onClose={handleCloseDialog}/>
+                    {/* Pagination */
+                    }
+                    <Box sx={{display: 'flex', justifyContent: 'center', marginTop: 2}}>
+                        <Button
+                            variant="outlined"
+                            disabled={currentPage <= 1}
+                            onClick={() => fetchMedicalRecords(currentPage - 1)}
+                        >
+                            Trang trước
+                        </Button>
+                        <Typography sx={{marginX: 2, alignSelf: 'center'}}>
+                            Trang {currentPage} / {totalPages}
+                        </Typography>
+                        <Button
+                            variant="outlined"
+                            disabled={currentPage >= totalPages}
+                            onClick={() => fetchMedicalRecords(currentPage + 1)}
+                        >
+                            Trang sau
+                        </Button>
+                    </Box>
+                    {/* MedicalRecord Dialog */
+                    }
+                    <MedicalRecordDialog open={openDialog} onClose={handleCloseDialog}/>
+                </> : <Page403/>}
         </Box>
 
 

@@ -52,6 +52,37 @@ const ResponeRequest = ({open, onClose, onSuccess, selectedRequest}) => {
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
+        if (selectedRequest && selectedRequest.doctorId && selectedRequest.appointmentDate && doctorAvailable.length > 0) {
+            // Tìm bác sĩ tương ứng
+            const matchedDoctor = doctorAvailable.find(
+                (doctor) => doctor.doctorId === selectedRequest.doctorId
+            );
+
+            if (matchedDoctor) {
+                // Lấy các thời gian rảnh trong ngày
+                const availableTimesForDate = matchedDoctor.availableTimes[selectedRequest.appointmentDate] || [];
+
+                // Kiểm tra thời gian được chọn có nằm trong availableTimes không
+                const isTimeAvailable = availableTimesForDate.includes(selectedRequest.appointmentTime);
+
+                // Hiển thị trạng thái
+                if (isTimeAvailable) {
+                    toast.success("Không trùng lịch");
+                } else {
+                    toast.warning("Trùng lịch");
+                }
+            }
+        }
+    }, [selectedRequest]);
+
+    useEffect(() => {
+        if (formData.time) {
+            setSelectedTime(formData.time);
+        }
+    }, [formData.time]);
+
+
+    useEffect(() => {
         if (selectedRequest) {
             setFormData({
                 time: selectedRequest?.appointmentTime || "",
@@ -71,8 +102,10 @@ const ResponeRequest = ({open, onClose, onSuccess, selectedRequest}) => {
         if (token) {
             getAllService();
         }
-        if (selectedRequest)
+        if (selectedRequest) {
             setRequestData(selectedRequest);
+        }
+
     }, []);
 
     useEffect(() => {
@@ -103,15 +136,6 @@ const ResponeRequest = ({open, onClose, onSuccess, selectedRequest}) => {
 
 
     useEffect(() => {
-        if (selectedDoctor && formData.date) {
-            const times = selectedDoctor.availableTimes?.[formData.date] || [];
-            setAvailableTimes(times);
-        } else {
-            setAvailableTimes([]);
-        }
-    }, [selectedDoctor, formData.date]);
-
-    useEffect(() => {
         if (selectedRequest && services.length > 0) {
             const matchingService = services.find(
                 (service) => service.name === selectedRequest.service
@@ -123,20 +147,6 @@ const ResponeRequest = ({open, onClose, onSuccess, selectedRequest}) => {
         }
     }, [selectedRequest, services]);
 
-    useEffect(() => {
-        if (selectedDoctor && formData.date) {
-            const times = selectedDoctor.availableTimes?.[formData.date] || [];
-            setAvailableTimes(times);
-            // Nếu thời gian đã chọn không có trong availableTimes, đặt lại selectedTime
-            if (!times.includes(formData.time)) {
-                setSelectedTime(null);
-            }
-        } else {
-            setAvailableTimes([]);
-            setSelectedTime(null); // Đặt lại thời gian khi không có bác sĩ hoặc ngày
-        }
-    }, [selectedDoctor, formData.date]);
-
 
     const handleDateChange = (e) => {
         const value = e.target.value; // Giá trị dạng "YYYY-MM-DD"
@@ -144,6 +154,7 @@ const ResponeRequest = ({open, onClose, onSuccess, selectedRequest}) => {
         setFormData({
             ...formData,
             date: formattedDate,
+            time: null,
         });
     };
 
@@ -161,23 +172,25 @@ const ResponeRequest = ({open, onClose, onSuccess, selectedRequest}) => {
         : "";
 
     const handleReset = () => {
-        if (selectedRequest) {
-            setFormData(prevFormData => {
-                const matchingService = services.find(
-                    (service) => service.name === (requestData?.service || "")
-                );
-                setSelectedDoctor(selectedRequest?.doctorId || null);
-                setSelectedTime(selectedRequest?.appointmentTime || null);
-                return {
-                    time: selectedRequest?.appointmentTime || "",
-                    date: selectedRequest?.appointmentDate || "",
-                    doctorId: selectedRequest?.doctorId || "",
-                    service: matchingService || null,
-                    notes: selectedRequest?.note || "",
-                };
-            });
 
-        }
+        setFormData(prevFormData => {
+            const matchingService = services.find(
+                (service) => service.name === (selectedRequest?.service || "")
+            );
+            const selectedDoc = doctorAvailable.find(doctor => doctor.doctorId === selectedRequest?.doctorId);
+            if (selectedDoc) {
+                setSelectedDoctor(selectedDoc);
+            }
+            setSelectedTime(selectedRequest?.appointmentTime || null);
+            return {
+                time: selectedRequest?.appointmentTime || "",
+                date: selectedRequest?.appointmentDate || "",
+                doctorId: selectedRequest?.doctorId || "",
+                service: matchingService || null,
+                notes: selectedRequest?.note || "",
+            };
+        });
+
     };
 
 
@@ -250,7 +263,6 @@ const ResponeRequest = ({open, onClose, onSuccess, selectedRequest}) => {
             note: formData.note || "",
             editBy: JSON.stringify(editByObject),
         };
-        console.log("Request edit:", requestEdit);
         try {
             // Gửi yêu cầu cập nhật thông tin yêu cầu
             const response = await axios.put(
@@ -280,9 +292,6 @@ const ResponeRequest = ({open, onClose, onSuccess, selectedRequest}) => {
                 })
                 setSelectedTime(updatedRequest.appointmentTime);
                 setSelectedDoctor(updatedRequest.doctorId);
-                // Gọi lại getRequestById để làm mới thông tin
-                // getRequestById(response.data.updatedRequest._id, token);
-                // console.log("Updated Request:", response.data.updatedRequest);
                 onSuccess(response.data.updatedRequest);
                 toast.success("Cập nhật yêu cầu thành công", {autoClose: 3000});
                 setIsEditing(false);
@@ -363,9 +372,6 @@ const ResponeRequest = ({open, onClose, onSuccess, selectedRequest}) => {
         }
     };
 
-    const handleOpenReject = () => {
-        setOpenReject(true);
-    };
     const handleCloseReject = () => {
         setOpenReject(false);
         setReasonReject("");
@@ -420,7 +426,7 @@ const ResponeRequest = ({open, onClose, onSuccess, selectedRequest}) => {
 
                             <TextField
                                 type="date"
-                                lable="Chọn ngày hẹn"
+                                lable="Ngày hẹn"
                                 name="date"
                                 value={formattedAppointmentDate}
                                 onChange={handleDateChange}
@@ -436,6 +442,7 @@ const ResponeRequest = ({open, onClose, onSuccess, selectedRequest}) => {
                                     readOnly: !isEditing,
                                 }}
                             />
+                            <Typography sx={{fontSize: '1.1rem'}}>Giờ yêu cầu: {formData.time} giờ</Typography>
 
                             <FormControl fullWidth sx={{mb: 2}}>
                                 <InputLabel>Vui lòng chọn bác sĩ</InputLabel>
