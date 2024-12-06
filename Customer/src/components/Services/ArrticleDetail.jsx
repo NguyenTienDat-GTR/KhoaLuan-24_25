@@ -98,9 +98,9 @@ const ArticleDetail = () => {
             <Box sx={{marginTop: 18}}>
                 <Typography variant="h4" sx={{color: 'red', textAlign: 'center',}}>{article.title}</Typography>
                 {article.imageUrls && article.imageUrls.length > 0 && (
-                    <Box sx={{marginTop: 1, marginLeft: {md: 30}}}>
+                    <Box sx={{marginTop: 1, marginLeft: {md: 30}, display: 'flex', justifyContent: 'center'}}>
                         {article.imageUrls.map((imageUrl, imgIndex) => (
-                            <img key={imgIndex} src={imageUrl} width="100%" height={400}/>
+                            <img key={imgIndex} src={imageUrl} width="60%" height={400}/>
                         ))}
                     </Box>
                 )}
@@ -114,10 +114,10 @@ const ArticleDetail = () => {
 
                         {/* Hiển thị hình ảnh nếu có */}
                         {mainHeading.imageUrls && mainHeading.imageUrls.length > 0 && (
-                            <Box sx={{marginTop: 1}}>
+                            <Box sx={{marginTop: 1, display: 'flex', justifyContent: 'center'}}>
                                 {mainHeading.imageUrls.map((imageUrl, imgIndex) => (
                                     <img key={imgIndex} src={imageUrl} alt={`Main heading ${index}-${imgIndex}`}
-                                         width="100%"/>
+                                         width="50%"/>
                                 ))}
                             </Box>
                         )}
@@ -139,10 +139,10 @@ const ArticleDetail = () => {
                                 }}>{`${subIndex + 1}. ${subHeading.title}`}</Typography>
                                 {/* Hiển thị hình ảnh nếu có */}
                                 {subHeading.imageUrls && subHeading.imageUrls.length > 0 && (
-                                    <Box sx={{marginTop: 1}}>
+                                    <Box sx={{marginTop: 1, display: 'flex', justifyContent: 'center'}}>
                                         {subHeading.imageUrls.map((imageUrl, imgIndex) => (
                                             <img key={imgIndex} src={imageUrl}
-                                                 alt={`Subheading ${subIndex}-${imgIndex}`} width="100%"/>
+                                                 alt={`Subheading ${subIndex}-${imgIndex}`} width="50%"/>
                                         ))}
                                     </Box>
                                 )}
@@ -158,10 +158,10 @@ const ArticleDetail = () => {
                                         <Typography variant="subtitle1">{subSubheading.title}</Typography>
                                         {/* Hiển thị hình ảnh nếu có */}
                                         {subSubheading.imageUrls && subSubheading.imageUrls.length > 0 && (
-                                            <Box sx={{marginTop: 1}}>
+                                            <Box sx={{marginTop: 1, display: 'flex', justifyContent: 'center'}}>
                                                 {subSubheading.imageUrls.map((imageUrl, imgIndex) => (
                                                     <img key={imgIndex} src={imageUrl}
-                                                         alt={`SubSubheading ${subSubIndex}-${imgIndex}`} width="100%"/>
+                                                         alt={`SubSubheading ${subSubIndex}-${imgIndex}`} width="50%"/>
                                                 ))}
                                             </Box>
                                         )}

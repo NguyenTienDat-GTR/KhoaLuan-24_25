@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import {useInView} from "react-intersection-observer";
 import {Toaster} from 'react-hot-toast';
 import PolicyDetail from "./components/Policy/PolicyDetail";
+import KnowledgeDetail from "./components/Infors/KnowledgeDetail";
 
 // Lazy load components
 const Home = React.lazy(() => import("./pages/Home"));
@@ -89,7 +90,7 @@ const LazyComponent = ({Component}) => {
 const App = () => {
     return (
         <>
-            <Toaster />
+            <Toaster/>
             <Router>
                 <Routes>
                     <Route path="/" element={<LazyComponent Component={Home}/>}/>
@@ -99,7 +100,7 @@ const App = () => {
                         element={<LazyComponent Component={Contact}/>}
                     />
                     <Route path="/service/:serviceId" element={<ArticleDetail/>}/>
-                    <Route path="/policy/:policyId" element={<PolicyDetail />} />
+                    <Route path="/policy/:policyId" element={<PolicyDetail/>}/>
                     <Route
                         path="/Booking"
                         element={<LazyComponent Component={Booking}/>}
@@ -123,7 +124,8 @@ const App = () => {
                         path="/nieng-rang-mac-cai"
                         element={<LazyComponent Component={Bracket}/>}
                     />
-
+                    <Route path="/Knowledge/:knowledgeId" element={<KnowledgeDetail/>}/>
+                    <Route path="/Knowledge" element={<LazyComponent Component={Infor}/>}/>
 
                     {/* Add more routes */}
                 </Routes>

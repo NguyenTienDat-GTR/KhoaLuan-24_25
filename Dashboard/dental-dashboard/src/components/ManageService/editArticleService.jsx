@@ -6,10 +6,9 @@ import {
 import axios from "../../config/axiosConfig";
 import useUserStore from "../../hooks/auth/useUserStore";
 import useGetAllService from "../../hooks/service/useGetAllServiceType";
-import {toast} from "react-toastify";
 
 
-const EditArticleService = ({selectedService, onClose, open}) => {
+const EditArticleService = ({serviceId, onClose, open}) => {
     const [service, setService] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -17,20 +16,53 @@ const EditArticleService = ({selectedService, onClose, open}) => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const {userLoggedIn, setUserLoggedIn, token} = useUserStore();
     const {services, getAllService} = useGetAllService();
+    const [saving, setSaving] = useState(false);
 
+    useEffect(() => {
+        if (token) {
+            setUserLoggedIn(token);
+        }
+    }, [token]);
 
     useEffect(() => {
         if (token) {
             getAllService();
         }
-    }, [token]);
+    }, [token, services]);
 
 
-    useEffect(() => {
-        if (selectedService) {
-            setService({...selectedService});
+    // Hàm fetch chi tiết bài viết
+    const fetchDetails = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const response = await axios.get(`/service/getById/${serviceId}`);
+            setService(response.data?.service || response.data);
+        } catch (error) {
+            console.error("Error fetching article:", error);
+            setError("Không thể tải thông tin bài viết. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
         }
-    }, [selectedService]);
+    };
+
+    // Khi modal mở, reset lại trạng thái và gọi API để lấy dữ liệu nếu có serviceId
+    useEffect(() => {
+        if (open && serviceId) {
+            fetchDetails();
+        }
+    }, [open, serviceId]);
+
+    // Tự động đóng Dialog sau 5 giây
+    useEffect(() => {
+        if (dialogOpen) {
+            const timer = setTimeout(() => {
+                setDialogOpen(false);
+            }, 5000); // Đóng sau 5 giây
+            return () => clearTimeout(timer); // Dọn dẹp timer khi dialogOpen thay đổi
+        }
+    }, [dialogOpen]);
 
     const handleInputChange = (path, value) => {
         // Chia path thành các phần của object (ví dụ: "blog.title", "blog.mainHeadings[0].title")
@@ -101,38 +133,58 @@ const EditArticleService = ({selectedService, onClose, open}) => {
 
     const handleSave = async () => {
         try {
+            setLoading(true);
+            setSaving(true);
             const updatedArticle = {
                 ...service?.blog,
                 title: service?.blog?.title,
                 createBy: service?.blog?.createBy,
                 content: service?.blog?.content,
+                mainHeadings: service?.blog?.mainHeadings,
             };
             console.log(updatedArticle);
-            setLoading(true)
-            const response = await axios.put(`/article/update/${service._id}`, updatedArticle, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+
+            const response = await axios.put(`/article/update/${serviceId}`,
+                updatedArticle, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
             console.log("kết quả lưu là:", response)
             if (response.status === 200) {
-                toast.success(response.data?.message, {
-                    autoClose: 2000,
-                });
-                setLoading(false)
+                alert("Cập nhật dịch vụ thành công!");
                 onClose();
             } else {
                 console.error(response);
-                setLoading(false)
-                toast.error("Không thể cập nhật dịch vụ. Vui lòng thử lại.");
+                alert("Không thể cập nhật dịch vụ. Vui lòng thử lại.");
             }
         } catch (error) {
             console.error("Lỗi cập nhật dịch vụ:", error.response?.data || error.message);
-            setLoading(false)
-            toast.error(`Lỗi: ${error.response?.data?.message || "Không thể cập nhật dịch vụ."}`);
+            alert(`Lỗi: ${error.response?.data?.message || "Không thể cập nhật dịch vụ."}`);
+        } finally {
+            setLoading(false); // Kết thúc trạng thái loading
+            setSaving(false);
         }
     };
+
+
+    // Hiển thị khi đang tải
+    if (loading) {
+        return (
+            <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+                <DialogTitle>Chỉnh sửa bài viết dịch vụ</DialogTitle>
+                <DialogContent>
+                    <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+                        <CircularProgress/>
+                        <Typography sx={{ml: 2}}>
+                            {saving ? "Đang lưu bài viết..." : "Đang tải bài viết dịch vụ..."}
+                        </Typography>
+                    </Box>
+                </DialogContent>
+            </Dialog>
+        );
+    }
 
     return (
         <>
@@ -165,7 +217,6 @@ const EditArticleService = ({selectedService, onClose, open}) => {
                                         value={service.blog.createBy || ""}
                                         onChange={(e) => handleInputChange("blog.createBy", e.target.value)}
                                         sx={{mb: 2}}
-                                        disabled={true}
                                     />
                                     {/* Các tiêu đề chính */}
                                     {service.blog.mainHeadings?.length > 0 ? (
@@ -174,7 +225,7 @@ const EditArticleService = ({selectedService, onClose, open}) => {
                                                 <strong>Các tiêu đề chính:</strong>
                                             </Typography>
                                             {service.blog.mainHeadings.map((main, index) => (
-                                                <Box key={index} sx={{mt: 1}}>
+                                                <Box key={index} sx={{mb: 2}}>
                                                     <TextField
                                                         label={`Tiêu đề chính ${index + 1}`}
                                                         variant="outlined"
@@ -195,10 +246,10 @@ const EditArticleService = ({selectedService, onClose, open}) => {
                                                         onChange={(e) =>
                                                             handleInputChange(`blog.mainHeadings[${index}].content`, e.target.value)
                                                         }
-                                                        sx={{mt: 1}}
+                                                        sx={{mb: 2}}
                                                     />
                                                     {main.imageUrls?.length && (
-                                                        <Box sx={{mt: 1}}>
+                                                        <Box sx={{mb: 2}}>
                                                             <Typography variant="body1" sx={{fontWeight: 'bold'}}>
                                                                 Hình ảnh hiện tại:
                                                             </Typography>
@@ -240,21 +291,23 @@ const EditArticleService = ({selectedService, onClose, open}) => {
                     )}
                 </DialogContent>
                 <DialogActions>
-                    {!loading ? (
-                        <>
-                            <Button onClick={onClose} color="error" variant="outlined">
-                                Đóng
-                            </Button>
-                            <Button onClick={handleSave} color="success" variant="contained">
-                                Lưu
-                            </Button>
-                        </>) : (
-                        <Typography>Đang xử lí.....</Typography>
-                    )}
+                    <Button onClick={onClose}>Đóng</Button>
+                    <Button color="primary" onClick={handleSave}>
+                        Lưu
+                    </Button>
                 </DialogActions>
             </Dialog>
 
-
+            {/* Dialog hiển thị thông báo thành công hoặc lỗi */}
+            <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+                <DialogTitle>{successMessage ? "Thành công" : "Lỗi"}</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body1">{successMessage || error}</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setDialogOpen(false)}>Đóng</Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 };

@@ -648,7 +648,7 @@ const ManageAppointment = () => {
                                 </Select>
                             </FormControl>}
                         <Button variant="contained" color="primary" onClick={() => setOpenCreate(true)}>
-                            Thêm lịch hẹn
+                            {userLoggedIn.user?.role !== "doctor" ? "Thêm lịch hẹn" : "Tạo lịch tái khám"}
                         </Button>
                     </Box>
                 </Box>

@@ -1,48 +1,61 @@
-import React, {useState, useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import {
-    Box,
-    TextField,
     Dialog,
+    DialogActions,
     DialogContent,
     DialogTitle,
     Button,
+    Box,
     Typography,
-    DialogActions,
-    CircularProgress,
+    Grid,
+    Card,
+    CardMedia,
+    TextField,
 } from "@mui/material";
 import axios from "../../config/axiosConfig";
 import useUserStore from "../../hooks/auth/useUserStore";
 
-const PolicyDetail = ({open, onClose, policyId, onSave}) => {
-    const [policy, setPolicy] = useState("");
-    const [originalPolicy, setOriginalPolicy] = useState(""); // Lưu dữ liệu gốc
+const KnowledgeDetail = ({ open, onClose, knowledgeId, onSave }) => {
+
+    const [knowledge, setKnowledge] = useState("");
+    const [loading, setLoading] = useState(true);
+
+    const [originalKnowledge, setOriginalKnowledge] = useState(""); // Lưu dữ liệu gốc
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
+
     const [isEditing, setIsEditing] = useState(false);
     //const { token } = useUserStore();
-    const {userLoggedIn, setUserLoggedIn, token} = useUserStore();
+    const { userLoggedIn, setUserLoggedIn, token } = useUserStore();
+
 
     const fetchDetails = async () => {
+
         try {
             setLoading(true);
             setError(null);
-            const response = await axios.get(`/policy/getById/${policyId}`);
-            const fetchedPolicy = response.data?.policy || response.data;
-            setPolicy(fetchedPolicy);
-            setOriginalPolicy(fetchedPolicy); // Lưu dữ liệu gốc khi tải thành công
+            const response = await axios.get(`/knowledge/getById/${knowledgeId}`);
+            const fetchedKnowledge = response.data?.knowledge || response.data;
+            console.log("API response:", response.data);
+            setKnowledge(fetchedKnowledge);
+            setOriginalKnowledge(fetchedKnowledge);
         } catch (error) {
-            console.error("Error fetching policy:", error);
-            setError("Không thể tải thông tin chính sách. Vui lòng thử lại.");
+            console.error("Failed to fetch knowledge:", error);
+            setError("Không thể tải thông tin kiến thức Vui lòng thử lại.");
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        if (open && policyId) {
+        console.log("Received knowledgeId in KnowledgeDetail:", knowledgeId);
+    }, [knowledgeId]);
+
+
+    useEffect(() => {
+        if (open && knowledgeId) {
             fetchDetails();
         }
-    }, [open, policyId]);
+    }, [open, knowledgeId]);
 
     const handleClose = () => {
         onClose();
@@ -67,7 +80,7 @@ const PolicyDetail = ({open, onClose, policyId, onSave}) => {
     };
 
     const handleCancel = () => {
-        setPolicy(originalPolicy); // Khôi phục lại dữ liệu gốc
+        setKnowledge(originalKnowledge); // Khôi phục lại dữ liệu gốc
         setIsEditing(false); // Thoát khỏi chế độ chỉnh sửa
     };
     useEffect(() => {
@@ -78,17 +91,17 @@ const PolicyDetail = ({open, onClose, policyId, onSave}) => {
 
     const handleSave = async () => {
         console.log("Data being sent:", {
-            title: policy.title,
-            summary: policy.summary,
-            mainHeadings: policy.mainHeadings,
-            createBy: policy.createBy,
+            title: knowledge.data.title,
+            summary: knowledge.data.summary,
+            mainHeadings: knowledge.data.mainHeadings,
+            createBy: knowledge.data.createBy,
         });
         try {
             setLoading(true);  // Bắt đầu trạng thái loading
             setError(null);    // Xóa thông báo lỗi trước khi gửi yêu cầu
 
             // Gửi yêu cầu cập nhật chính sách tới API
-            const response = await axios.put(`/policy/update/${policyId}`, policy, {
+            const response = await axios.put(`/knowledge/update/${knowledgeId}`, knowledge, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -96,14 +109,14 @@ const PolicyDetail = ({open, onClose, policyId, onSave}) => {
 
             if (response.status === 200) {
                 // Cập nhật dữ liệu gốc với dữ liệu đã lưu
-                setOriginalPolicy(policy);
-                onSave(policy); // Gọi hàm onSave với dữ liệu đã cập nhật
+                setOriginalKnowledge(knowledge);
+                onSave(knowledge); // Gọi hàm onSave với dữ liệu đã cập nhật
             } else {
-                setError("Cập nhật chính sách không thành công. Vui lòng thử lại.");
+                setError("Cập nhật kiến thức không thành công. Vui lòng thử lại.");
             }
         } catch (error) {
-            console.error("Error updating policy:", error);
-            setError("Không thể cập nhật chính sách. Vui lòng thử lại.");
+            console.error("Error updating knowledge:", error);
+            setError("Không thể cập nhật kiến thức Vui lòng thử lại.");
         } finally {
             setLoading(false); // Kết thúc trạng thái loading
             setIsEditing(false); // Thoát khỏi chế độ chỉnh sửa
@@ -112,78 +125,86 @@ const PolicyDetail = ({open, onClose, policyId, onSave}) => {
 
     if (loading) {
         return (
-            <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-                <DialogTitle>Chi tiết chính sách</DialogTitle>
-                <DialogContent>
-                    <Box display="flex" justifyContent="center" alignItems="center" height="200px">
-                        <CircularProgress/>
-                        <Typography sx={{ml: 2}}>Đang tải chi tiết chính sách...</Typography>
-                    </Box>
-                </DialogContent>
+            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+                <DialogTitle>Loading...</DialogTitle>
             </Dialog>
         );
     }
 
     return (
-        <Dialog
-            open={open}
-            onClose={handleClose}
-            maxWidth="md"
-            fullWidth
-        >
-            <DialogTitle>Chi tiết chính sách</DialogTitle>
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+            <DialogTitle>Chi tiết kiến thức</DialogTitle>
             <DialogContent>
                 {error && <Typography color="error">{error}</Typography>}
+
                 <TextField
-                    label="Tên chính sách"
-                    value={policy.title || ""}
+                    label="Tên kiến thức"
+                    value={knowledge.data.title || ""}
                     fullWidth
                     margin="normal"
-                    InputProps={{readOnly: !isEditing}} // Cho phép chỉnh sửa nếu isEditing là true
-                    onChange={(e) => setPolicy({...policy, title: e.target.value})}
+                    InputProps={{ readOnly: !isEditing }} // Cho phép chỉnh sửa nếu isEditing là true
+                    onChange={(e) => setKnowledge({ ...knowledge, title: e.target.value })}
                 />
                 <TextField
-                    label="Nội dung tóm tắt của chính sách"
-                    value={policy.summary || ""}
+                    label="Nội dung tóm tắt của kiến thức"
+                    value={knowledge.data.summary || ""}
                     fullWidth
                     margin="normal"
-                    InputProps={{readOnly: !isEditing}} // Cho phép chỉnh sửa nếu isEditing là true
-                    onChange={(e) => setPolicy({...policy, summary: e.target.value})}
+                    InputProps={{ readOnly: !isEditing }} // Cho phép chỉnh sửa nếu isEditing là true
+                    onChange={(e) => setKnowledge({ ...knowledge, summary: e.target.value })}
                 />
                 <TextField
-                    label="Người tạo chính sách"
-                    value={policy.createBy || ""}
+                    label="Người tạo kiến thức"
+                    value={knowledge.data.createBy || ""}
                     fullWidth
                     margin="normal"
-                    InputProps={{readOnly: true}} // Không cho phép chỉnh sửa
+                    InputProps={{ readOnly: true }} // Không cho phép chỉnh sửa
                 />
                 <TextField
-                    label="Thời gian tạo chính sách"
-                    value={policy.createAt ? formatDate(policy.createAt) : ""}
+                    label="Thời gian tạo kiến thức"
+                    value={knowledge.data.createAt ? formatDate(knowledge.data.createAt) : ""}
                     fullWidth
                     margin="normal"
-                    InputProps={{readOnly: true}} // Không cho phép chỉnh sửa
+                    InputProps={{ readOnly: true }} // Không cho phép chỉnh sửa
                 />
 
-                {/* Thêm hiển thị các trường trong mainHeadings */}
-                <Typography variant="h6" sx={{mt: 2}}>Các tiêu đề chính:</Typography>
-                {policy.mainHeadings && policy.mainHeadings.length > 0 ? (
-                    policy.mainHeadings.map((main, index) => (
-                        <Box key={index} sx={{mb: 2}}>
-                            <TextField
-                                label={`Tiêu đề chính ${index + 1}`}
-                                variant="outlined"
-                                fullWidth
-                                value={main.title || ""}
-                                InputProps={{readOnly: !isEditing}} // Cho phép chỉnh sửa nếu isEditing là true
-                                onChange={(e) =>
-                                    setPolicy(prev => {
-                                        const updatedHeadings = [...prev.mainHeadings];
-                                        updatedHeadings[index].title = e.target.value;
-                                        return {...prev, mainHeadings: updatedHeadings};
-                                    })
-                                }
-                                sx={{mb: 1}}
+                <Box sx={{ mb: 4 }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
+                        Hình ảnh:
+                    </Typography>
+                    <Grid container spacing={2}>
+                        {knowledge.data.imageUrls?.map((url, index) => (
+                            <Grid item xs={6} md={4} key={index}>
+                                <Card>
+                                    <CardMedia
+                                        component="img"
+                                        height="100"
+                                        width="100"
+                                        image={url}
+                                        alt={`Image ${index + 1}`}
+                                    />
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Box>
+                <Typography variant="h6" sx={{ mt: 2 }}>Các tiêu đề chính:</Typography>
+                {knowledge?.data?.mainHeadings?.length > 0 ? (
+                    knowledge.data.mainHeadings.map((main, index) => (
+                        <Box key={index} sx={{ mb: 3 }}>
+                            <TextField label={`Tiêu đề chính ${index + 1}`}
+                                       variant="outlined"
+                                       fullWidth
+                                       value={main.title || ""}
+                                       InputProps={{ readOnly: !isEditing }} // Cho phép chỉnh sửa nếu isEditing là true
+                                       onChange={(e) =>
+                                           setKnowledge(prev => {
+                                               const updatedHeadings = [...prev.mainHeadings];
+                                               updatedHeadings[index].title = e.target.value;
+                                               return { ...prev, mainHeadings: updatedHeadings };
+                                           })
+                                       }
+                                       sx={{ mb: 1 }}
                             />
                             <TextField
                                 label={`Nội dung ${index + 1}`}
@@ -192,19 +213,19 @@ const PolicyDetail = ({open, onClose, policyId, onSave}) => {
                                 multiline
                                 rows={5}
                                 value={main.content || ""}
-                                InputProps={{readOnly: !isEditing}} // Cho phép chỉnh sửa nếu isEditing là true
+                                InputProps={{ readOnly: !isEditing }} // Cho phép chỉnh sửa nếu isEditing là true
                                 onChange={(e) =>
-                                    setPolicy(prev => {
+                                    setKnowledge(prev => {
                                         const updatedHeadings = [...prev.mainHeadings];
                                         updatedHeadings[index].content = e.target.value;
-                                        return {...prev, mainHeadings: updatedHeadings};
+                                        return { ...prev, mainHeadings: updatedHeadings };
                                     })
                                 }
-                                sx={{mb: 2}}
+                                sx={{ mb: 2 }}
                             />
                             {main.imageUrls?.length && (
-                                <Box sx={{mb: 2}}>
-                                    <Typography variant="body1" sx={{fontWeight: 'bold'}}>
+                                <Box sx={{ mb: 2 }}>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
                                         Hình ảnh hiện tại:
                                     </Typography>
                                     {main.imageUrls.map((url, imgIndex) => (
@@ -212,7 +233,7 @@ const PolicyDetail = ({open, onClose, policyId, onSave}) => {
                                             <img
                                                 src={url}
                                                 alt={`Hình ảnh bài viết ${imgIndex + 1}`}
-                                                style={{width: "100px", height: "100px", objectFit: "cover"}}
+                                                style={{ width: "100px", height: "100px", objectFit: "cover" }}
                                             />
                                             <input
                                                 type="file"
@@ -274,4 +295,4 @@ const PolicyDetail = ({open, onClose, policyId, onSave}) => {
     );
 };
 
-export default PolicyDetail;
+export default KnowledgeDetail;

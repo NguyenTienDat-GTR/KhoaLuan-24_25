@@ -14,7 +14,7 @@ import {
     ArrowRight,
     ManageAccounts,
     EventNoteTwoTone,
-    PeopleAltSharp, Water,
+    PeopleAltSharp, Water, MenuBook,
 } from "@mui/icons-material";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
@@ -60,6 +60,8 @@ const ManageInvoice = React.lazy(() => import("./pages/ManageInvoice"));
 const Profile = React.lazy(() => import("./pages/Profile"));
 
 const AccountInfo = React.lazy(() => import("./pages/AccountInfo"));
+
+const ManageKnowledge = React.lazy(() => import("./pages/ManageKnowledge"));
 
 const LazyComponent = ({Component}) => {
     const [isInView, setIsInView] = useState(false);
@@ -205,6 +207,12 @@ function App() {
             text: "Hóa đơn",
             icon: <Payment sx={{color: "rgba(21,182,210)"}}/>,
             path: "dashboard/quan-li-hoa-don",
+        },
+        ,
+        {
+            text: "Kiến thức",
+            icon: <MenuBook sx={{color: "rgba(21,182,210)"}}/>,
+            path: "dashboard/kien-thuc",
         },
         {
             text: "Chính sách",
@@ -384,6 +392,16 @@ function App() {
                                         <LazyComponent
                                             Component={() => (
                                                 <ManagePolicy isSidebarOpen={sidebarOpen}/>
+                                            )}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path="/dashboard/kien-thuc"
+                                    element={
+                                        <LazyComponent
+                                            Component={() => (
+                                                <ManageKnowledge isSidebarOpen={sidebarOpen}/>
                                             )}
                                         />
                                     }

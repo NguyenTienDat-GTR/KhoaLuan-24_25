@@ -19,23 +19,24 @@ import useDoctorAvailable from "../../hooks/appointmentRequest/useDoctorAvailabl
 import useGetService from "../../hooks/service/useGetAllService";
 import usePatientStore from "../../hooks/patient/usePatientStore.jsx";
 import moment from "moment";
-import confirmCustomerArrived from "../ManageAppointmentRequest/ConfirmCustomerArrived.jsx";
 
 const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
     const {token, userLoggedIn} = useUserStore(); // Lấy token từ hook người dùng
-    const [isNewCustomer, setIsNewCustomer] = useState(true); // Dùng để toggle giữa khách hàng mới và cũ
+    const isDoctor = userLoggedIn?.user.role === "doctor";
+    const loggedInDoctorId = userLoggedIn?.user.details.employeeID;
+    const [isNewCustomer, setIsNewCustomer] = useState(isDoctor ? false : true);
     const [formData, setFormData] = useState({
         customerName: "",
         customerPhone: "",
         customerEmail: "",
         gender: "",
         service: "",
-        date: moment().format("DD/MM/YYYY"),
+        date: isDoctor ? moment().add(1, "days").format("DD/MM/YYYY") : moment().format("DD/MM/YYYY"),
         time: "",
-        doctorId: "",
+        doctorId: isDoctor ? loggedInDoctorId : "",
         notes: ""
     });
-    const {doctorAvailable, getDoctorAvailable} = useDoctorAvailable();
+    const {doctorAvailableOffline, getDoctorAvailableOffline} = useDoctorAvailable();
     const {services, getAllService} = useGetService();
     const {patients, getAllPatients} = usePatientStore();
     const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -44,16 +45,39 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
     const [selectedService, setSelectedService] = useState(null);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [loading, setLoading] = useState(false)
+    const [ticketId, setTicketId] = useState(null)
+    const [filteredDoctors, setFilteredDoctors] = useState([]);
 
     useEffect(() => {
-        getDoctorAvailable();
+        // Lấy danh sách bác sĩ
         getAllService();
+        getDoctorAvailableOffline();
+
         if (token) {
             getAllPatients(token);
         }
-    }, [])
+    }, [token]);
+
+
+    useEffect(() => {
+        // Lọc danh sách bác sĩ theo vai trò
+        if (isDoctor) {
+            const doctor = doctorAvailableOffline.find(
+                (doctor) => doctor.doctorId === loggedInDoctorId
+            );
+            setFilteredDoctors(doctor ? [doctor] : []);
+            setSelectedDoctor(doctor)
+            setFormData((prev) => ({
+                ...prev,
+                doctorId: loggedInDoctorId,
+            }));
+        } else {
+            setFilteredDoctors(doctorAvailableOffline);
+        }
+    }, [doctorAvailableOffline, isDoctor, loggedInDoctorId]);
 
     const handleCustomerTypeChange = (event) => {
+        if (isDoctor) return;
         setIsNewCustomer(event.target.value === "true");
         setFormData(prevState => ({
             ...prevState,
@@ -64,7 +88,7 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
         }));
     };
 
-    const confirmCustomerArrived = async (ticketId) => {
+    const confirmCustomerArrived = async () => {
         try {
             const response = await axios.put(`/ticket/confirmCustomerIsArrived/${ticketId}`, {
                 confirmedBy: userLoggedIn?.user.details.employeeName,
@@ -95,7 +119,7 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
                 customerEmail: "",
                 gender: "",
                 service: "",
-                date: moment().format("DD/MM/YYYY"),
+                date: isDoctor ? moment().add(1, "days").format("DD/MM/YYYY") : moment().format("DD/MM/YYYY"),
                 time: "",
                 doctorId: "",
                 notes: ""
@@ -107,6 +131,9 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
         setSelectedTime(null)
         setSelectedCustomer(null)
         setSelectedDoctor(null)
+        setTicketId(null)
+        setIsNewCustomer(isDoctor ? false : true)
+        setAvailableTimes(null)
         onClose()
 
     }
@@ -161,14 +188,13 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
             if (response.status === 201) {
                 toast.success("Tạo phiếu hẹn thành công.");
                 onSuccess();
-                await confirmCustomerArrived(response.data.ticket._id)
+                setTicketId(response.data.ticket._id)
             }
         } catch (error) {
             toast.error(error.response?.data.message);
             console.log("Error when creating appointment ticket: ", error);
         } finally {
             setLoading(false)
-            handleClose();
         }
     };
 
@@ -192,8 +218,9 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
         });
     };
     const handleDoctorChange = (e) => {
+        if (isDoctor) return
         const selectedDocId = e.target.value;
-        const selectedDoc = doctorAvailable.find(doctor => doctor.doctorId === selectedDocId);
+        const selectedDoc = filteredDoctors.find(doctor => doctor.doctorId === selectedDocId);
 
         if (selectedDoc) {
             setSelectedDoctor(selectedDoc);
@@ -243,8 +270,10 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
                     <Box sx={{flex: 1, mt: 1}}>
                         {/* Chọn khách hàng mới hoặc cũ */}
                         <RadioGroup row value={isNewCustomer} onChange={handleCustomerTypeChange}>
-                            <FormControlLabel value={true} control={<Radio/>} label="Khách hàng mới"/>
-                            <FormControlLabel value={false} control={<Radio/>} label="Khách hàng cũ"/>
+                            <FormControlLabel value={true} disabled={ticketId} control={<Radio/>}
+                                              label="Khách hàng mới"/>
+                            <FormControlLabel value={false} disabled={ticketId} control={<Radio/>}
+                                              label="Khách hàng cũ"/>
                         </RadioGroup>
 
                         {/* Thông tin khách hàng */}
@@ -252,13 +281,13 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
                             <Box sx={{display: "flex", flexDirection: "column", gap: 2, mt: 1}}>
                                 <TextField label="Họ Tên" value={formData.customerName}
                                            onChange={(e) => setFormData({...formData, customerName: e.target.value})}
-                                           fullWidth sx={{mt: 1}}/>
+                                           fullWidth sx={{mt: 1}} disabled={ticketId}/>
                                 <TextField label="Số Điện Thoại" value={formData.customerPhone}
                                            onChange={(e) => setFormData({...formData, customerPhone: e.target.value})}
-                                           fullWidth sx={{mt: 1}}/>
+                                           fullWidth sx={{mt: 1}} disabled={ticketId}/>
                                 <TextField label="Email" value={formData.customerEmail}
                                            onChange={(e) => setFormData({...formData, customerEmail: e.target.value})}
-                                           fullWidth sx={{mt: 1}}/>
+                                           fullWidth sx={{mt: 1}} disabled={ticketId}/>
                                 <FormControl fullWidth sx={{
                                     mt: 1,
                                     justifyContent: "flex-start",
@@ -277,9 +306,12 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
                                             justifyContent: "center",
                                             alignItems: 'center'
                                         }}
+
                                     >
-                                        <FormControlLabel value="male" control={<Radio/>} label="Nam"/>
-                                        <FormControlLabel value="female" control={<Radio/>} label="Nữ"/>
+                                        <FormControlLabel value="male" disabled={ticketId} control={<Radio/>}
+                                                          label="Nam"/>
+                                        <FormControlLabel value="female" disabled={ticketId} control={<Radio/>}
+                                                          label="Nữ"/>
                                     </RadioGroup>
                                 </FormControl>
                             </Box>
@@ -289,9 +321,10 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
                                 onChange={handleCustomerSearchChange}
                                 options={patients} // Dữ liệu khách hàng từ API
                                 getOptionLabel={(option) => `${option.name} - ${option.phone || ''} - ${option.email || ''}`}
-                                renderInput={(params) => <TextField {...params} label="Tìm khách hàng cũ"/>}
+                                renderInput={(params) => <TextField {...params} label="Tìm khách hàng "/>}
                                 fullWidth
                                 sx={{mt: 2}}
+                                disabled={ticketId}
                             />
                         )}
                         <TextField
@@ -302,6 +335,7 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
                             rows={4}
                             fullWidth
                             sx={{mt: 3}}
+                            disabled={ticketId}
                         />
                     </Box>
 
@@ -314,6 +348,7 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
                             getOptionLabel={(option) => option?.name || ""}
                             renderInput={(params) => <TextField {...params} label="Dịch vụ"/>}
                             isOptionEqualToValue={(option, value) => option?.name === value?.name}
+                            disabled={ticketId}
                         />
                         <Typography
                             sx={{
@@ -333,15 +368,18 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
                             fullWidth
                             sx={{mt: 2}}
                             inputProps={{
-                                min: new Date().toISOString().split("T")[0],
+                                min: isDoctor
+                                    ? new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0]
+                                    : new Date().toISOString().split("T")[0],
                                 max: new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().split("T")[0],
                             }}
+                            disabled={ticketId}
                         />
                         <FormControl fullWidth sx={{mt: 2}}>
                             <InputLabel>Vui lòng chọn bác sĩ</InputLabel>
                             <Select value={formData.doctorId || ""} onChange={handleDoctorChange}
-                                    label="Vui lòng chọn bác sĩ">
-                                {doctorAvailable.map((doctor) => (
+                                    label="Vui lòng chọn bác sĩ" disabled={ticketId || isDoctor}>
+                                {filteredDoctors.map((doctor) => (
                                     <MenuItem key={doctor.doctorId} value={doctor.doctorId}>
                                         {doctor.doctorName}
                                     </MenuItem>
@@ -365,12 +403,14 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
                             </Box>
                         )}
 
-                        {availableTimes.length > 0 ? (
+                        {availableTimes?.length > 0 ? (
                             <Box sx={{display: "flex", flexWrap: "wrap", gap: 1, mt: 2}}>
-                                {availableTimes.map((time) => (
+                                {availableTimes?.map((time) => (
                                     <Button key={time} onClick={() => handleTimeSelect(time)}
                                             variant={formData.time === time ? "contained" : "outlined"}
-                                            sx={{flex: "0 1 48%"}}>
+                                            sx={{flex: "0 1 48%"}}
+                                            disabled={ticketId}
+                                    >
                                         {time}
                                     </Button>
                                 ))}
@@ -387,8 +427,13 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
             <DialogActions>
                 {!loading ?
                     <>
-                        <Button onClick={handleClose} color="error">Hủy</Button>
-                        <Button onClick={handleFormSubmit} variant="contained" color="success">Tạo mới</Button>
+                        <Button onClick={handleClose} color="error">Đóng</Button>
+                        {!ticketId ?
+                            <Button onClick={handleFormSubmit} variant="contained" color="success">Tạo mới</Button>
+                            : !isDoctor &&
+                            <Button onClick={confirmCustomerArrived} variant="contained" color="success">Xác nhận KH đã
+                                đến</Button>
+                        }
                     </> :
                     <Typography>Đang tạo mới...</Typography>}
             </DialogActions>

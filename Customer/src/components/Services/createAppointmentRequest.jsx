@@ -198,10 +198,7 @@ const CreateAppointmentRequest = ({open, onClose, selectedService}) => {
                 handleReset();
                 toast.success(response.data.message);
             }
-            if (response.status === 409) {
-                setLoading(false);
-                toast.error(response.data.message);
-            }
+
         } catch (error) {
             toast.error(error?.response?.data.message);
             setLoading(false);
