@@ -47,7 +47,7 @@ const ManagePatient = () => {
 
     useEffect(() => {
         if (token) {
-            getAllPatients(token);
+            getAllPatients(token,{});
         }
     }, [token]);
 

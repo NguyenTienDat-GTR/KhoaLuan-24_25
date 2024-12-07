@@ -38,7 +38,8 @@ const MedicalRecordWithCustomer = () => {
             });
 
             if (response.status === 200) {
-                setMedicalRecords(response.data.records);
+                const reversedRecords = response.data.records.reverse(); // Đảo ngược mảng records
+                setMedicalRecords(reversedRecords);
                 setCurrentPage(response.data.currentPage);
                 setTotalPages(response.data.totalPages);
             }

@@ -54,7 +54,7 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
         getDoctorAvailableOffline();
 
         if (token) {
-            getAllPatients(token);
+            getAllPatients(token,{});
         }
     }, [token]);
 

@@ -54,7 +54,6 @@ const ServiceManagement = () => {
     const { userLoggedIn, setUserLoggedIn, token } = useUserStore();
     const [openCreateServiceType, setOpenCreateServiceType] = useState(false);
     const [openCreateService, setOpenCreateService] = useState(false);
-    const [selectedService, setSelectedService] = useState(null);
 
     const handleSearchChange = (event) => setSearchTerm(event.target.value);
     const handleChangePage = (event, newPage) => setPage(newPage);
@@ -132,8 +131,10 @@ const ServiceManagement = () => {
     };
 
     // Mở modal khi bấm vào icon "Xem chi tiết"
-    const handleOpenModal = (service) => {
-        setSelectedService(service);
+    const handleOpenModal = (id) => {
+        console.log("id hiện tại là:", id);
+
+        setServiceId(id);  // Lưu ID của dịch vụ
         setOpenModal(true);  // Mở modal
     };
 
@@ -142,13 +143,13 @@ const ServiceManagement = () => {
         setOpenModal(false);
     };
 
-    const handleOpenEditService = (service) => {
-        setSelectedService(service);
+    const handleOpenEditService = (id) => {
+        setServiceId(id);
         setOpenEditService(true);  // Mở modal chỉnh sửa dịch vụ
     };
 
-    const handleOpenEditArticle = (service) => {
-        setSelectedService(service);
+    const handleOpenEditArticle = (id) => {
+        setServiceId(id);
         setOpenEditArticle(true);  // Mở modal chỉnh sửa bài viết dịch vụ
     };
     const handleCloseEditService = () => {
@@ -331,7 +332,7 @@ const ServiceManagement = () => {
                                             <TableCell>
                                                 <Tooltip title="Xem chi tiết">
                                                     <IconButton sx={{ color: "#1976d2" }}
-                                                                onClick={() => handleOpenModal(service)}
+                                                                onClick={() => handleOpenModal(service._id)}
                                                     >
                                                         <Visibility />
                                                     </IconButton>
@@ -341,7 +342,7 @@ const ServiceManagement = () => {
                                                     <>
                                                         <Tooltip title="Chỉnh sửa dịch vụ">
                                                             <IconButton sx={{ color: "#4caf50" }}
-                                                                        onClick={() => handleOpenEditService(service)}>
+                                                                        onClick={() => handleOpenEditService(service._id)}>
                                                                 <Edit />
                                                             </IconButton>
                                                         </Tooltip>
@@ -355,7 +356,7 @@ const ServiceManagement = () => {
                                                         </Tooltip>
                                                         <Tooltip title="Chỉnh sửa bài viết dịch vụ">
                                                             <IconButton sx={{ color: "#ff9800" }}
-                                                                        onClick={() => handleOpenEditArticle(service)}>
+                                                                        onClick={() => handleOpenEditArticle(service._id)}>
                                                                 <EditNote />
                                                             </IconButton>
                                                         </Tooltip>
@@ -391,23 +392,22 @@ const ServiceManagement = () => {
                 onRefresh={handleRefreshServices}
             />
             <ServiceDetailModal
-                selectedService={selectedService}  // Truyền ID dịch vụ vào modal
+                serviceId={serviceId}  // Truyền ID dịch vụ vào modal
                 open={openModal}  // Điều khiển trạng thái mở của modal
-                onClose={handleCloseModal}  // Hàm đóng modal
+                closeModal={handleCloseModal}  // Hàm đóng modal
 
 
             />
             {/* Modal chỉnh sửa dịch vụ */}
             <EditService
-                selectedService={selectedService}
+                serviceId={serviceId}
                 open={openEditService}
                 onClose={handleCloseEditService}
-                onRefresh={handleRefreshServices}
             />
 
             {/* Modal chỉnh sửa bài viết dịch vụ */}
             <EditArticleService
-                selectedService={selectedService}
+                serviceId={serviceId}
                 open={openEditArticle}
                 onClose={handleCloseEditArticle}
             />

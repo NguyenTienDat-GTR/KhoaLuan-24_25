@@ -26,6 +26,13 @@ import AppointmentSumaryChart from "../components/Overview/AppointmentSumaryChar
 import useAppointmentRequestStore from "../hooks/appointmentRequest/useAppointmentRequestStore.jsx";
 import useInvoiceStore from "../hooks/Invoice/useInvoiceStore.jsx";
 import TotalSumaryInvoiceChart from "../components/Overview/TotalSumaryInvoiceChart.jsx";
+import DialogSumTicket from "../components/Overview/dialog/DialogSumTicket.jsx";
+import DialogSumPatient from "../components/Overview/dialog/DialogSumPatient.jsx";
+import DialogSumRequest from "../components/Overview/dialog/DialogSumRequest.jsx";
+import DialogSumInvoice from "../components/Overview/dialog/DialogSumInvoice.jsx";
+import CardTicketDoneOfDoctor from "../components/Overview/card/CardTicketDoneOfDoctor.jsx";
+import TableRequestRejected from "../components/Overview/TableRequestRejected.jsx";
+import CountRequestChart from "../components/Overview/CountRequestChart.jsx";
 
 const Overview = ({isSidebarOpen}) => {
     const cardWidth = isSidebarOpen ? "calc(25% - 16px)" : "calc(25% - 8px)";
@@ -38,10 +45,14 @@ const Overview = ({isSidebarOpen}) => {
     const {appointmentRequests, getAllRequestAppointment} = useAppointmentRequestStore();
     const [countInvoice, setCountInvoice] = useState(0);
     const {invoices, getAllInvoices, totalAmount, getTotalAmount} = useInvoiceStore();
+    const [openSumTicket, setOpenSumTicket] = useState(false);
+    const [openSumPatient, setOpenSumPatient] = useState(false);
+    const [openSumRequest, setOpenSumRequest] = useState(false);
+    const [openSumInvoice, setOpenSumInvoice] = useState(false);
+
 
     // State cho các combobox
-    // State cho các combobox
-    const [selectedYear, setSelectedYear] = useState("all");
+    const [selectedYear, setSelectedYear] = useState({label: "Tất cả", value: "all"});
     const [selectedQuarter, setSelectedQuarter] = useState(null);
     const [selectedMonth, setSelectedMonth] = useState(null);
     const [filters, setFilters] = useState({
@@ -49,6 +60,7 @@ const Overview = ({isSidebarOpen}) => {
         quarter: null,
         month: null,
         doctorId: null,
+        rejectBy: null,
     });
 
     // Danh sách các giá trị cho năm, quý, tháng
@@ -64,7 +76,7 @@ const Overview = ({isSidebarOpen}) => {
 
     useEffect(() => {
         setSelectedYear({label: "Tất cả", value: "all"});
-    }, []);
+    }, [token]);
 
     // Khi năm được chọn là "all", reset quý và tháng
     useEffect(() => {
@@ -124,6 +136,7 @@ const Overview = ({isSidebarOpen}) => {
             doctorId: userLoggedIn.user?.role === "doctor"
                 ? userLoggedIn.user?.details.employeeID
                 : null,
+            rejectBy: userLoggedIn.user?.role === "employee" ? userLoggedIn.user?.details.employeeName : null
         });
     }, [selectedYear, selectedQuarter, selectedMonth, userLoggedIn]);
 
@@ -131,7 +144,7 @@ const Overview = ({isSidebarOpen}) => {
     const fetchData = async () => {
         // Gọi API khi có thay đổi trong các bộ lọc
         if (userLoggedIn?.user.role === "admin") {
-            await getAllPatients(token);
+            await getAllPatients(token, {filters});
             await getAllTickets(token, {filters});
             await getAllRequestAppointment(token, {filters})
             await getAllInvoices(token, {filters})
@@ -139,6 +152,10 @@ const Overview = ({isSidebarOpen}) => {
 
         } else if (userLoggedIn?.user.role === "doctor") {
             await getTicketByDoctor(token, userLoggedIn.user?.details.employeeID, {filters});
+            await getAllRequestAppointment(token, {filters})
+        } else if (userLoggedIn?.user.role === "employee") {
+            await getAllPatients(token, {filters});
+            await getAllTickets(token, {filters});
         }
     }
 
@@ -147,19 +164,22 @@ const Overview = ({isSidebarOpen}) => {
             fetchData();
 
         }
-    }, [selectedYear, selectedQuarter, selectedMonth, token, filters]);
+    }, [selectedYear, selectedQuarter, selectedMonth, token, filters, userLoggedIn]);
 
     useEffect(() => {
         if (userLoggedIn?.user.role === "admin") {
             setCountPatient(patients.length);
-            // Cập nhật lại tổng số lịch hẹn khi tickets thay đổi
             setCountTicket(tickets.length);
             setCountRequest(appointmentRequests.length);
             setCountInvoice(invoices.length);
         } else if (userLoggedIn?.user.role === "doctor") {
             setCountTicket(ticketByDoctor.length);
+            setCountRequest(appointmentRequests.length);
+        } else if (userLoggedIn?.user.role === "employee") {
+            setCountPatient(patients.length);
+            setCountTicket(tickets.length);
         }
-    }, [patients, tickets, ticketByDoctor, filters, invoices, appointmentRequests, token]);
+    }, [patients, tickets, ticketByDoctor, filters, invoices, appointmentRequests, token, userLoggedIn]);
 
     return (
         <Box sx={{paddingY: 6, paddingX: 0.5}}>
@@ -248,48 +268,69 @@ const Overview = ({isSidebarOpen}) => {
                         >
                             {countTicket}
                         </Typography>
+                        <Typography variant="caption"
+                                    sx={{
+                                        cursor: 'pointer',
+                                        textDecoration: 'underline',
+                                        color: 'blue'
+                                    }}
+                                    onClick={() => setOpenSumTicket(true)}>Xem chi tiết</Typography>
                     </CardContent>
                 </Card>
 
                 {/* Card 2 */}
-                {userLoggedIn?.user.role === "admin" && (
-                    <Card
-                        sx={{
-                            width: cardWidth,
-                            backgroundColor: "#e1f5fe",
-                            boxShadow: 10,
-                            height: "8rem",
-                        }}
-                    >
-                        <CardContent>
-                            <Box sx={{display: "flex", alignItems: "center"}}>
-                                <AccountCircle sx={{fontSize: 40, color: "#4caf50"}}/>
+                <>
+                    {userLoggedIn?.user.role !== "doctor" && (
+                        <Card
+                            sx={{
+                                width: cardWidth,
+                                backgroundColor: "#e1f5fe",
+                                boxShadow: 10,
+                                height: "8rem",
+                            }}
+                        >
+                            <CardContent>
+                                <Box sx={{display: "flex", alignItems: "center"}}>
+                                    <AccountCircle sx={{fontSize: 40, color: "#4caf50"}}/>
+                                    <Typography
+                                        sx={{
+                                            fontSize: "1.3rem",
+                                            color: "#4caf50",
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        Tổng số bệnh nhân
+                                    </Typography>
+                                </Box>
                                 <Typography
                                     sx={{
-                                        fontSize: "1.3rem",
-                                        color: "#4caf50",
+                                        paddingX: "2rem",
+                                        fontSize: "2.2rem",
+                                        color: "#ff5722",
                                         fontWeight: "bold",
+                                        textAlign: "center",
                                     }}
                                 >
-                                    Tổng số bệnh nhân
+                                    {countPatient}
                                 </Typography>
-                            </Box>
-                            <Typography
-                                sx={{
-                                    paddingX: "2rem",
-                                    fontSize: "2.2rem",
-                                    color: "#ff5722",
-                                    fontWeight: "bold",
-                                    textAlign: "center",
-                                }}
-                            >
-                                {countPatient}
-                            </Typography>
-                        </CardContent>
-                    </Card>
-                )}
+                                <Typography variant="caption"
+                                            sx={{
+                                                cursor: 'pointer',
+                                                textDecoration: 'underline',
+                                                color: 'blue'
+                                            }}
+                                            onClick={() => setOpenSumPatient(true)}
+                                >Xem chi tiết</Typography>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {userLoggedIn?.user?.role === "doctor" && (
+                        <CardTicketDoneOfDoctor filters={filters} cardWidth={cardWidth}/>
+                    )}
+                </>
                 {/*card 3*/}
-                {userLoggedIn?.user.role === "admin" && (
+                {userLoggedIn?.user.role !== "employee" && (
                     <Card
                         sx={{
                             width: cardWidth,
@@ -308,7 +349,7 @@ const Overview = ({isSidebarOpen}) => {
                                         fontWeight: "bold",
                                     }}
                                 >
-                                    Tổng số yêu cầu
+                                    Số yêu cầu đặt lịch
                                 </Typography>
                             </Box>
                             <Typography
@@ -322,6 +363,14 @@ const Overview = ({isSidebarOpen}) => {
                             >
                                 {countRequest}
                             </Typography>
+                            <Typography variant="caption"
+                                        sx={{
+                                            cursor: 'pointer',
+                                            textDecoration: 'underline',
+                                            color: 'blue'
+                                        }}
+                                        onClick={() => setOpenSumRequest(true)}
+                            >Xem chi tiết</Typography>
                         </CardContent>
                     </Card>
                 )}
@@ -359,6 +408,14 @@ const Overview = ({isSidebarOpen}) => {
                             >
                                 {countInvoice}
                             </Typography>
+                            <Typography variant="caption"
+                                        sx={{
+                                            cursor: 'pointer',
+                                            textDecoration: 'underline',
+                                            color: 'blue'
+                                        }}
+                                        onClick={() => setOpenSumInvoice(true)}
+                            >Xem chi tiết</Typography>
                         </CardContent>
                     </Card>
                 )}
@@ -414,21 +471,20 @@ const Overview = ({isSidebarOpen}) => {
                     justifyContent: "space-between", // Căn đều các biểu đồ trên một dòng
                 }}
             >
+                {/* Biểu đồ 1 */}
+                <Box
+                    sx={{
+                        flexBasis: "calc(50% - 1.5rem)", // Mỗi biểu đồ chiếm 50% chiều rộng trừ khoảng cách
+                        marginTop: 4,
+                    }}
+                >
+                    <Typography variant="h6" gutterBottom>
+                        Biểu đồ dịch vụ được đặt nhiều nhất
+                    </Typography>
+                    <TopServiceChart filters={filters}/>
+                </Box>
                 {userLoggedIn.user.role === "admin" && (
                     <>
-                        {/* Biểu đồ 1 */}
-                        <Box
-                            sx={{
-                                flexBasis: "calc(50% - 1.5rem)", // Mỗi biểu đồ chiếm 50% chiều rộng trừ khoảng cách
-                                marginTop: 4,
-                            }}
-                        >
-                            <Typography variant="h6" gutterBottom>
-                                Biểu đồ dịch vụ được đặt nhiều nhất
-                            </Typography>
-                            <TopServiceChart filters={filters}/>
-                        </Box>
-
                         {/* Biểu đồ 2 */}
                         <Box
                             sx={{
@@ -441,7 +497,26 @@ const Overview = ({isSidebarOpen}) => {
                             </Typography>
                             <TopDoctorChart filters={filters}/>
                         </Box>
-
+                    </>
+                )}
+                {userLoggedIn.user.role === "employee" && (
+                    <>
+                        {/* Biểu đồ 2 */}
+                        <Box
+                            sx={{
+                                flexBasis: "calc(50% - 1.5rem)", // Tương tự như trên
+                                marginTop: 4,
+                            }}
+                        >
+                            <Typography variant="h6" gutterBottom>
+                                Biểu đồ số lượng yêu cầu
+                            </Typography>
+                            <CountRequestChart filters={filters}/>
+                        </Box>
+                    </>
+                )}
+                {userLoggedIn.user.role !== "employee" && (
+                    <>
                         {/* Biểu đồ 3 */}
                         <Box
                             sx={{
@@ -454,6 +529,10 @@ const Overview = ({isSidebarOpen}) => {
                             </Typography>
                             <AppointmentSumaryChart filters={filters}/>
                         </Box>
+                    </>
+                )}
+                {userLoggedIn.user.role === "admin" && (
+                    <>
                         {/* Biểu đồ 4 */}
                         <Box
                             sx={{
@@ -470,6 +549,36 @@ const Overview = ({isSidebarOpen}) => {
                 )}
             </Box>
 
+            {/*Table section*/}
+            <Box sx={{width: '100%', mt: 5}}>
+                {
+                    userLoggedIn.user?.role !== "doctor" && <TableRequestRejected filters={filters}/>
+                }
+            </Box>
+
+            <DialogSumTicket
+                open={openSumTicket}
+                onClose={() => setOpenSumTicket(false)}
+                filters={filters}
+            />
+
+            <DialogSumPatient
+                open={openSumPatient}
+                onClose={() => setOpenSumPatient(false)}
+                filters={filters}
+            />
+
+            <DialogSumRequest
+                open={openSumRequest}
+                onClose={() => setOpenSumRequest(false)}
+                filters={filters}
+            />
+
+            <DialogSumInvoice
+                open={openSumInvoice}
+                onClose={() => setOpenSumInvoice(false)}
+                filters={filters}
+            />
 
         </Box>
     );

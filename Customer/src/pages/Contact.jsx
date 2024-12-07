@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import { Box, CircularProgress, Divider, Typography } from "@mui/material";
-
+import BookingForm from "../components/BookingForm"
 const Header = React.lazy(() => import("../components/Header"));
 const Footer = React.lazy(() => import("../components/Footer"));
 const BookingFormContact = React.lazy(() =>
@@ -43,7 +43,7 @@ const Contact = () => {
             alignItems: { xs: "flex-start", sm: "flex-start", md: "center" },
             height: "auto",
             width: "100vw",
-            paddingTop:{md: "8rem",xs:"6rem", sm:"8rem"}
+            paddingTop: { md: "8rem", xs: "6rem", sm: "8rem" }
           }}
         >
           <Typography
@@ -77,6 +77,7 @@ const Contact = () => {
             }}
           />
         </Box>
+        <BookingFormContact />
         <Suspense
           fallback={
             <Box
@@ -97,7 +98,7 @@ const Contact = () => {
             </Box>
           }
         >
-          <BookingFormContact />
+          <BookingForm />
         </Suspense>
         <Suspense
           fallback={

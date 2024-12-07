@@ -8,6 +8,7 @@ const useTicketStore = create((set) => ({
     ticketById: null,
     ticketByDoctor: [],
     ticketId: null,
+    ticketDoneOfDoctor:[],
 
     getAllTickets: async (token, {filters}) => {
         set({loading: true});
@@ -82,6 +83,35 @@ const useTicketStore = create((set) => ({
     },
 
     setTicketId: (id) => set({ticketId: id}),
+
+    getTicketDoneOfDoctor: async (token, {filters}) => {
+        set({loading: true});
+        try {
+            const params = {};
+
+            // Kiểm tra các filters và truyền vào params
+            if (filters?.year) params.year = filters.year;
+            if (filters?.quarter) params.quarter = filters.quarter;
+            if (filters?.month) params.month = filters.month;
+
+            // Nếu có doctorId, truyền vào
+            if (filters?.doctorId) params.doctorId = filters.doctorId;
+
+            const response = await axios.get("/ticket/doneOfDoctor", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                params: params,
+            });
+
+            if (response.status === 200) {
+                set({ticketDoneOfDoctor: response.data.appointmentTickets, loading: false});
+            }
+        } catch (error) {
+            set({error: error?.response?.data.message, loading: false});
+        }
+    }
+
 }));
 
 export default useTicketStore;
