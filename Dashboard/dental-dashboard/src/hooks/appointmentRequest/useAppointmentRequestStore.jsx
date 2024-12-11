@@ -27,7 +27,7 @@ const useAppointmentRequestStore = create((set) => ({
                 params: params,
             });
             if (response.status === 200) {
-                set({ appointmentRequests: response.data.request, loading: false });
+                set({ appointmentRequests: response.data.request.reverse(), loading: false });
             }
         } catch (error) {
             set({ error: error?.response?.data.message, loading: false });

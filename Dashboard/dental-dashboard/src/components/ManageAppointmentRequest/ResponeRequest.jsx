@@ -570,6 +570,7 @@ const ResponeRequest = ({open, onClose, onSuccess, selectedRequest}) => {
                 <DialogTitle>Xác nhận từ chối</DialogTitle>
                 <DialogContent>
                     <TextField
+                        sx={{mt: 2}}
                         label="Lý do từ chối"
                         value={reasonReject}
                         onChange={(e) => setReasonReject(e.target.value)}
@@ -579,8 +580,9 @@ const ResponeRequest = ({open, onClose, onSuccess, selectedRequest}) => {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseReject} color="primary">Hủy</Button>
-                    <Button onClick={() => handleResponse("rejected")} color="error">Xác nhận</Button>
+                    <Button onClick={handleCloseReject} color="error">Hủy</Button>
+                    <Button onClick={() => handleResponse("rejected")} color="error" variant="contained">Xác
+                        nhận</Button>
                 </DialogActions>
             </Dialog>
         </Dialog>

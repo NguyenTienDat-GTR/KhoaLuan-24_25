@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import useUserStore from "../../hooks/auth/useUserStore";
 import axios from "../../config/axiosConfig";
 import {PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer} from "recharts";
-import {Box, Typography} from "@mui/material";
+import {Box} from "@mui/material";
 
-const COLORS = ["#0088FE", "#FF8042"]; // Màu cho các trạng thái thanh toán
+const COLORS = ["#FF8042", "#0088FE"]; // Màu cho các trạng thái thanh toán
 
 const TotalSumaryInvoiceChart = ({filters}) => {
     const [invoiceData, setInvoiceData] = useState([]);
@@ -19,10 +19,19 @@ const TotalSumaryInvoiceChart = ({filters}) => {
                 params: filters,
             });
 
-            // Dữ liệu cho PieChart
+            // Tính tổng giá trị để tính phần trăm
+            const total = res.data.unpaidAmount + res.data.paidAmount;
             const data = [
-                {name: "Chưa thanh toán", value: res.data.unpaidAmount},
-                {name: "Đã thanh toán", value: res.data.paidAmount},
+                {
+                    name: "Chưa thanh toán",
+                    value: res.data.unpaidAmount,
+                    percentage: ((res.data.unpaidAmount / total) * 100).toFixed(2),
+                },
+                {
+                    name: "Đã thanh toán",
+                    value: res.data.paidAmount,
+                    percentage: ((res.data.paidAmount / total) * 100).toFixed(2),
+                },
             ];
             setInvoiceData(data);
         } catch (error) {
@@ -33,6 +42,9 @@ const TotalSumaryInvoiceChart = ({filters}) => {
     useEffect(() => {
         if (token) fetchInvoiceSummary();
     }, [filters, token]);
+
+    // Tùy chỉnh nhãn hiển thị
+    const renderCustomLabel = ({name, percentage}) => `${name}: ${percentage}%`;
 
     return (
         <Box height={300} sx={{border: 'solid 1px #000000', width: '100%'}}>
@@ -46,13 +58,18 @@ const TotalSumaryInvoiceChart = ({filters}) => {
                         cy="50%"
                         outerRadius={100}
                         fill="#8884d8"
-                        label
+                        label={({name, percentage}) => renderCustomLabel({name, percentage})}
                     >
                         {invoiceData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>
                         ))}
                     </Pie>
-                    <Tooltip/>
+                    <Tooltip
+                        formatter={(value, name, props) => {
+                            const percentage = props.payload.percentage;
+                            return [`${value.toLocaleString()}VNĐ (${percentage}%)`, name];
+                        }}
+                    />
                     <Legend/>
                 </PieChart>
             </ResponsiveContainer>
