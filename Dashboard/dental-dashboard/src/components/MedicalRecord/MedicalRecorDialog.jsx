@@ -23,7 +23,7 @@ import useToothAndJawStore from "../../hooks/ToothandJaw/useToothJawStore";
 import useServiceAppointmentStore from "../../hooks/appointmentTicket/useServiceAppointmentStore";
 import useTicketStore from "../../hooks/appointmentTicket/useTicketStore";
 
-const MedicalRecordDialog = ({open, onClose}) => {
+const MedicalRecordDialog = ({open, onClose, refresh}) => {
     const customerId = useCustomerIdStore((state) => state.customerId);
     const serviceAppointment = useServiceAppointmentStore((state) => state.serviceName);  // Lấy giá trị serviceAppointment
     const ticketId = useTicketStore((state) => state.ticketId);
@@ -38,6 +38,7 @@ const MedicalRecordDialog = ({open, onClose}) => {
     const {tooth, jaw, getAllTooth, getAllJaw} = useToothAndJawStore();
     const [loadingRecord, setLoadingRecord] = useState(false);
     const [loadingInvoice, setLoadingInvoice] = useState(false);
+    const [selectedServices, setSelectedServices] = useState(new Set());
 
     useEffect(() => {
         getAllService();
@@ -53,17 +54,52 @@ const MedicalRecordDialog = ({open, onClose}) => {
                     ...prevState,
                     usedService: [{service: defaultService._id, for: ''}] // Sử dụng _id của dịch vụ
                 }));
+
+                const updatedSelectedServices = new Set(selectedServices);
+
+                // Nếu dịch vụ mặc định có unit là tooth hoặc jaw, giữ nguyên dịch vụ trong selectedServices
+                if (defaultService.unit !== 'tooth' && defaultService.unit !== 'jaw') {
+                    updatedSelectedServices.add(defaultService._id);
+                } else {
+                    updatedSelectedServices.delete(defaultService._id);
+                }
+                setSelectedServices(updatedSelectedServices);
             }
         }
-    }, [token, serviceAppointment, services]);  // Thêm serviceAppointment vào dependencies để theo dõi thay đổi
+    }, [token, serviceAppointment, services]);
 
     const handleServiceChange = (event, index) => {
         const updatedServices = [...medicalRecord.usedService];
+        const previousService = updatedServices[index].service; // Lấy dịch vụ trước đó (nếu có)
         updatedServices[index].service = event.target.value;
         updatedServices[index].for = ''; // Reset trường 'for' khi thay đổi dịch vụ
         setMedicalRecord({...medicalRecord, usedService: updatedServices});
-    };
 
+        // Cập nhật Set dịch vụ đã chọn
+        const updatedSelectedServices = new Set(selectedServices);
+        if (previousService) {
+            updatedSelectedServices.delete(previousService); // Xóa dịch vụ trước đó
+        }
+
+        // Loại bỏ dịch vụ không phải là tooth hoặc jaw
+        const newService = services.find(service => service._id === event.target.value);
+        if (newService.unit !== 'tooth' && newService.unit !== 'jaw') {
+            updatedSelectedServices.add(event.target.value); // thêm dịch vụ không phải là tooth hoặc jaw vào dịch vụ đã chọn
+        } else {
+            updatedSelectedServices.delete(event.target.value); // xóa dịch vụ  nếu unit là tooth hoặc jaw khỏi dịch vụ đã chọn
+        }
+
+        // // Loại bỏ răng đã chọn nếu dịch vụ trùng với dịch vụ đã chọn trước đó và unit là tooth hoặc jaw
+        // if (newService.unit === 'tooth' || newService.unit === 'jaw') {
+        //     const selectedServiceWithToothOrJaw = medicalRecord.usedService.find(s =>
+        //         (s.service === previousService) && (s.for !== ''));
+        //     if (selectedServiceWithToothOrJaw) {
+        //         updatedSelectedServices.delete(selectedServiceWithToothOrJaw.for); // loại bỏ răng đã chọn trước đó
+        //     }
+        // }
+
+        setSelectedServices(updatedSelectedServices);
+    };
 
     const handleAddService = () => {
         setMedicalRecord({
@@ -81,9 +117,16 @@ const MedicalRecordDialog = ({open, onClose}) => {
 
     const handleRemoveService = (index) => {
         const updatedServices = [...medicalRecord.usedService];
-        updatedServices.splice(index, 1); // Remove the service at the specified index
+        const removedService = updatedServices[index].service; // Lưu lại dịch vụ bị xóa
+        updatedServices.splice(index, 1); // Xóa dịch vụ tại index
         setMedicalRecord({...medicalRecord, usedService: updatedServices});
+
+        // Cập nhật Set dịch vụ đã chọn
+        const updatedSelectedServices = new Set(selectedServices);
+        updatedSelectedServices.delete(removedService);
+        setSelectedServices(updatedSelectedServices);
     };
+
 
     const createInvoice = async (medicalRecordId, discount) => {
         toast.warning("Đang tạo hóa đơn...");
@@ -112,6 +155,10 @@ const MedicalRecordDialog = ({open, onClose}) => {
         }
     }
 
+    const isToothOrJawSelected = (forValue) => {
+        return medicalRecord.usedService.some(s => s.for === forValue);
+    }
+
     const handleSaveMedicalRecord = async () => {
         setLoadingRecord(true);
         try {
@@ -135,13 +182,13 @@ const MedicalRecordDialog = ({open, onClose}) => {
             if (response.status === 201) {
                 toast.success("Thêm hồ sơ y tế thành công", {autoClose: 3000});
                 await createInvoice(response.data.record._id);  // Tạo hóa đơn sau khi tạo hồ sơ y tế
-
+                refresh();  // Refresh lại trang
             }
         } catch (error) {
             console.error("Error creating medical record:", error);
             toast.error("Không thể thêm hồ sơ y tế", {autoClose: 3000});
         } finally {
-            setMedicalRecord(false)
+            setLoadingRecord(false)
         }
     };
 
@@ -169,11 +216,13 @@ const MedicalRecordDialog = ({open, onClose}) => {
                                         value={service.service}
                                         onChange={(e) => handleServiceChange(e, index)}
                                     >
-                                        {services.map(s => (
-                                            <MenuItem key={s._id} value={s._id}>
-                                                {s.name}
-                                            </MenuItem>
-                                        ))}
+                                        {services
+                                            .filter((s) => !selectedServices.has(s._id) || s._id === service.service) // Bao gồm cả dịch vụ đã chọn
+                                            .map((s) => (
+                                                <MenuItem key={s._id} value={s._id}>
+                                                    {s.name}
+                                                </MenuItem>
+                                            ))}
                                     </Select>
                                 </FormControl>
 
@@ -192,30 +241,29 @@ const MedicalRecordDialog = ({open, onClose}) => {
                                     <FormControl sx={{width: '20%', ml: 2}}>
                                         <InputLabel>Chọn răng</InputLabel>
                                         <Select
-                                            value={service.for || ''}
+                                            value={service.for}
                                             onChange={(e) => handleToothOrJawChange(e, index)}
+                                            fullWidth
                                         >
-                                            {tooth?.map(t => (
-                                                <MenuItem key={t._id} value={t.name}>
-                                                    {t.name}
-                                                </MenuItem>
+                                            <MenuItem value="">Chọn răng</MenuItem>
+                                            {tooth.map(t => (
+                                                <MenuItem key={t._id} value={t.name}>{t.name}</MenuItem>
                                             ))}
                                         </Select>
                                     </FormControl>
                                 )}
 
-                                {/* Hiển thị ComboBox Jaw nếu unit là 'jaw' */}
                                 {service.service && services.find(s => s._id === service.service)?.unit === 'jaw' && (
                                     <FormControl sx={{width: '40%', ml: 2}}>
                                         <InputLabel>Chọn hàm</InputLabel>
                                         <Select
-                                            value={service.for || ''}
+                                            value={service.for}
                                             onChange={(e) => handleToothOrJawChange(e, index)}
+                                            fullWidth
                                         >
-                                            {jaw?.map(j => (
-                                                <MenuItem key={j._id} value={j._name}>
-                                                    {j.name}
-                                                </MenuItem>
+                                            <MenuItem value="">Chọn hàm</MenuItem>
+                                            {jaw.map(t => (
+                                                <MenuItem key={t._id} value={t.name}>{t.name}</MenuItem>
                                             ))}
                                         </Select>
                                     </FormControl>

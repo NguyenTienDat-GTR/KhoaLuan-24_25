@@ -15,7 +15,8 @@ const useMedicalRecordStore = create((set) => ({
                     Authorization: `Bearer ${token}`,
                 },
             });
-            set({records: response.data, loading: false});
+            //đảo ngược mảng records để hiển thị record mới nhất lên đâuuf
+            set({records: response.data.reverse(), loading: false});
         } catch (error) {
             set({error: error.response.data, loading: false});
         }

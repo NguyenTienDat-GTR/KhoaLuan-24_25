@@ -102,6 +102,7 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
                 toast.success(response.data.message, {
                     autoClose: 3000,
                 });
+                handleClose();
             }
         } catch (error) {
             console.log(error);

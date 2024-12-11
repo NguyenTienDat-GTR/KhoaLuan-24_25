@@ -21,17 +21,15 @@ import {
     Radio,
 } from "@mui/material";
 import {Add, Visibility} from "@mui/icons-material";
-// import CreateMedicalRecord from "../../components/ManageMedicalRecord/CreateMedicalRecord";
-// import MedicalRecordDetail from "../../components/ManageMedicalRecord/MedicalRecordDetail";
 import useMedicalRecordStore from "../hooks/medicalRecord/MedicalRecordStore"; // Hook lấy dữ liệu hồ sơ
 import useUserStore from "../hooks/auth/useUserStore"; // Hook lấy dữ liệu người dùng
 import Page403 from "./page403"; // Trang 403
+import MedicalRecordDetail from "../components/MedicalRecord/MedicalRecordDetail.jsx";
 
 const ManageMedicalRecord = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [openCreateMedicalRecord, setOpenCreateMedicalRecord] = useState(false);
     const [openMedicalRecordDetail, setOpenMedicalRecordDetail] = useState(false);
     const [selectedMedicalRecord, setSelectedMedicalRecord] = useState(null);
     const {records, loading, error, getAllMedicalRecords} = useMedicalRecordStore();
@@ -54,8 +52,10 @@ const ManageMedicalRecord = () => {
     };
 
     const filteredMedicalRecords = records.filter((record) => {
-        const isMatch = record.customerID?.name.toLowerCase().includes(searchTerm.toLowerCase());
-        return isMatch;
+        const search = searchTerm.toLowerCase();
+        const nameMatch = record.customerID?.name.toLowerCase().includes(search);
+        const phoneMatch = record.customerID?.phone.includes(search);
+        return nameMatch || phoneMatch;
     });
 
     const handleChangePage = (event, newPage) => {
@@ -65,14 +65,6 @@ const ManageMedicalRecord = () => {
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
-    };
-
-    const handleOpenCreateMedicalRecord = () => {
-        setOpenCreateMedicalRecord(true);
-    };
-
-    const handleCloseCreateMedicalRecord = () => {
-        setOpenCreateMedicalRecord(false);
     };
 
     const handleOpenMedicalRecordDetail = (record) => {
@@ -101,13 +93,14 @@ const ManageMedicalRecord = () => {
                                 Tìm kiếm:
                             </Typography>
                             <TextField
-                                label="Tên bệnh nhân"
+                                label="Tìm theo tên hoặc số điện thoại"
                                 variant="outlined"
                                 size="small"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 sx={{bgcolor: "#f5f5f5"}}
                             />
+
                         </Box>
 
                     </Box>
@@ -116,20 +109,6 @@ const ManageMedicalRecord = () => {
                         <Box sx={{display: "flex", justifyContent: "space-evenly", width: "50%", alignItems: "center"}}>
 
                         </Box>
-
-                        {/*<Box sx={{ display: "flex", justifyContent: "flex-end" }}>*/}
-                        {/*    /!* Chỉ hiển thị nút "Thêm mới hồ sơ điều trị" nếu người dùng là admin *!/*/}
-                        {/*    {userLoggedIn?.user.role === "admin" && (*/}
-                        {/*        <Button*/}
-                        {/*            variant="contained"*/}
-                        {/*            startIcon={<Add />}*/}
-                        {/*            sx={{ bgcolor: "#4caf50" }}*/}
-                        {/*            onClick={handleOpenCreateMedicalRecord}*/}
-                        {/*        >*/}
-                        {/*            Thêm mới hồ sơ điều trị*/}
-                        {/*        </Button>*/}
-                        {/*    )}*/}
-                        {/*</Box>*/}
                     </Box>
 
                     <TableContainer sx={{boxShadow: 2, borderRadius: 1}}>
@@ -138,6 +117,7 @@ const ManageMedicalRecord = () => {
                                 <TableRow>
                                     <TableCell sx={{fontWeight: "bold"}}>Số thứ tự</TableCell>
                                     <TableCell sx={{fontWeight: "bold"}}>Tên bệnh nhân</TableCell>
+                                    <TableCell sx={{fontWeight: "bold"}}>Số điện thoại</TableCell>
                                     <TableCell sx={{fontWeight: "bold"}}>Ngày điều trị</TableCell>
                                     <TableCell sx={{fontWeight: "bold"}}>Bác sĩ điều trị</TableCell>
                                     <TableCell sx={{fontWeight: "bold"}}>Hành động</TableCell>
@@ -151,6 +131,7 @@ const ManageMedicalRecord = () => {
                                                   sx={{"&:hover": {backgroundColor: "#e0f7fa"}}}>
                                             <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
                                             <TableCell>{record.customerID.name}</TableCell>
+                                            <TableCell>{record.customerID.phone}</TableCell>
                                             <TableCell>{record.date}</TableCell>
                                             <TableCell>{record.doctorName}</TableCell>
                                             <TableCell>
@@ -178,13 +159,11 @@ const ManageMedicalRecord = () => {
                         onRowsPerPageChange={handleChangeRowsPerPage}
                     />
 
-                    {/*<CreateMedicalRecord open={openCreateMedicalRecord} onClose={handleCloseCreateMedicalRecord} />*/}
-                    {/*<MedicalRecordDetail*/}
-                    {/*    open={openMedicalRecordDetail}*/}
-                    {/*    onClose={() => setOpenMedicalRecordDetail(false)}*/}
-                    {/*    medicalRecord={selectedMedicalRecord}*/}
-                    {/*    onSuccess={refreshData}*/}
-                    {/*/>*/}
+                    <MedicalRecordDetail
+                        open={openMedicalRecordDetail}
+                        onClose={() => setOpenMedicalRecordDetail(false)}
+                        medicalRecord={selectedMedicalRecord}
+                    />
                 </> : <Page403/>}
         </Box>
     );
