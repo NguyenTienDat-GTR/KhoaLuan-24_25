@@ -56,7 +56,7 @@ const ServiceDetailModal = ({selectedService, onClose, open}) => {
                             <Typography sx={{fontWeight: 'bold'}}>
                                 Mô tả: {selectedService?.description || "Không có mô tả"}
                             </Typography>
-                            {service?.imageUrls?.length > 0 && (
+                            {selectedService?.imageUrls?.length > 0 && (
                                 <Box sx={{mt: 2}}>
                                     <Typography variant="body1" sx={{fontWeight: "bold"}}>
                                         Hình ảnh dịch vụ:
