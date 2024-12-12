@@ -72,7 +72,7 @@ const Intro = () => {
             fontWeight: "bold",
           }}
         >
-          NHA KHOA HOÀNG KIM
+          NHA KHOA HBT
         </Typography>
       </Box>
       <Suspense

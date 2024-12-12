@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import rang3 from "..//images/intro/rs.jpg";
-import rang4 from "..//images/intro/TRIP.jpg";
+import rang4 from "../Services/img/nieng-rang/thao-lap.jpg";
 import rang5 from "..//images/intro/NRCN.png";
 import rang6 from "..//images/intro/NKTQ.png";
 
@@ -11,24 +11,24 @@ const Solution = () => {
 
   const services = [
     {
-      title: "Răng Sứ Thẩm Mỹ",
+      title: "Răng Sứ Kim Loại Đức",
       image: rang3,
-      route: "/services/rang-su-tham-my",
+      route: "/service/67346dcd39b92e36966d25c8",
     },
     {
-      title: "Trồng răng Implant",
+      title: "Hàm Giả Tháo Lắp",
       image: rang4,
-      route: "/services/trong-rang-implant",
+      route: "/service/6733910c41275c60e1339212",
     },
     {
       title: "Niềng răng - Chỉnh nha",
       image: rang5,
-      route: "/services/nieng-rang-chinh-nha",
+      route: "/service/67335e896223f9952a4923ed",
     },
     {
       title: "Điều trị tổng quát",
       image: rang6,
-      route: "/services/dieu-tri-tong-quat",
+      route: "/service/67335b70c6381088e7b983ab",
     },
   ];
 
