@@ -145,10 +145,10 @@ const CreateService = ({ open, onClose, onSuccess }) => {
   };
 
   const handleImageChange = (
-    event,
-    mainIndex,
-    subIndex = null,
-    subSubIndex = null
+      event,
+      mainIndex,
+      subIndex = null,
+      subSubIndex = null
   ) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -158,11 +158,11 @@ const CreateService = ({ open, onClose, onSuccess }) => {
 
     if (subSubIndex !== null) {
       updatedHeadings[mainIndex].subheadings[subIndex].subSubheadings[
-        subSubIndex
-      ] = {
-        ...updatedHeadings[mainIndex].subheadings[subIndex].subSubheadings[
           subSubIndex
-        ],
+          ] = {
+        ...updatedHeadings[mainIndex].subheadings[subIndex].subSubheadings[
+            subSubIndex
+            ],
         image: file,
         imageURL: fileURL,
       };
@@ -222,18 +222,18 @@ const CreateService = ({ open, onClose, onSuccess }) => {
 
   // Hàm cập nhật nội dung heading cấp hai hoặc ba
   const updateSubheadingContent = (
-    mainIndex,
-    subIndex,
-    key,
-    value,
-    isSubSub = false,
-    subSubIndex = null
+      mainIndex,
+      subIndex,
+      key,
+      value,
+      isSubSub = false,
+      subSubIndex = null
   ) => {
     const newMainHeadings = [...mainHeadings];
     if (isSubSub) {
       newMainHeadings[mainIndex].subheadings[subIndex].subSubheadings[
-        subSubIndex
-      ][key] = value;
+          subSubIndex
+          ][key] = value;
     } else {
       newMainHeadings[mainIndex].subheadings[subIndex][key] = value;
     }
@@ -249,8 +249,8 @@ const CreateService = ({ open, onClose, onSuccess }) => {
   const removeSubheading = (mainIndex, subIndex) => {
     const newMainHeadings = [...mainHeadings];
     newMainHeadings[mainIndex].subheadings = newMainHeadings[
-      mainIndex
-    ].subheadings.filter((_, index) => index !== subIndex);
+        mainIndex
+        ].subheadings.filter((_, index) => index !== subIndex);
     setMainHeadings(newMainHeadings);
   };
 
@@ -258,9 +258,9 @@ const CreateService = ({ open, onClose, onSuccess }) => {
   const removeSubSubheading = (mainIndex, subIndex, subSubIndex) => {
     const newMainHeadings = [...mainHeadings];
     newMainHeadings[mainIndex].subheadings[subIndex].subSubheadings =
-      newMainHeadings[mainIndex].subheadings[subIndex].subSubheadings.filter(
-        (_, index) => index !== subSubIndex
-      );
+        newMainHeadings[mainIndex].subheadings[subIndex].subSubheadings.filter(
+            (_, index) => index !== subSubIndex
+        );
     setMainHeadings(newMainHeadings);
   };
 
@@ -284,8 +284,8 @@ const CreateService = ({ open, onClose, onSuccess }) => {
           sub.subSubheadings.forEach((subSub, subSubIndex) => {
             if (subSub.image) {
               formData.append(
-                `subSub_${mainIndex}_${subIndex}_${subSubIndex}`,
-                subSub.image
+                  `subSub_${mainIndex}_${subIndex}_${subSubIndex}`,
+                  subSub.image
               ); // Thêm ảnh cho tiểu mục cấp ba
             }
           });
@@ -323,15 +323,15 @@ const CreateService = ({ open, onClose, onSuccess }) => {
     const minPriceNum = parseInt(minPrice);
     const maxPriceNum = parseInt(maxPrice);
     if (
-      serviceType &&
-      serviceName &&
-      price > 0 &&
-      description &&
-      images.length > 0 &&
-      minPrice &&
-      maxPrice &&
-      minPriceNum <= maxPriceNum &&
-      unit
+        serviceType &&
+        serviceName &&
+        price > 0 &&
+        description &&
+        images.length > 0 &&
+        minPrice &&
+        maxPrice &&
+        minPriceNum <= maxPriceNum &&
+        unit
     ) {
       const formData = new FormData();
       formData.append("name", serviceName);
@@ -395,450 +395,450 @@ const CreateService = ({ open, onClose, onSuccess }) => {
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
-      <DialogTitle>Thêm mới dịch vụ</DialogTitle>
-      <DialogContent>
-        <Box display="flex" gap={2}>
-          <Box
-            flex={1}
-            p={2}
-            border={1}
-            borderColor="grey.300"
-            borderRadius={2}
-          >
-            <Typography variant="h6">Thông tin dịch vụ</Typography>
-            <FormControl fullWidth required margin="normal" variant="outlined">
-              {/* <InputLabel shrink={Boolean(serviceType)}>Loại dịch vụ</InputLabel> */}
-              <Select
-                value={serviceType}
-                onChange={(e) => setServiceType(e.target.value)}
-                displayEmpty
-              >
-                <MenuItem value="">Chọn loại dịch vụ *</MenuItem>
-                {services.map((type) => (
-                  <MenuItem key={type._id} value={type.typeName}>
-                    {type.typeName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+      <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
+        <DialogTitle>Thêm mới dịch vụ</DialogTitle>
+        <DialogContent>
+          <Box display="flex" gap={2}>
+            <Box
+                flex={1}
+                p={2}
+                border={1}
+                borderColor="grey.300"
+                borderRadius={2}
+            >
+              <Typography variant="h6">Thông tin dịch vụ</Typography>
+              <FormControl fullWidth required margin="normal" variant="outlined">
+                {/* <InputLabel shrink={Boolean(serviceType)}>Loại dịch vụ</InputLabel> */}
+                <Select
+                    value={serviceType}
+                    onChange={(e) => setServiceType(e.target.value)}
+                    displayEmpty
+                >
+                  <MenuItem value="">Chọn loại dịch vụ *</MenuItem>
+                  {services.map((type) => (
+                      <MenuItem key={type._id} value={type.typeName}>
+                        {type.typeName}
+                      </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-            <TextField
-              label="Tên dịch vụ"
-              fullWidth
-              required
-              margin="normal"
-              value={serviceName}
-              onChange={(e) => setServiceName(e.target.value)}
-            />
-            <Box display="flex" gap={2} mt={2}>
               <TextField
-                label="Giá thấp nhất (VND)"
-                type="number"
-                fullWidth
-                required
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-              />
-              <TextField
-                label="Giá cao nhất (VND)"
-                type="number"
-                fullWidth
-                required
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-              />
-            </Box>
-            <TextField
-              label="Giá (VND)"
-              type="number"
-              fullWidth
-              required
-              margin="normal"
-              value={price}
-              onChange={handlePriceChange}
-              InputProps={{ inputProps: { min: 0 } }}
-            />
-            <Typography variant="caption" display="block">
-              Giá trị bằng chữ: {priceText}
-            </Typography>
-            <FormControl fullWidth required margin="normal">
-              {/* <InputLabel shrink={Boolean(unit)}>Đơn vị tính</InputLabel> */}
-              <Select
-                value={unit}
-                onChange={(e) => setUnit(e.target.value)}
-                displayEmpty
-              >
-                <MenuItem value="">Chọn đơn vị tính *</MenuItem>
-                {Object.entries(units).map(([key, value]) => (
-                  <MenuItem key={key} value={key}>
-                    {value}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <TextField
-              label="Giảm giá (%)"
-              type="number"
-              fullWidth
-              margin="normal"
-              value={discount}
-              onChange={(e) => setDiscount(e.target.value)}
-            />
-
-            <TextField
-              label="Mô tả"
-              fullWidth
-              required
-              multiline
-              rows={3}
-              margin="normal"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-
-            <FormControl fullWidth required margin="normal">
-              <InputLabel shrink={Boolean(duration)}>
-                Thời gian (phút)
-              </InputLabel>
-              <Select
-                value={duration}
-                onChange={(e) => setDuration(e.target.value)}
-              >
-                <MenuItem value="">Chọn thời gian</MenuItem>
-                {[30, 60, 90, 120].map((time) => (
-                  <MenuItem key={time} value={time}>
-                    {time} phút
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <Box mt={2}>
-              <Button
-                variant="outlined"
-                component="label"
-                startIcon={<AddPhotoAlternate />}
-              >
-                Thêm hình ảnh
-                <input
-                  type="file"
-                  hidden
-                  multiple
-                  accept="image/*"
-                  onChange={handleAddImages}
-                />
-              </Button>
-              <Box display="flex" mt={2} gap={1} flexWrap="wrap">
-                {images.map((image, index) => (
-                  <Box key={index} position="relative">
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt={`service-image-${index}`}
-                      width="80"
-                      height="80"
-                      style={{ borderRadius: "4px" }}
-                    />
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={() => handleRemoveImage(index)}
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        right: 0,
-                        backgroundColor: "white",
-                      }}
-                    >
-                      <Delete fontSize="small" />
-                    </IconButton>
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-          </Box>
-          {/* Cột 2: Tạo bài viết */}
-          <Box
-            flex={1}
-            p={2}
-            border={1}
-            borderColor="grey.300"
-            borderRadius={2}
-          >
-            <Typography variant="h6">Tạo bài viết</Typography>
-            <TextField
-              label="Tiêu đề bài viết"
-              fullWidth
-              margin="normal"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-
-            {/* Main Headings */}
-            {mainHeadings.map((main, mainIndex) => (
-              <Box key={mainIndex} mb={2}>
-                <TextField
-                  label="Tiêu đề cấp 1"
+                  label="Tên dịch vụ"
                   fullWidth
-                  value={main.title}
-                  onChange={(e) =>
-                    updateMainHeading(mainIndex, "title", e.target.value)
-                  }
+                  required
                   margin="normal"
-                />
-                <IconButton
-                  color="error"
-                  onClick={() => removeMainHeading(mainIndex)}
-                >
-                  <Delete fontSize="small" />
-                </IconButton>
-                <Button
-                  variant="outlined"
-                  component="label"
-                  startIcon={<AddPhotoAlternate />}
-                >
-                  Thêm hình ảnh tiêu đề cấp 1
-                  <input
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    onChange={(e) => handleImageChange(e, mainIndex)}
-                  />
-                </Button>
-                {main.image && (
-                  <Box mt={2}>
-                    <img src={main.imageURL} alt="title-image" width="100" />
-                  </Box>
-                )}
+                  value={serviceName}
+                  onChange={(e) => setServiceName(e.target.value)}
+              />
+              <Box display="flex" gap={2} mt={2}>
                 <TextField
-                  label="Mô tả tiêu đề cấp 1"
+                    label="Giá thấp nhất (VND)"
+                    type="number"
+                    fullWidth
+                    required
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(e.target.value)}
+                />
+                <TextField
+                    label="Giá cao nhất (VND)"
+                    type="number"
+                    fullWidth
+                    required
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(e.target.value)}
+                />
+              </Box>
+              <TextField
+                  label="Giá (VND)"
+                  type="number"
                   fullWidth
+                  required
+                  margin="normal"
+                  value={price}
+                  onChange={handlePriceChange}
+                  InputProps={{ inputProps: { min: 0 } }}
+              />
+              <Typography variant="caption" display="block">
+                Giá trị bằng chữ: {priceText}
+              </Typography>
+              <FormControl fullWidth required margin="normal">
+                {/* <InputLabel shrink={Boolean(unit)}>Đơn vị tính</InputLabel> */}
+                <Select
+                    value={unit}
+                    onChange={(e) => setUnit(e.target.value)}
+                    displayEmpty
+                >
+                  <MenuItem value="">Chọn đơn vị tính *</MenuItem>
+                  {Object.entries(units).map(([key, value]) => (
+                      <MenuItem key={key} value={key}>
+                        {value}
+                      </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                  label="Giảm giá (%)"
+                  type="number"
+                  fullWidth
+                  margin="normal"
+                  value={discount}
+                  onChange={(e) => setDiscount(e.target.value)}
+              />
+
+              <TextField
+                  label="Mô tả"
+                  fullWidth
+                  required
                   multiline
                   rows={3}
-                  value={main.content}
-                  onChange={(e) =>
-                    updateMainHeading(mainIndex, "content", e.target.value)
-                  }
                   margin="normal"
-                />
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+              />
 
-                <Button
-                  variant="contained"
-                  onClick={() => addSubheading(mainIndex)}
-                  startIcon={<Add />}
+              <FormControl fullWidth required margin="normal">
+                <InputLabel shrink={Boolean(duration)}>
+                  Thời gian (phút)
+                </InputLabel>
+                <Select
+                    value={duration}
+                    onChange={(e) => setDuration(e.target.value)}
                 >
-                  Thêm tiêu đề cấp 2
+                  <MenuItem value="">Chọn thời gian</MenuItem>
+                  {[30, 60, 90, 120].map((time) => (
+                      <MenuItem key={time} value={time}>
+                        {time} phút
+                      </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <Box mt={2}>
+                <Button
+                    variant="outlined"
+                    component="label"
+                    startIcon={<AddPhotoAlternate />}
+                >
+                  Thêm hình ảnh
+                  <input
+                      type="file"
+                      hidden
+                      multiple
+                      accept="image/*"
+                      onChange={handleAddImages}
+                  />
                 </Button>
-
-                {main.subheadings.map((sub, subIndex) => (
-                  <Box key={subIndex} ml={4} mt={2}>
-                    <TextField
-                      label="Tiêu đề cấp 2"
-                      fullWidth
-                      value={sub.title}
-                      onChange={(e) =>
-                        updateSubheadingContent(
-                          mainIndex,
-                          subIndex,
-                          "title",
-                          e.target.value
-                        )
-                      }
-                      margin="normal"
-                    />
-                    <IconButton
-                      color="error"
-                      onClick={() => removeSubheading(mainIndex, subIndex)}
-                    >
-                      <Delete fontSize="small" />
-                    </IconButton>
-                    <Button
-                      variant="outlined"
-                      component="label"
-                      startIcon={<AddPhotoAlternate />}
-                    >
-                      Thêm hình ảnh tiêu đề cấp 2
-                      <input
-                        type="file"
-                        hidden
-                        accept="image/*"
-                        onChange={(e) =>
-                          handleImageChange(e, mainIndex, subIndex)
-                        }
-                      />
-                    </Button>
-                    {sub.image && (
-                      <Box mt={2}>
+                <Box display="flex" mt={2} gap={1} flexWrap="wrap">
+                  {images.map((image, index) => (
+                      <Box key={index} position="relative">
                         <img
-                          src={sub.imageURL}
-                          alt="subheading-image"
-                          width="100"
-                        />
-                      </Box>
-                    )}
-                    <TextField
-                      label="Mô tả tiêu đề cấp 2"
-                      fullWidth
-                      multiline
-                      rows={3}
-                      value={sub.content}
-                      onChange={(e) =>
-                        updateSubheadingContent(
-                          mainIndex,
-                          subIndex,
-                          "content",
-                          e.target.value
-                        )
-                      }
-                      margin="normal"
-                    />
-
-                    <Button
-                      variant="contained"
-                      onClick={() => addSubSubheading(mainIndex, subIndex)}
-                      startIcon={<Add />}
-                    >
-                      Thêm tiêu đề cấp 3
-                    </Button>
-
-                    {sub.subSubheadings.map((subSub, subSubIndex) => (
-                      <Box key={subSubIndex} ml={4} mt={2}>
-                        <TextField
-                          label="Tiêu đề cấp 3"
-                          fullWidth
-                          value={subSub.title}
-                          onChange={(e) =>
-                            updateSubheadingContent(
-                              mainIndex,
-                              subIndex,
-                              "subSubheadings",
-                              e.target.value,
-                              subSubIndex
-                            )
-                          }
-                          margin="normal"
+                            src={URL.createObjectURL(image)}
+                            alt={`service-image-${index}`}
+                            width="80"
+                            height="80"
+                            style={{ borderRadius: "4px" }}
                         />
                         <IconButton
-                          color="error"
-                          onClick={() =>
-                            removeSubSubheading(
-                              mainIndex,
-                              subIndex,
-                              subSubIndex
-                            )
-                          }
+                            size="small"
+                            color="error"
+                            onClick={() => handleRemoveImage(index)}
+                            style={{
+                              position: "absolute",
+                              top: 0,
+                              right: 0,
+                              backgroundColor: "white",
+                            }}
                         >
                           <Delete fontSize="small" />
                         </IconButton>
-                        <Button
-                          variant="outlined"
-                          component="label"
-                          startIcon={<AddPhotoAlternate />}
-                        >
-                          Thêm hình ảnh tiêu đề cấp 3
-                          <input
-                            type="file"
-                            hidden
-                            accept="image/*"
-                            onChange={(e) =>
-                              handleImageChange(
-                                e,
-                                mainIndex,
-                                subIndex,
-                                subSubIndex
-                              )
-                            }
-                          />
-                        </Button>
-                        {subSub.image && (
-                          <Box mt={2}>
-                            <img
-                              src={subSub.imageURL}
-                              alt="subsubheading-image"
-                              width="100"
-                            />
-                          </Box>
-                        )}
-                        <TextField
-                          label="Mô tả tiêu đề cấp 3"
-                          fullWidth
-                          multiline
-                          rows={3}
-                          value={subSub.content}
-                          onChange={(e) =>
-                            updateSubheadingContent(
-                              mainIndex,
-                              subIndex,
-                              "subSubheadings",
-                              e.target.value,
-                              subSubIndex
-                            )
-                          }
-                          margin="normal"
-                        />
                       </Box>
+                  ))}
+                </Box>
+              </Box>
+            </Box>
+            {/* Cột 2: Tạo bài viết */}
+            <Box
+                flex={1}
+                p={2}
+                border={1}
+                borderColor="grey.300"
+                borderRadius={2}
+            >
+              <Typography variant="h6">Tạo bài viết</Typography>
+              <TextField
+                  label="Tiêu đề bài viết"
+                  fullWidth
+                  margin="normal"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+              />
+
+              {/* Main Headings */}
+              {mainHeadings.map((main, mainIndex) => (
+                  <Box key={mainIndex} mb={2}>
+                    <TextField
+                        label="Tiêu đề cấp 1"
+                        fullWidth
+                        value={main.title}
+                        onChange={(e) =>
+                            updateMainHeading(mainIndex, "title", e.target.value)
+                        }
+                        margin="normal"
+                    />
+                    <IconButton
+                        color="error"
+                        onClick={() => removeMainHeading(mainIndex)}
+                    >
+                      <Delete fontSize="small" />
+                    </IconButton>
+                    <Button
+                        variant="outlined"
+                        component="label"
+                        startIcon={<AddPhotoAlternate />}
+                    >
+                      Thêm hình ảnh tiêu đề cấp 1
+                      <input
+                          type="file"
+                          hidden
+                          accept="image/*"
+                          onChange={(e) => handleImageChange(e, mainIndex)}
+                      />
+                    </Button>
+                    {main.image && (
+                        <Box mt={2}>
+                          <img src={main.imageURL} alt="title-image" width="100" />
+                        </Box>
+                    )}
+                    <TextField
+                        label="Mô tả tiêu đề cấp 1"
+                        fullWidth
+                        multiline
+                        rows={3}
+                        value={main.content}
+                        onChange={(e) =>
+                            updateMainHeading(mainIndex, "content", e.target.value)
+                        }
+                        margin="normal"
+                    />
+
+                    <Button
+                        variant="contained"
+                        onClick={() => addSubheading(mainIndex)}
+                        startIcon={<Add />}
+                    >
+                      Thêm tiêu đề cấp 2
+                    </Button>
+
+                    {main.subheadings.map((sub, subIndex) => (
+                        <Box key={subIndex} ml={4} mt={2}>
+                          <TextField
+                              label="Tiêu đề cấp 2"
+                              fullWidth
+                              value={sub.title}
+                              onChange={(e) =>
+                                  updateSubheadingContent(
+                                      mainIndex,
+                                      subIndex,
+                                      "title",
+                                      e.target.value
+                                  )
+                              }
+                              margin="normal"
+                          />
+                          <IconButton
+                              color="error"
+                              onClick={() => removeSubheading(mainIndex, subIndex)}
+                          >
+                            <Delete fontSize="small" />
+                          </IconButton>
+                          <Button
+                              variant="outlined"
+                              component="label"
+                              startIcon={<AddPhotoAlternate />}
+                          >
+                            Thêm hình ảnh tiêu đề cấp 2
+                            <input
+                                type="file"
+                                hidden
+                                accept="image/*"
+                                onChange={(e) =>
+                                    handleImageChange(e, mainIndex, subIndex)
+                                }
+                            />
+                          </Button>
+                          {sub.image && (
+                              <Box mt={2}>
+                                <img
+                                    src={sub.imageURL}
+                                    alt="subheading-image"
+                                    width="100"
+                                />
+                              </Box>
+                          )}
+                          <TextField
+                              label="Mô tả tiêu đề cấp 2"
+                              fullWidth
+                              multiline
+                              rows={3}
+                              value={sub.content}
+                              onChange={(e) =>
+                                  updateSubheadingContent(
+                                      mainIndex,
+                                      subIndex,
+                                      "content",
+                                      e.target.value
+                                  )
+                              }
+                              margin="normal"
+                          />
+
+                          <Button
+                              variant="contained"
+                              onClick={() => addSubSubheading(mainIndex, subIndex)}
+                              startIcon={<Add />}
+                          >
+                            Thêm tiêu đề cấp 3
+                          </Button>
+
+                          {sub.subSubheadings.map((subSub, subSubIndex) => (
+                              <Box key={subSubIndex} ml={4} mt={2}>
+                                <TextField
+                                    label="Tiêu đề cấp 3"
+                                    fullWidth
+                                    value={subSub.title}
+                                    onChange={(e) =>
+                                        updateSubheadingContent(
+                                            mainIndex,
+                                            subIndex,
+                                            "subSubheadings",
+                                            e.target.value,
+                                            subSubIndex
+                                        )
+                                    }
+                                    margin="normal"
+                                />
+                                <IconButton
+                                    color="error"
+                                    onClick={() =>
+                                        removeSubSubheading(
+                                            mainIndex,
+                                            subIndex,
+                                            subSubIndex
+                                        )
+                                    }
+                                >
+                                  <Delete fontSize="small" />
+                                </IconButton>
+                                <Button
+                                    variant="outlined"
+                                    component="label"
+                                    startIcon={<AddPhotoAlternate />}
+                                >
+                                  Thêm hình ảnh tiêu đề cấp 3
+                                  <input
+                                      type="file"
+                                      hidden
+                                      accept="image/*"
+                                      onChange={(e) =>
+                                          handleImageChange(
+                                              e,
+                                              mainIndex,
+                                              subIndex,
+                                              subSubIndex
+                                          )
+                                      }
+                                  />
+                                </Button>
+                                {subSub.image && (
+                                    <Box mt={2}>
+                                      <img
+                                          src={subSub.imageURL}
+                                          alt="subsubheading-image"
+                                          width="100"
+                                      />
+                                    </Box>
+                                )}
+                                <TextField
+                                    label="Mô tả tiêu đề cấp 3"
+                                    fullWidth
+                                    multiline
+                                    rows={3}
+                                    value={subSub.content}
+                                    onChange={(e) =>
+                                        updateSubheadingContent(
+                                            mainIndex,
+                                            subIndex,
+                                            "subSubheadings",
+                                            e.target.value,
+                                            subSubIndex
+                                        )
+                                    }
+                                    margin="normal"
+                                />
+                              </Box>
+                          ))}
+                        </Box>
                     ))}
                   </Box>
-                ))}
-              </Box>
-            ))}
-            <Button onClick={addMainHeading} startIcon={<Add />}>
-              Thêm tiểu mục cấp 1
-            </Button>
+              ))}
+              <Button onClick={addMainHeading} startIcon={<Add />}>
+                Thêm tiểu mục cấp 1
+              </Button>
+            </Box>
           </Box>
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        {!loading && (
-          <Button
-            variant="outlined"
-            startIcon={<RestartAlt />}
-            onClick={handleReset}
-            color="primary"
-          >
-            Reset
-          </Button>
-        )}
-        {!loading && (
-          <Button
-            variant="contained"
-            startIcon={<Save />}
-            onClick={addServiceAndArticle}
-            color="success"
-          >
-            Thêm
-          </Button>
-        )}
-        {!loading && (
-          <Button
-            variant="outlined"
-            startIcon={<Cancel />}
-            onClick={onClose}
-            color="error"
-          >
-            Đóng
-          </Button>
-        )}
-        {loading && (
-          <Typography
-            className="wave-effect"
-            sx={{
-              mr: "1px",
-              width: "100%",
-              textAlign: "right",
-              fontWeight: "bold",
-              fontSize: "1.2rem",
-            }}
-          >
-            {"Đang thêm dịch vụ ...".split("").map((char, index) => (
-              <span key={index} style={{ animationDelay: `${index * 100}ms` }}>
+        </DialogContent>
+        <DialogActions>
+          {!loading && (
+              <Button
+                  variant="outlined"
+                  startIcon={<RestartAlt />}
+                  onClick={handleReset}
+                  color="primary"
+              >
+                Reset
+              </Button>
+          )}
+          {!loading && (
+              <Button
+                  variant="contained"
+                  startIcon={<Save />}
+                  onClick={addServiceAndArticle}
+                  color="success"
+              >
+                Thêm
+              </Button>
+          )}
+          {!loading && (
+              <Button
+                  variant="outlined"
+                  startIcon={<Cancel />}
+                  onClick={onClose}
+                  color="error"
+              >
+                Đóng
+              </Button>
+          )}
+          {loading && (
+              <Typography
+                  className="wave-effect"
+                  sx={{
+                    mr: "1px",
+                    width: "100%",
+                    textAlign: "right",
+                    fontWeight: "bold",
+                    fontSize: "1.2rem",
+                  }}
+              >
+                {"Đang thêm dịch vụ ...".split("").map((char, index) => (
+                    <span key={index} style={{ animationDelay: `${index * 100}ms` }}>
                 {char}
               </span>
-            ))}
-          </Typography>
-        )}
-      </DialogActions>
-    </Dialog>
+                ))}
+              </Typography>
+          )}
+        </DialogActions>
+      </Dialog>
   );
 };
 

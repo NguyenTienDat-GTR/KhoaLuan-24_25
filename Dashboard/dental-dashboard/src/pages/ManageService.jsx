@@ -131,10 +131,10 @@ const ServiceManagement = () => {
     };
 
     // Mở modal khi bấm vào icon "Xem chi tiết"
-    const handleOpenModal = (id) => {
-        console.log("id hiện tại là:", id);
+    const handleOpenModal = (service) => {
+        console.log("id hiện tại là:", service);
 
-        setServiceId(id);  // Lưu ID của dịch vụ
+        setServiceId(service);  // Lưu ID của dịch vụ
         setOpenModal(true);  // Mở modal
     };
 
@@ -332,7 +332,7 @@ const ServiceManagement = () => {
                                             <TableCell>
                                                 <Tooltip title="Xem chi tiết">
                                                     <IconButton sx={{ color: "#1976d2" }}
-                                                                onClick={() => handleOpenModal(service._id)}
+                                                                onClick={() => handleOpenModal(service)}
                                                     >
                                                         <Visibility />
                                                     </IconButton>
@@ -392,9 +392,9 @@ const ServiceManagement = () => {
                 onRefresh={handleRefreshServices}
             />
             <ServiceDetailModal
-                serviceId={serviceId}  // Truyền ID dịch vụ vào modal
+                selectedService={serviceId}  // Truyền ID dịch vụ vào modal
                 open={openModal}  // Điều khiển trạng thái mở của modal
-                closeModal={handleCloseModal}  // Hàm đóng modal
+                onClose={handleCloseModal}  // Hàm đóng modal
 
 
             />

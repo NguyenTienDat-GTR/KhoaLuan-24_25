@@ -26,24 +26,6 @@ const ServiceDetailModal = ({selectedService, onClose, open}) => {
         session: "Lần",
     };
 
-    // Hàm fetch chi tiết dịch vụ và bài viết
-    const fetchDetails = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-
-            const response = await axios.get(`/service/getById/${serviceId}`);
-            setService(response.data?.service || response.data);
-            console.log("Service data:", response.data);
-
-        } catch (error) {
-            console.error("Error fetching service:", error);
-            setError("Không thể tải thông tin dịch vụ. Vui lòng thử lại.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
