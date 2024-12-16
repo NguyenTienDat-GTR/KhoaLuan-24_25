@@ -143,13 +143,13 @@ const ServiceManagement = () => {
         setOpenModal(false);
     };
 
-    const handleOpenEditService = (id) => {
-        setServiceId(id);
+    const handleOpenEditService = (service) => {
+        setServiceId(service);
         setOpenEditService(true);  // Mở modal chỉnh sửa dịch vụ
     };
 
-    const handleOpenEditArticle = (id) => {
-        setServiceId(id);
+    const handleOpenEditArticle = (service) => {
+        setServiceId(service);
         setOpenEditArticle(true);  // Mở modal chỉnh sửa bài viết dịch vụ
     };
     const handleCloseEditService = () => {
@@ -342,7 +342,7 @@ const ServiceManagement = () => {
                                                     <>
                                                         <Tooltip title="Chỉnh sửa dịch vụ">
                                                             <IconButton sx={{ color: "#4caf50" }}
-                                                                        onClick={() => handleOpenEditService(service._id)}>
+                                                                        onClick={() => handleOpenEditService(service)}>
                                                                 <Edit />
                                                             </IconButton>
                                                         </Tooltip>
@@ -356,7 +356,7 @@ const ServiceManagement = () => {
                                                         </Tooltip>
                                                         <Tooltip title="Chỉnh sửa bài viết dịch vụ">
                                                             <IconButton sx={{ color: "#ff9800" }}
-                                                                        onClick={() => handleOpenEditArticle(service._id)}>
+                                                                        onClick={() => handleOpenEditArticle(service)}>
                                                                 <EditNote />
                                                             </IconButton>
                                                         </Tooltip>
@@ -400,16 +400,18 @@ const ServiceManagement = () => {
             />
             {/* Modal chỉnh sửa dịch vụ */}
             <EditService
-                serviceId={serviceId}
+                selectedService={serviceId}
                 open={openEditService}
                 onClose={handleCloseEditService}
+                onRefresh={handleRefreshServices}
             />
 
             {/* Modal chỉnh sửa bài viết dịch vụ */}
             <EditArticleService
-                serviceId={serviceId}
+                selectedService={serviceId}
                 open={openEditArticle}
                 onClose={handleCloseEditArticle}
+                onRefresh={handleRefreshServices}
             />
 
         </Box>

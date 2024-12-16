@@ -61,7 +61,7 @@ const ConfirmPayment = ({open, onClose, onSuccessfulPayment}) => {
                     invoice: updatedInvoice // Ghi đè dữ liệu mới
                 });
 
-                printInvoice(selectedInvoice.invoice); // In hóa đơn
+                printInvoice(updatedInvoice); // In hóa đơn
 
             }
 
@@ -106,6 +106,15 @@ const ConfirmPayment = ({open, onClose, onSuccessfulPayment}) => {
                     <Typography variant="h5" fontWeight="bold" sx={{margin: '0 auto'}}>
                         Nha khoa HBT
                     </Typography>
+                    <Box
+                        sx={{margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2}}>
+                        <Typography variant="body1" fontWeight="bold">
+                            Địa chỉ: 877, Tân Kỳ Tân Quý, P. Bình Hưng Hòa A, Q.Bình Tân, TP.HCM
+                        </Typography>
+                        <Typography variant="body1" fontWeight="bold">
+                            Số điện thoại: 0906070338
+                        </Typography>
+                    </Box>
                     {/* Thông tin khách hàng */}
                     <Typography variant="h6" fontWeight="bold">
                         Thông tin hóa đơn
@@ -118,11 +127,13 @@ const ConfirmPayment = ({open, onClose, onSuccessfulPayment}) => {
                         </Grid>
                         <Grid item xs={6}>
                             <Typography><strong>Ngày tạo hóa đơn:</strong> {invoice?.createdAt}</Typography>
+                            <Typography><strong>Bác sĩ điều trị:</strong> {invoice?.createBy}</Typography>
                             <Typography><strong>Trạng
                                 thái:</strong> {invoice?.isPaid ? "Đã thanh toán" : "Chưa thanh toán"}</Typography>
                             {invoice?.isPaid && (
                                 <>
-                                    <Typography><strong>Nhân viên Xác nhận:</strong> {invoice?.paidBy || "Không xác định"}
+                                    <Typography><strong>Nhân viên xác
+                                        nhận:</strong> {invoice?.paidBy || "Không xác định"}
                                     </Typography>
                                     <Typography><strong>Thanh toán lúc:</strong> {invoice?.paidAt || "Không xác định"}
                                     </Typography>
@@ -151,7 +162,7 @@ const ConfirmPayment = ({open, onClose, onSuccessfulPayment}) => {
                             {invoice?.usedServices.map((service, index) => (
                                 <TableRow key={service._id}>
                                     <TableCell>{index + 1}</TableCell>
-                                    <TableCell>{service.name}</TableCell>
+                                    <TableCell>{!invoice?.isPaid ? service.name : service.service.name}</TableCell>
                                     <TableCell
                                         sx={{textAlign: 'center'}}>{units[service.unit] || service.unit}</TableCell>
                                     <TableCell

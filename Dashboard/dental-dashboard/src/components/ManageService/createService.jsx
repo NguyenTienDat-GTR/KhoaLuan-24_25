@@ -363,7 +363,6 @@ const CreateService = ({ open, onClose, onSuccess }) => {
           handleReset();
           onSuccess();
           onClose();
-          setLoading(false);
           setAddArticle(false);
         }
       } catch (error) {

@@ -36,7 +36,7 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
         doctorId: isDoctor ? loggedInDoctorId : "",
         notes: ""
     });
-    const {doctorAvailableOffline, getDoctorAvailableOffline} = useDoctorAvailable();
+    const {doctorAvailable, getDoctorAvailableOffline,getDoctorAvailable} = useDoctorAvailable();
     const {services, getAllService} = useGetService();
     const {patients, getAllPatients} = usePatientStore();
     const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -51,7 +51,7 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
     useEffect(() => {
         // Lấy danh sách bác sĩ
         getAllService();
-        getDoctorAvailableOffline();
+        getDoctorAvailable();
 
         if (token) {
             getAllPatients(token,{});
@@ -62,7 +62,7 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
     useEffect(() => {
         // Lọc danh sách bác sĩ theo vai trò
         if (isDoctor) {
-            const doctor = doctorAvailableOffline.find(
+            const doctor = doctorAvailable.find(
                 (doctor) => doctor.doctorId === loggedInDoctorId
             );
             setFilteredDoctors(doctor ? [doctor] : []);
@@ -72,9 +72,9 @@ const CreateAppointmentTicket = ({open, onClose, onSuccess}) => {
                 doctorId: loggedInDoctorId,
             }));
         } else {
-            setFilteredDoctors(doctorAvailableOffline);
+            setFilteredDoctors(doctorAvailable);
         }
-    }, [doctorAvailableOffline, isDoctor, loggedInDoctorId]);
+    }, [doctorAvailable, isDoctor, loggedInDoctorId]);
 
     const handleCustomerTypeChange = (event) => {
         if (isDoctor) return;

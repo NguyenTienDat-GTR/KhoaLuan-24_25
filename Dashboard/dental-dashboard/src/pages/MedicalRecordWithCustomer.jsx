@@ -120,7 +120,7 @@ const MedicalRecordWithCustomer = () => {
                                                     <TableRow>
                                                         <TableCell><b>STT</b></TableCell>
                                                         <TableCell><b>Tên dịch vụ</b></TableCell>
-                                                        <TableCell><b>Dùng cho</b></TableCell>
+                                                        <TableCell><b>Dùng cho răng/hàm</b></TableCell>
                                                     </TableRow>
                                                 </TableHead>
                                                 <TableBody>
