@@ -75,6 +75,30 @@ const ManageServiceType = () => {
             );
         }
     };
+    const handleDeleteServiceType = async ( typeId) => {
+        if ( !typeId) {
+            console.error("Thiếu Id dịch vụ hoặc Id loại dịch vụ");
+            return;
+
+        }
+        try {
+            // Gọi API xóa loại dịch vụ, ví dụ như:
+            const response = await axios.delete(`/service-type/delete/${typeId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            console.log("Xóa loại dịch vụ thành công:", response.data.message);
+            // Thực hiện cập nhật lại UI hoặc dữ liệu sau khi xóa thành công
+            getAllService()
+        } catch (error) {
+            console.error("Lỗi khi xóa loại dịch vụ:", error.response?.data?.message || error.message);
+        }
+
+    };
+
 
     return (
         <Box sx={{padding: 4, marginTop: 8}}>
@@ -118,7 +142,7 @@ const ManageServiceType = () => {
                                             <IconButton
                                                 color="error"
                                                 onClick={() =>
-                                                    console.log("Hàm xóa loại dịch vụ chưa hoàn thiện")
+                                                    handleDeleteServiceType(serviceType._id)
                                                 }
                                             >
                                                 <Delete/>

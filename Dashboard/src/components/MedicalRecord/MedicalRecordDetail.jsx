@@ -28,6 +28,7 @@ const MedicalRecordDetail = ({ open, onClose, medicalRecord }) => {
                     </Typography>
                     <Typography><strong>Tên bệnh nhân:</strong> {medicalRecord.customerID?.name}</Typography>
                     <Typography><strong>Số điện thoại:</strong> {medicalRecord.customerID?.phone}</Typography>
+                    <Typography><strong>Email:</strong> {medicalRecord.customerID?.email}</Typography>
                 </Box>
 
                 <Box sx={{ marginBottom: 2 }}>
@@ -51,7 +52,7 @@ const MedicalRecordDetail = ({ open, onClose, medicalRecord }) => {
                                 <TableRow>
                                     <TableCell><strong>STT</strong></TableCell>
                                     <TableCell><strong>Dịch vụ</strong></TableCell>
-                                    <TableCell><strong>Sử dụng cho</strong></TableCell>
+                                    <TableCell><strong>Sử dụng cho răng/hàm</strong></TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>

@@ -47,7 +47,7 @@ const ManageAccount = ({isSidebarOpen}) => {
         if (token) {
             getAllAccount(token);
         }
-    }, [token, accounts]);
+    }, [token]);
 
     const filteredAccounts = accounts.filter((account) => {
         const matchesSearch =
@@ -209,14 +209,14 @@ const ManageAccount = ({isSidebarOpen}) => {
                                                             <Edit/>
                                                         </IconButton>
                                                     </Tooltip>
-                                                    <Tooltip title="Xóa" arrow>
-                                                        <IconButton
-                                                            sx={{color: "red"}}
-                                                            onClick={() => handleDeleteClick(account)}
-                                                        >
-                                                            <Delete/>
-                                                        </IconButton>
-                                                    </Tooltip>
+                                                    {/*<Tooltip title="Xóa" arrow>*/}
+                                                    {/*    <IconButton*/}
+                                                    {/*        sx={{color: "red"}}*/}
+                                                    {/*        onClick={() => handleDeleteClick(account)}*/}
+                                                    {/*    >*/}
+                                                    {/*        <Delete/>*/}
+                                                    {/*    </IconButton>*/}
+                                                    {/*</Tooltip>*/}
                                                 </TableCell>
                                             )}
                                         </TableRow>
@@ -245,11 +245,9 @@ const ManageAccount = ({isSidebarOpen}) => {
                         onClose={() => setEditAccountDialogOpen(false)}
                         account={selectedAccount}
                         onUpdate={(updatedAccount) => {
-                            setAccounts((prevAccounts) =>
-                                prevAccounts.map((acc) =>
-                                    acc.id === updatedAccount.id ? updatedAccount : acc
-                                )
-                            );
+                            if (token) {
+                                getAllAccount(token);
+                            }
                             setEditAccountDialogOpen(false);
                         }}
                     />

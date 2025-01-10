@@ -3,7 +3,7 @@ import {Box, CircularProgress} from "@mui/material";
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import {useInView} from "react-intersection-observer";
 import {Toaster} from 'react-hot-toast';
-import PolicyDetail from "./components/Policy/PolicyDetail";
+import PolicyDetail from "./components/policy/PolicyDetail";
 import KnowledgeDetail from "./components/Infors/KnowledgeDetail";
 
 // Lazy load components

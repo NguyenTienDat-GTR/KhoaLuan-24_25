@@ -1,9 +1,8 @@
-
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { REACT_APP_IP_ADDRESS } from "../env";
 
-const SOCKET_SERVER_URL = `http://${REACT_APP_IP_ADDRESS}:3001`;
+const SOCKET_SERVER_URL = `${REACT_APP_IP_ADDRESS}`;
 
 const useSocket = () => {
     const [socket, setSocket] = useState(null);

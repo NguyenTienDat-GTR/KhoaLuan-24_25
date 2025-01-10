@@ -11,6 +11,7 @@ const ConfirmCustomerArrived = ({open, onClose, ticketId, refreshTicket}) => {
 
     const handleResponse = async () => {
         setIsLoadingResponse(true);
+        console.log(ticketId)
         try {
             const response = await axios.put(`/ticket/confirmCustomerIsArrived/${ticketId}`, {
                 confirmedBy: userLoggedIn?.user.details.employeeName,
@@ -23,7 +24,7 @@ const ConfirmCustomerArrived = ({open, onClose, ticketId, refreshTicket}) => {
             if (response.status === 200) {
                 onClose();
                 setIsLoadingResponse(false);
-                toast.success(response.data.message,{
+                toast.success(response.data.message, {
                     autoClose: 3000,
                 });
                 refreshTicket();
@@ -31,7 +32,7 @@ const ConfirmCustomerArrived = ({open, onClose, ticketId, refreshTicket}) => {
         } catch (error) {
             console.log(error);
             setIsLoadingResponse(false);
-            toast.error(error.response?.data.message,{
+            toast.error(error.response?.data.message, {
                 autoClose: 3000,
             })
         }
